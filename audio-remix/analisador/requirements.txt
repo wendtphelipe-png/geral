@@ -4,4 +4,3 @@ soundfile
 numpy
 scipy
 matplotlib
-shazamio
