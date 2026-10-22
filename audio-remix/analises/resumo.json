@@ -1,0 +1,53 @@
+{
+ "mixes": 1,
+ "duracoes": [
+  154.87
+ ],
+ "duracao_trecho": [
+  5.87,
+  15.7,
+  17.07,
+  14.77,
+  10.61,
+  7.22,
+  14.46,
+  14.33,
+  11.52,
+  10.12,
+  10.17,
+  23.03
+ ],
+ "oitos_trecho": [
+  0.6,
+  4.2,
+  4.8,
+  4.0,
+  2.9,
+  1.9,
+  3.8,
+  3.9,
+  3.2,
+  2.6,
+  2.8,
+  1.5
+ ],
+ "etiquetas": {
+  "corte": 7,
+  "muda o BPM": 1,
+  "salto de volume": 1,
+  "mistura gradual": 4
+ },
+ "musicas": {
+  "Lecrae & 1K Phew – MOVE": 10
+ },
+ "videos": [
+  {
+   "id": "XRAzF6JNTqs",
+   "titulo": "Brotherhood Round 1 Front Row | IDL Launch 2025",
+   "duracao": 155,
+   "canal": "IDL [International Dance League]",
+   "link": "https://www.youtube.com/watch?v=XRAzF6JNTqs",
+   "posicao": 1
+  }
+ ]
+}
