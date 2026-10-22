@@ -95,6 +95,23 @@ Proposta: o "motor" roda no PC, e a tela é uma página no navegador (igual ao E
 
 Observação: a GTX 1070 Ti tem 8 GB de memória de vídeo. É suficiente para separar faixas. Para gerar música do zero, alguns modelos podem ficar lentos ou não caber; isso precisa ser testado no PC.
 
+## A IA que supervisiona e cria (decidido em 22/10/2026)
+
+O Phelipe tem as assinaturas do Claude e do Google AI Pro e quer a melhor qualidade. A divisão:
+
+| Tarefa | Melhor escolha | Por quê |
+|---|---|---|
+| Ouvir um áudio e descrever o que tem nele (estilo, instrumentos, onde está o drop, o que mudou num mix) | **Gemini** (Google) | O Gemini aceita áudio como entrada. A API do Claude, até agora, não aceita som. |
+| Gerar música nova (do zero, ou trechos de um estilo para injetar) | **Lyria 3** (Google), pela API do Gemini | É o modelo de música do Google: gera MP3, inclusive músicas completas. O Claude não gera áudio. |
+| Entender pedidos livres, planejar a edição, conferir o resultado, programar o app | **Claude** | É mais forte em raciocínio, em planos de várias etapas e em código. Já é quem constrói o app (Claude Code). |
+
+Como encaixa no app:
+1. O pedido escrito vai para o **Claude**, que devolve um plano de edição preciso (quais oitos, quais faixas, fades, camadas).
+2. Quando precisar "ouvir" (por exemplo, "deixe parecido com este outro mix"), o áudio vai para o **Gemini**, e a descrição volta para o Claude.
+3. Quando precisar criar som novo (um bloco de house, uma bateria de krump), o pedido vai para o **Lyria**, e o resultado entra como camada.
+
+Atenção: as assinaturas (o plano do app Claude e o Google AI Pro) não incluem o uso por programas. Para o Audio Remix chamar essas IAs, é preciso uma chave de API de cada uma, cobrada à parte pelo uso. O Google AI Studio tem uma faixa gratuita para testes. Pela regra do projeto (motores gratuitos primeiro), isso só entra com a aprovação do Phelipe, e a chave é criada e colada por ele.
+
 ## Etapas sugeridas
 
 1. **Etapa 0: Analisador (pronto para testar no PC).** Recebe vídeo ou link, separa as faixas, mostra o BPM ao longo do tempo, os oitos e as transições, e identifica as músicas. Usamos para estudar a playlist da Brotherhood. Veja o README.

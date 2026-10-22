@@ -60,6 +60,30 @@
     const citadas = faixasCitadas(t);
     const pct = porcentagem(t);
 
+    // fades: "fade out de 2 oitos", "fade in 3 segundos", "entra suave", "some aos poucos"
+    const fadeIn = /\bfade ?in\b|\bentra\w* (suave|aos poucos|devagar)|\bsurg\w* aos poucos|\baparec\w* aos poucos/.test(t);
+    const fadeOut = /\bfade ?out\b|\bsai\w* (suave|aos poucos|devagar)|\bsome\w* aos poucos|\bvai sumindo|\bdesaparec\w*|\bterminar? suave/.test(t);
+    if (fadeIn || fadeOut) {
+      const q = t.match(/(\d+(?:[.,]\d+)?)\s*(segundos?|s\b|tempos?|batidas?|oitos?)/);
+      let medida = null;
+      if (q) {
+        const v = parseFloat(q[1].replace(",", "."));
+        medida = /seg|^s$/.test(q[2]) ? {seg: v} : /oito/.test(q[2]) ? {tempos: v * 8} : {tempos: v};
+      }
+      const dir = fadeIn ? "in" : "out";
+      acoes.push(Object.assign({tipo: "fade", dir}, medida || {}));
+      frases.push((dir === "in" ? "fade de entrada" : "fade de saída") + (medida ? (medida.seg ? ` de ${medida.seg} s` : ` de ${medida.tempos} tempos`) : " em toda a seleção"));
+      return {acoes, frases, faltando};
+    }
+
+    // dividir: "corta ao meio", "divide em 4"
+    const div = t.match(/\b(cort\w*|divid\w*|part\w*|quebr\w*)\b.*\b(no meio|ao meio|pela metade|em (dois|2|duas|quatro|4|oito|8))\b/);
+    if (div) {
+      const n = /quatro|4/.test(div[2]) ? 4 : /oito|8/.test(div[2]) ? 8 : 2;
+      acoes.push({tipo: "dividir", partes: n}); frases.push(`dividir em ${n} partes`);
+      return {acoes, frases, faltando};
+    }
+
     // velocidade
     if (/meio tempo|half ?time|metade da velocidade|mais devagar|camera lenta/.test(t)) {
       acoes.push({tipo: "vel", valor: 0.5}); frases.push("meio tempo");
@@ -73,6 +97,7 @@
     if (/\b(volta\w* ao (normal|original)|como era|desfaz tudo|original de novo|restaura)\b/.test(t)) {
       acoes.push({tipo: "faixas", mudancas: Object.fromEntries(FAIXAS.map(f => [f, {set: 1}]))});
       acoes.push({tipo: "vel", valor: 1});
+      acoes.push({tipo: "semFade"});
       frases.push("tudo como na música original");
     }
 
@@ -133,14 +158,63 @@
 
   // Aplica as ações numa linha do tempo (lista de blocos) nos índices selecionados.
   // Devolve a nova seleção.
-  function aplicar(tl, indices, acoes) {
+  // Curva de volume de um fade (cosseno), amostrada em pontos [x, ganho] dentro de um bloco.
+  function curvaFade(dir, iniFade, fimFade, iniBloco, fimBloco) {
+    const pts = [];
+    const ganho = t => {
+      const p = Math.max(0, Math.min(1, (t - iniFade) / (fimFade - iniFade)));
+      const sobe = 0.5 - 0.5 * Math.cos(Math.PI * p);
+      return dir === "in" ? sobe : 1 - sobe;
+    };
+    for (let k = 0; k <= 12; k++) {
+      const t = iniBloco + (fimBloco - iniBloco) * k / 12;
+      pts.push([+(k / 12).toFixed(4), +ganho(t).toFixed(4)]);
+    }
+    return pts;
+  }
+
+  function aplicar(tl, indices, acoes, ctx) {
     let sel = [...indices].sort((a, b) => a - b);
     for (const a of acoes) {
+      if (a.tipo === "fade" && ctx && sel.length) {
+        const durs = sel.map(i => ctx.dur(tl[i]));
+        const total = durs.reduce((x, y) => x + y, 0);
+        const L = Math.min(total, a.seg ? a.seg : a.tempos ? a.tempos * ctx.tempo : total);
+        const [iniF, fimF] = a.dir === "in" ? [0, L] : [total - L, total];
+        let t0 = 0;
+        sel.forEach((i, k) => {
+          const t1 = t0 + durs[k];
+          if (t1 > iniF && t0 < fimF) tl[i].env = curvaFade(a.dir, iniF, fimF, t0, t1);
+          else if (a.dir === "in" && t0 >= fimF) delete tl[i].env;
+          t0 = t1;
+        });
+        continue;
+      }
+      if (a.tipo === "dividir") {
+        const novaSel = [];
+        let desloc = 0;
+        for (const i0 of sel) {
+          const i = i0 + desloc, b = tl[i];
+          const de = b.de ?? 0, ate = b.ate ?? 1, partes = [];
+          for (let k = 0; k < a.partes; k++) {
+            const nb = JSON.parse(JSON.stringify(b));
+            nb.de = +(de + (ate - de) * k / a.partes).toFixed(5); nb.ate = +(de + (ate - de) * (k + 1) / a.partes).toFixed(5);
+            delete nb.env; partes.push(nb);
+          }
+          tl.splice(i, 1, ...partes);
+          for (let k = 0; k < a.partes; k++) novaSel.push(i + k);
+          desloc += a.partes - 1;
+        }
+        sel = novaSel;
+        continue;
+      }
       if (a.tipo === "faixas") {
         for (const i of sel) for (const [f, m] of Object.entries(a.mudancas)) {
           const atual = tl[i].faixas[f];
           tl[i].faixas[f] = m.set !== undefined ? m.set : Math.max(0, Math.min(2, (atual || 0) * m.mult));
         }
+      } else if (a.tipo === "semFade") {
+        for (const i of sel) delete tl[i].env;
       } else if (a.tipo === "vel") {
         for (const i of sel) tl[i].vel = a.valor;
       } else if (a.tipo === "repetir" && sel.length) {

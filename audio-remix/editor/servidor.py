@@ -161,7 +161,9 @@ class Pedido(BaseHTTPRequestHandler):
                 info.update({"analise": {k: analise[k] for k in ("bpm", "duracao", "deslocamento", "unidades", "versao")},
                              "timeline": meta["timeline"], "alvo": meta.get("alvo", 165),
                              "mixer": meta.get("mixer") or mixer_padrao(),
-                             "duracao_mix": round(proj.duracao(meta["timeline"]), 2)})
+                             "camadas": meta.get("camadas") or [],
+                             "importados": motor.listar_importados(p),
+                             "duracao_mix": round(proj.duracao(meta["timeline"], meta.get("camadas")), 2)})
             return self.enviar(info)
 
         if metodo == "PUT" and acao == "timeline":
@@ -170,12 +172,14 @@ class Pedido(BaseHTTPRequestHandler):
             timeline = validar_timeline(dados.get("timeline"), proj)
             meta = motor.ler_json(p / "projeto.json")
             meta["timeline"] = timeline
+            if isinstance(dados.get("camadas"), list):
+                meta["camadas"] = validar_camadas(dados["camadas"], proj, efetivo=False)
             if isinstance(dados.get("mixer"), dict):
                 meta["mixer"] = validar_mixer(dados["mixer"])
             if "alvo" in dados:
                 meta["alvo"] = max(10, min(900, float(dados["alvo"])))
             motor.gravar_json(p / "projeto.json", meta)
-            return self.enviar({"ok": True, "duracao_mix": round(proj.duracao(timeline), 2)})
+            return self.enviar({"ok": True, "duracao_mix": round(proj.duracao(timeline, meta.get("camadas")), 2)})
 
         if metodo == "POST" and acao == "contagem":
             dados = self.corpo_json()
@@ -191,9 +195,17 @@ class Pedido(BaseHTTPRequestHandler):
         if metodo == "POST" and acao == "audio":
             # Corpo: {"timeline": [...]} — devolve o WAV da mistura e o início de cada bloco no cabeçalho.
             proj = abrir(pid)
-            timeline = validar_timeline(self.corpo_json().get("timeline"), proj)
-            audio, inicios = proj.montar(timeline)
+            dados = self.corpo_json()
+            timeline = validar_timeline(dados.get("timeline"), proj)
+            audio, inicios = proj.montar(timeline, validar_camadas(dados.get("camadas") or [], proj))
             return self.enviar(motor.para_wav(audio), "audio/wav", extra={"X-Inicios": json.dumps(inicios)})
+
+        if metodo == "POST" and acao == "importar":
+            nome = urllib.parse.unquote(self.headers.get("X-Nome", "audio"))
+            n = int(self.headers.get("Content-Length") or 0)
+            temporario = p / ("enviado-" + re.sub(r"[^\w.]", "", Path(nome).name)[-60:])
+            self.receber_arquivo(temporario, n)
+            return self.enviar(motor.importar_audio(p, temporario, nome))
 
         if metodo == "GET" and acao == "unidade":
             proj = abrir(pid)
@@ -209,11 +221,22 @@ class Pedido(BaseHTTPRequestHandler):
             meta = motor.ler_json(p / "projeto.json")
             EXPORTADOS.mkdir(parents=True, exist_ok=True)
             nome = re.sub(r'[\\/:*?"<>|]+', "", meta.get("titulo") or pid)[:60].strip() or pid
-            arquivo = motor.exportar(proj, timeline, dados.get("formato", "mp3"),
+            arquivo = motor.exportar(proj, timeline, validar_camadas(dados.get("camadas") or [], proj),
+                                     dados.get("formato", "mp3"),
                                      EXPORTADOS / f"{nome} - mix {motor.time.strftime('%Y%m%d-%H%M')}")
             return self.enviar({"ok": True, "arquivo": str(arquivo)})
 
         raise KeyError(caminho)
+
+    def receber_arquivo(self, caminho, n):
+        with open(caminho, "wb") as f:
+            restante = n
+            while restante > 0:
+                pedaco = self.rfile.read(min(1 << 20, restante))
+                if not pedaco:
+                    break
+                f.write(pedaco)
+                restante -= len(pedaco)
 
     def criar(self, q):
         tipo = self.headers.get("Content-Type", "")
@@ -231,14 +254,7 @@ class Pedido(BaseHTTPRequestHandler):
             destino = motor.PASTA_DADOS / pid
             destino.mkdir(parents=True)
             arquivo = destino / ("enviado" + Path(nome).suffix.lower())
-            with open(arquivo, "wb") as f:
-                restante = n
-                while restante > 0:
-                    pedaco = self.rfile.read(min(1 << 20, restante))
-                    if not pedaco:
-                        break
-                    f.write(pedaco)
-                    restante -= len(pedaco)
+            self.receber_arquivo(arquivo, n)
             iniciar_trabalho(pid, {"arquivo": str(arquivo), "nome": nome})
         return self.enviar({"id": pid})
 
@@ -256,6 +272,13 @@ def validar_mixer(mixer):
     return saida
 
 
+def numero(v, minimo, maximo, padrao):
+    try:
+        return max(minimo, min(maximo, float(v)))
+    except (TypeError, ValueError):
+        return padrao
+
+
 def validar_timeline(timeline, proj):
     if not isinstance(timeline, list):
         raise ValueError("linha do tempo inválida")
@@ -263,9 +286,56 @@ def validar_timeline(timeline, proj):
     for b in timeline:
         if b.get("u") not in proj.unidades:
             raise ValueError(f"unidade desconhecida: {b.get('u')}")
-        faixas = {f: max(0.0, min(2.0, float((b.get("faixas") or {}).get(f, 1)))) for f in motor.FAIXAS}
+        faixas = {f: numero((b.get("faixas") or {}).get(f, 1), 0, 2, 1.0) for f in motor.FAIXAS}
         vel = float(b.get("vel", 1))
-        saida.append({"u": b["u"], "faixas": faixas, "vel": vel if vel in motor.VELOCIDADES else 1})
+        bloco = {"u": b["u"], "faixas": faixas, "vel": vel if vel in motor.VELOCIDADES else 1}
+        de, ate = numero(b.get("de", 0), 0, 1, 0.0), numero(b.get("ate", 1), 0, 1, 1.0)
+        if ate - de < 0.01:
+            raise ValueError("corte pequeno demais")
+        if de or ate != 1:
+            bloco.update(de=round(de, 5), ate=round(ate, 5))
+        for k in ("fi", "fo"):
+            if b.get(k):
+                bloco[k] = round(numero(b[k], 0, 60, 0), 3)
+        env = b.get("env")
+        if isinstance(env, list) and 2 <= len(env) <= 64:
+            pontos = sorted((numero(x, 0, 1, 0), numero(g, 0, 2, 1)) for x, g in env)
+            bloco["env"] = [[round(x, 4), round(g, 4)] for x, g in pontos]
+        saida.append(bloco)
+    return saida
+
+
+def validar_camadas(camadas, proj, efetivo=True):
+    """Camadas extras. `efetivo`: o ganho já vem calculado (mudo/solo) pela tela."""
+    saida = []
+    for cam in camadas[:32]:
+        clipes = []
+        for c in (cam.get("clipes") or [])[:400]:
+            fonte = c.get("fonte") or {}
+            if fonte.get("tipo") == "importado":
+                if not re.fullmatch(r"a[0-9a-f]{10}", str(fonte.get("id"))) or \
+                        not (proj.pasta / "importados" / f"{fonte['id']}.wav").exists():
+                    raise ValueError("arquivo importado não encontrado")
+                f = {"tipo": "importado", "id": fonte["id"]}
+            elif fonte.get("tipo") == "faixa":
+                if fonte.get("u") not in proj.unidades or fonte.get("faixa") not in motor.FAIXAS:
+                    raise ValueError("trecho de faixa inválido")
+                f = {"tipo": "faixa", "u": fonte["u"], "faixa": fonte["faixa"],
+                     "de": numero(fonte.get("de", 0), 0, 1, 0), "ate": numero(fonte.get("ate", 1), 0, 1, 1)}
+            else:
+                raise ValueError("clipe sem origem")
+            clipe = {"id": str(c.get("id", ""))[:20], "fonte": f, "pos": round(numero(c.get("pos"), 0, 3600, 0), 4),
+                     "ini": round(numero(c.get("ini"), 0, 3600, 0), 4), "dur": round(numero(c.get("dur"), 0.01, 3600, 1), 4),
+                     "ganho": numero(c.get("ganho", 1), 0, 2, 1), "nome": str(c.get("nome", ""))[:80]}
+            for k in ("fi", "fo"):
+                if c.get(k):
+                    clipe[k] = round(numero(c[k], 0, 60, 0), 3)
+            clipes.append(clipe)
+        item = {"id": str(cam.get("id", ""))[:20], "nome": str(cam.get("nome", "Camada"))[:40],
+                "ganho": numero(cam.get("ganho", 1), 0, 2, 1), "clipes": clipes}
+        if not efetivo:
+            item.update(mudo=bool(cam.get("mudo")), solo=bool(cam.get("solo")))
+        saida.append(item)
     return saida
 
 

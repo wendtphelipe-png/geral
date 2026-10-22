@@ -34,6 +34,15 @@ A tela é como a de um editor de áudio:
   - "apaga esses oitos".
 
   Pedidos que ainda não existem (eco, filtros, paradas, mudar o tom, trazer a voz de outro trecho, injetar estilo) são avisados, e nada é mudado.
+- **Ferramentas de edição (barra de cima):**
+  - **Cortar** (tecla C): corta no cursor, a linha branca. Para pôr o cursor no lugar, clique na régua do tempo. Se um clipe estiver selecionado, corta o clipe; se não, corta o oito da trilha principal na batida mais próxima (com Alt, no ponto exato).
+  - **Fade in / Fade out:** aplicam na seleção. Em vários oitos, o fade atravessa a seleção inteira. Também dá para escrever: "fade out de 2 oitos", "fade in 3 segundos". A curva do volume aparece desenhada sobre as faixas.
+  - **Importar áudio** (tecla I): qualquer mp3, wav, m4a etc. Vira uma camada nova, no ponto do cursor. Também dá para arrastar o arquivo do Windows para dentro do editor.
+- **Camadas (abaixo das 4 faixas):** quantas quiser, cada uma com nome, M, S, volume e um botão para apagar.
+  - **+ Nova camada** cria uma vazia.
+  - **Arrastar um oito de uma faixa** (por exemplo, a voz do oito 5) para uma camada copia aquele trecho. Serve para "colocar a voz daquele trecho aqui".
+  - **Clipes:** arraste para mudar de lugar (encaixa nas batidas; com Alt, fica livre) ou para outra camada. Puxe as bordas para encurtar. Puxe as bolinhas brancas dos cantos para fazer fade. Dois cliques tocam a partir do clipe.
+  - Com um clipe selecionado, a barra de comando muda o volume ("30% mais baixo"), faz fade, repete ou apaga o clipe.
 - **Música original (embaixo):** os oitos da música. Clique para ouvir, arraste para o mix ou dê dois cliques para inserir depois da seleção. As setas ajustam onde fica o "1" da contagem.
 
 Atalhos:
@@ -41,6 +50,8 @@ Atalhos:
 - L: repetir a seleção;
 - Ctrl+Z: desfazer;
 - Ctrl+D: repetir a seleção;
+- C: cortar no cursor;
+- I: importar áudio;
 - Delete: apagar;
 - Ctrl+A: selecionar tudo;
 - Enter: escrever um pedido;

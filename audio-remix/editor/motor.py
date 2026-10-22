@@ -281,8 +281,44 @@ def novo_bloco(uid):
 
 # ---------------------------------------------------------------- renderização
 
+def aplicar_fades(audio, fi, fo):
+    """Fade de entrada/saída (segundos) com curva suave (cosseno)."""
+    n = audio.shape[1]
+    for segundos, entrada in ((fi, True), (fo, False)):
+        k = min(n, int(float(segundos or 0) * SR))
+        if k > 1:
+            curva = (0.5 - 0.5 * np.cos(np.linspace(0, np.pi, k))).astype(np.float32)
+            if entrada:
+                audio[:, :k] *= curva
+            else:
+                audio[:, n - k:] *= curva[::-1]
+    return audio
+
+
+def importar_audio(pasta, arquivo_enviado, nome):
+    """Converte qualquer áudio (mp3, wav, m4a...) para a pasta de importados do projeto."""
+    destino = Path(pasta) / "importados"
+    destino.mkdir(exist_ok=True)
+    aid = "a" + hashlib.md5(f"{nome}-{time.time()}".encode()).hexdigest()[:10]
+    wav = destino / f"{aid}.wav"
+    converter(arquivo_enviado, wav)
+    Path(arquivo_enviado).unlink(missing_ok=True)
+    y, _ = librosa.load(str(wav), sr=SR_ANALISE, mono=True)
+    passo = max(1, int(SR_ANALISE / 20))  # 20 pontos por segundo
+    onda = [round(float(np.abs(y[i:i + passo]).max()), 3) for i in range(0, len(y), passo)]
+    maximo = max(onda) or 1
+    info = {"id": aid, "nome": Path(nome).stem, "dur": round(len(y) / SR_ANALISE, 3),
+            "onda": [round(v / maximo, 3) for v in onda]}
+    gravar_json(destino / f"{aid}.json", info)
+    return info
+
+
+def listar_importados(pasta):
+    return [ler_json(f) for f in sorted((Path(pasta) / "importados").glob("*.json"))]
+
+
 class Projeto:
-    """Projeto aberto na memória: faixas carregadas e cache de blocos já calculados."""
+    """Projeto aberto na memória: faixas carregadas e cache de pedaços já calculados."""
 
     def __init__(self, pasta):
         self.pasta = Path(pasta)
@@ -290,23 +326,41 @@ class Projeto:
         self.unidades = {u["id"]: u for u in self.analise["unidades"]}
         self.faixas = {}
         for nome in FAIXAS:
-            dados, sr = sf.read(str(self.pasta / "faixas" / f"{nome}.wav"), dtype="float32", always_2d=True)
-            if sr != SR:
-                dados = librosa.resample(dados.T, orig_sr=sr, target_sr=SR).T
-            self.faixas[nome] = dados.T  # (2, n)
+            self.faixas[nome] = self._ler(self.pasta / "faixas" / f"{nome}.wav")
+        self.importados = {}
         self.cache = {}
         self.trava = threading.Lock()
 
+    @staticmethod
+    def _ler(caminho):
+        dados, sr = sf.read(str(caminho), dtype="float32", always_2d=True)
+        if dados.shape[1] == 1:
+            dados = np.repeat(dados, 2, axis=1)
+        if sr != SR:
+            dados = librosa.resample(dados.T, orig_sr=sr, target_sr=SR).T
+        return np.ascontiguousarray(dados[:, :2].T)  # (2, n)
+
+    def _guardar(self, chave, valor):
+        self.cache[chave] = valor
+        if len(self.cache) > 800:
+            self.cache.pop(next(iter(self.cache)))
+        return valor
+
+    def trecho_unidade(self, uid, de=0.0, ate=1.0):
+        """Amostras [a, b) de uma unidade, recortada pelas frações de/ate (0 a 1)."""
+        u = self.unidades[uid]
+        tam = u["fim"] - u["ini"]
+        return u["ini"] + int(round(tam * de)), u["ini"] + int(round(tam * ate))
+
     def bloco_audio(self, bloco):
-        """Áudio de um bloco + EMENDA amostras extras no fim (para o cruzamento com o próximo)."""
+        """Áudio de um bloco da trilha principal + EMENDA amostras extras no fim (cruzamento)."""
         chave = hashlib.md5(json.dumps([self.analise["versao"], bloco], sort_keys=True).encode()).hexdigest()
         if chave in self.cache:
             return self.cache[chave]
-        u = self.unidades[bloco["u"]]
-        a, b = u["ini"], u["fim"]
+        a, b = self.trecho_unidade(bloco["u"], bloco.get("de", 0), bloco.get("ate", 1))
         n_total = next(iter(self.faixas.values())).shape[1]
         b_ext = min(b + EMENDA * 4, n_total)
-        mistura = np.zeros((2, b_ext - a), dtype=np.float32)
+        mistura = np.zeros((2, max(b_ext - a, 1)), dtype=np.float32)
         for nome, ganho in bloco["faixas"].items():
             if ganho:
                 mistura += self.faixas[nome][:, a:b_ext] * float(ganho)
@@ -317,18 +371,49 @@ class Projeto:
             nucleo = int(round(nucleo / vel))
         if mistura.shape[1] < nucleo + EMENDA:
             mistura = np.pad(mistura, ((0, 0), (0, nucleo + EMENDA - mistura.shape[1])))
-        resultado = (mistura[:, : nucleo + EMENDA].astype(np.float32), nucleo)
-        self.cache[chave] = resultado
-        if len(self.cache) > 600:
-            self.cache.pop(next(iter(self.cache)))
-        return resultado
+        mistura = mistura[:, : nucleo + EMENDA].astype(np.float32)
+        if bloco.get("env"):  # curva de volume (fades que atravessam vários blocos)
+            xs, gs = zip(*bloco["env"])
+            mistura[:, :nucleo] *= np.interp(np.linspace(0, 1, nucleo), xs, gs).astype(np.float32)
+            mistura[:, nucleo:] *= float(gs[-1])
+        if bloco.get("fi") or bloco.get("fo"):
+            corpo = aplicar_fades(mistura[:, :nucleo].copy(), bloco.get("fi"), bloco.get("fo"))
+            mistura[:, :nucleo] = corpo
+            if bloco.get("fo"):
+                mistura[:, nucleo:] = 0  # depois de um fade de saída não sobra som
+        return self._guardar(chave, (mistura, nucleo))
 
-    def montar(self, timeline):
-        """Junta os blocos com cruzamento curto. Devolve (áudio (2, n), início de cada bloco em segundos)."""
+    def fonte_clipe(self, fonte):
+        """Áudio completo de onde o clipe é recortado."""
+        if fonte["tipo"] == "importado":
+            aid = fonte["id"]
+            if aid not in self.importados:
+                self.importados[aid] = self._ler(self.pasta / "importados" / f"{aid}.wav")
+            return self.importados[aid]
+        a, b = self.trecho_unidade(fonte["u"], fonte.get("de", 0), fonte.get("ate", 1))
+        return self.faixas[fonte["faixa"]][:, a:b]
+
+    def clipe_audio(self, clipe):
+        chave = hashlib.md5(json.dumps(["clipe", self.analise["versao"], clipe], sort_keys=True).encode()).hexdigest()
+        if chave in self.cache:
+            return self.cache[chave]
+        fonte = self.fonte_clipe(clipe["fonte"])
+        a = int(float(clipe.get("ini", 0)) * SR)
+        b = a + int(float(clipe["dur"]) * SR)
+        audio = fonte[:, a:min(b, fonte.shape[1])].astype(np.float32) * float(clipe.get("ganho", 1))
+        audio = aplicar_fades(audio.copy(), clipe.get("fi"), clipe.get("fo"))
+        return self._guardar(chave, audio)
+
+    def montar(self, timeline, camadas=None):
+        """Trilha principal (blocos em sequência) + camadas (clipes em posições livres).
+        Devolve (áudio (2, n), início de cada bloco em segundos)."""
         with self.trava:
             pedacos = [self.bloco_audio(b) for b in timeline]
+            clipes = [(c, self.clipe_audio(c)) for cam in (camadas or []) for c in cam.get("clipes", [])
+                      if float(cam.get("ganho", 1)) > 0]
         total = sum(n for _, n in pedacos)
-        saida = np.zeros((2, total + EMENDA), dtype=np.float32)
+        fim_camadas = max((int(float(c["pos"]) * SR) + a.shape[1] for c, a in clipes), default=0)
+        saida = np.zeros((2, max(total, fim_camadas) + EMENDA), dtype=np.float32)
         sobe = np.linspace(0, 1, EMENDA, dtype=np.float32)
         desce = sobe[::-1]
         pos, inicios = 0, []
@@ -340,15 +425,22 @@ class Projeto:
             pedaco[:, nucleo:nucleo + EMENDA] *= desce
             saida[:, pos:pos + nucleo + EMENDA] += pedaco
             pos += nucleo
-        saida = saida[:, :max(total, 1)]
+        ganho_camada = {id(c): float(cam.get("ganho", 1)) for cam in (camadas or []) for c in cam.get("clipes", [])}
+        for c, audio in clipes:
+            ini = int(float(c["pos"]) * SR)
+            saida[:, ini:ini + audio.shape[1]] += audio * ganho_camada[id(c)]
+        saida = saida[:, :max(total, fim_camadas, 1)]
         pico = float(np.abs(saida).max()) if saida.size else 0
         if pico > 0.98:  # protege contra distorção
             saida *= 0.98 / pico
         return saida, inicios
 
-    def duracao(self, timeline):
-        return sum((self.unidades[b["u"]]["fim"] - self.unidades[b["u"]]["ini"]) / float(b.get("vel", 1))
-                   for b in timeline) / SR
+    def duracao(self, timeline, camadas=None):
+        principal = sum((lambda a, b: (b - a))(*self.trecho_unidade(b["u"], b.get("de", 0), b.get("ate", 1)))
+                        / float(b.get("vel", 1)) for b in timeline) / SR
+        fim = max((float(c["pos"]) + float(c["dur"]) for cam in (camadas or []) for c in cam.get("clipes", [])),
+                  default=0)
+        return max(principal, fim)
 
     def unidade_original(self, uid):
         u = self.unidades[uid]
@@ -362,8 +454,8 @@ def para_wav(audio):
     return buf.getvalue()
 
 
-def exportar(projeto, timeline, formato, destino):
-    audio, _ = projeto.montar(timeline)
+def exportar(projeto, timeline, camadas, formato, destino):
+    audio, _ = projeto.montar(timeline, camadas)
     # nivela o volume: pico em -1 dB
     pico = float(np.abs(audio).max()) or 1
     audio = audio * (0.89 / pico)
