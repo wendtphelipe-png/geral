@@ -1,6 +1,6 @@
 # 01 - Brotherhood Round 1 Front Row ｜ IDL Launch 2025 [XRAzF6JNTqs].wav
 
-Duração: 3:35  |  BPM mediano: 129.2  |  faixas separadas: não
+Duração: 2:34  |  BPM mediano: 129.2  |  faixas separadas: não
 
 ## Trechos
 
