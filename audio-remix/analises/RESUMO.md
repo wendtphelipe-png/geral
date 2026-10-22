@@ -15,6 +15,8 @@ Mixes: 1
 ## Transições
 - Transições por minuto: mediana 4.26 (metade entre 4.26 e 4.26; de 4.26 a 4.26)
 - Mudança de BPM numa transição: mediana 0.0 (metade entre 0.0 e 0.0; de 0.0 a 45.8)
+- Paradas (stops) por minuto: mediana 0.0 (metade entre 0.0 e 0.0; de 0.0 a 0.0)
+- Duração das paradas: - segundos
 
 - corte: 7 (64%)
 - mistura gradual: 4 (36%)

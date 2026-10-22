@@ -190,7 +190,9 @@ def analisar(caminho, pasta_stems, separar_faixas=True, identificar=True):
         return float(np.mean(arr[i:j]))
 
     transicoes = [classificar(t, rms, centro, mfcc_n, bpm_c, quadro, media) for t in fronteiras]
-    paradas = achar_paradas(rms, tempos_batida)
+    # A plateia grita nos agudos e médios; o grave mostra melhor quando a música para.
+    energia_grave = np.sqrt((espectro[freqs < 200] ** 2).sum(axis=0))
+    paradas = achar_paradas(energia_grave, rms, tempos_batida)
 
     limites = [0.0] + fronteiras + [duracao]
     trechos = []
@@ -241,11 +243,13 @@ def analisar(caminho, pasta_stems, separar_faixas=True, identificar=True):
     }
 
 
-def achar_paradas(rms, tempos_batida):
-    """Paradas curtas (0,1 a 2 s) em que o som cai muito: os 'stops' e 'freezes' da coreografia."""
-    nivel = db(rms)
-    referencia = median_filter(nivel, size=int(4 * SR / HOP) | 1, mode="nearest")
-    baixo = nivel < referencia - 12
+def achar_paradas(energia_grave, rms, tempos_batida):
+    """Paradas curtas (0,1 a 2 s) em que a música para: o grave cai muito e o som geral também."""
+    janela = int(4 * SR / HOP) | 1
+    nivel = db(energia_grave)
+    referencia = median_filter(nivel, size=janela, mode="nearest")
+    geral = db(rms)
+    baixo = (nivel < referencia - 12) & (geral < median_filter(geral, size=janela, mode="nearest") - 6)
     paradas, i = [], 0
     while i < len(baixo):
         if baixo[i]:
@@ -253,7 +257,8 @@ def achar_paradas(rms, tempos_batida):
             while j < len(baixo) and baixo[j]:
                 j += 1
             ini, fim = librosa.frames_to_time([i, j], sr=SR, hop_length=HOP)
-            if 0.1 <= fim - ini <= 2.0:
+            fim_musica = len(baixo) * HOP / SR
+            if 0.1 <= fim - ini <= 2.0 and ini > 1.0 and fim < fim_musica - 1.0:
                 p = {"tempo": round(float(ini), 2), "duracao": round(float(fim - ini), 2),
                      "queda_db": round(float(np.median(referencia[i:j]) - np.min(nivel[i:j])), 1)}
                 if len(tempos_batida) > 8:

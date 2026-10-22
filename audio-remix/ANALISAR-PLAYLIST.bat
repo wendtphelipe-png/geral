@@ -28,6 +28,10 @@ if errorlevel 1 (
 )
 
 echo.
+"%PY%" -c "import audio_separator" >nul 2>nul || (
+  echo AVISO: o separador de faixas nao esta instalado. A analise vai sair incompleta
+  echo ^(sem saber onde tem voz, bateria e baixo^). Rode PREPARAR-ANALISADOR.bat e mande a foto do final.
+)
 echo === 2/4 Analisando ^(separa as faixas na placa de video; alguns minutos por video^)
 "%PY%" analisador\analisar.py dados\audios --saida analises
 if not exist analises\*.json (

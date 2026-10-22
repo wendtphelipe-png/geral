@@ -29,7 +29,9 @@ def main():
     p.add_argument("--lista", default=None)
     a = p.parse_args()
     pasta = Path(a.pasta)
-    analises = [json.loads(f.read_text(encoding="utf-8")) for f in sorted(pasta.glob("*.json")) if f.name != "resumo.json"]
+    # Só os arquivos de análise de mix (ignora resumo.json, lista-videos.json etc.)
+    analises = [d for d in (json.loads(f.read_text(encoding="utf-8")) for f in sorted(pasta.glob("*.json")))
+                if isinstance(d, dict) and "trechos" in d]
     if not analises:
         print("Nenhuma análise encontrada.")
         return
