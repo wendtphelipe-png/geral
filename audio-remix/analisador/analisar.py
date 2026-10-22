@@ -190,6 +190,7 @@ def analisar(caminho, pasta_stems, separar_faixas=True, identificar=True):
         return float(np.mean(arr[i:j]))
 
     transicoes = [classificar(t, rms, centro, mfcc_n, bpm_c, quadro, media) for t in fronteiras]
+    paradas = achar_paradas(rms, tempos_batida)
 
     limites = [0.0] + fronteiras + [duracao]
     trechos = []
@@ -232,11 +233,37 @@ def analisar(caminho, pasta_stems, separar_faixas=True, identificar=True):
         "separado": bool(faixas),
         "trechos": trechos,
         "transicoes": transicoes,
+        "paradas": paradas,
         "curva_bpm": [[round(float(t), 1), round(float(b), 1)]
                       for t, b in zip(librosa.frames_to_time(np.arange(0, len(bpm_c), int(SR / HOP)), sr=SR, hop_length=HOP),
                                       bpm_c[:: int(SR / HOP)])],
         "batidas": [round(float(t), 3) for t in tempos_batida],
     }
+
+
+def achar_paradas(rms, tempos_batida):
+    """Paradas curtas (0,1 a 2 s) em que o som cai muito: os 'stops' e 'freezes' da coreografia."""
+    nivel = db(rms)
+    referencia = median_filter(nivel, size=int(4 * SR / HOP) | 1, mode="nearest")
+    baixo = nivel < referencia - 12
+    paradas, i = [], 0
+    while i < len(baixo):
+        if baixo[i]:
+            j = i
+            while j < len(baixo) and baixo[j]:
+                j += 1
+            ini, fim = librosa.frames_to_time([i, j], sr=SR, hop_length=HOP)
+            if 0.1 <= fim - ini <= 2.0:
+                p = {"tempo": round(float(ini), 2), "duracao": round(float(fim - ini), 2),
+                     "queda_db": round(float(np.median(referencia[i:j]) - np.min(nivel[i:j])), 1)}
+                if len(tempos_batida) > 8:
+                    n = int(np.searchsorted(tempos_batida, ini))
+                    p["oito"], p["tempo_do_oito"] = n // 8 + 1, n % 8 + 1
+                paradas.append(p)
+            i = j
+        else:
+            i += 1
+    return paradas
 
 
 def encaixar(t, tempos_batida):
@@ -314,7 +341,7 @@ def identificar_trechos(caminho, trechos):
 
 def relatorio_md(r):
     linhas = [f"# {r['arquivo']}", "",
-              f"Duração: {r['duracao'] / 60:.0f}:{r['duracao'] % 60:02.0f}  |  BPM mediano: {r['bpm_medio']}  |  "
+              f"Duração: {mmss(r['duracao'])}  |  BPM mediano: {r['bpm_medio']}  |  "
               f"faixas separadas: {'sim' if r['separado'] else 'não'}", "",
               "## Trechos", "",
               "| # | Início | Dur. (s) | Oitos | BPM | Tom | Vol. dB | Voz | Música identificada |",
@@ -329,6 +356,10 @@ def relatorio_md(r):
     for x in r["transicoes"]:
         linhas.append(f"| {mmss(x['tempo'])} | {', '.join(x['etiquetas'])} | {x['bpm_antes']} → {x['bpm_depois']} | "
                       f"{x['volume_antes_db']} → {x['volume_depois_db']} |")
+    if r.get("paradas"):
+        linhas += ["", "## Paradas (stops e freezes)", "", "| Tempo | Duração (s) | Queda (dB) | Oito, tempo |", "|---|---|---|---|"]
+        for x in r["paradas"]:
+            linhas.append(f"| {mmss(x['tempo'])} | {x['duracao']} | {x['queda_db']} | {x.get('oito', '')}, {x.get('tempo_do_oito', '')} |")
     return "\n".join(linhas) + "\n"
 
 
@@ -352,10 +383,18 @@ def grafico(r, destino):
         ax.text((t["inicio"] + t["fim"]) / 2, ax.get_ylim()[1], str(t["n"]), ha="center", va="bottom", fontsize=8)
     ax.set_xlabel("segundos")
     ax.set_ylabel("BPM")
-    ax.set_title(r["arquivo"], fontsize=9)
+    ax.set_title(r["arquivo"].replace("\uff5c", "|"), fontsize=9)
     fig.tight_layout()
     fig.savefig(destino, dpi=110)
     plt.close(fig)
+
+
+def separador_disponivel():
+    try:
+        import audio_separator  # noqa: F401
+        return True
+    except ImportError:
+        return False
 
 
 def main():
@@ -365,6 +404,7 @@ def main():
     p.add_argument("--estrutura", default=None, help="pasta onde ficam as faixas separadas")
     p.add_argument("--sem-separar", action="store_true")
     p.add_argument("--sem-identificar", action="store_true")
+    p.add_argument("--refazer", action="store_true", help="analisa de novo mesmo os já analisados")
     a = p.parse_args()
 
     entrada = Path(a.entrada)
@@ -375,9 +415,13 @@ def main():
 
     for arq in arquivos:
         destino = saida / (arq.stem + ".json")
-        if destino.exists():
-            log(f"já analisado: {arq.name}")
-            continue
+        if destino.exists() and not a.refazer:
+            antigo = json.loads(destino.read_text(encoding="utf-8"))
+            atualizado = "paradas" in antigo  # análises antigas não tinham as paradas
+            if atualizado and (antigo.get("separado") or a.sem_separar or not separador_disponivel()):
+                log(f"já analisado: {arq.name}")
+                continue
+            log(f"refazendo (versão nova do analisador ou faixas separadas): {arq.name}")
         inicio = time.time()
         try:
             r = analisar(arq, pasta_stems, not a.sem_separar, not a.sem_identificar)

@@ -55,7 +55,9 @@ def main():
           f"- Trechos com voz: {sum(1 for t in trechos if t.get('tem_voz'))} de {sum(1 for t in trechos if 'tem_voz' in t)}",
           "", "## Transições",
           f"- Transições por minuto: {faixa([len(r['transicoes']) / (r['duracao'] / 60) for r in analises], 2)}",
-          f"- Mudança de BPM numa transição: {faixa(saltos_bpm)}", ""]
+          f"- Mudança de BPM numa transição: {faixa(saltos_bpm)}",
+          f"- Paradas (stops) por minuto: {faixa([len(r.get('paradas', [])) / (r['duracao'] / 60) for r in analises], 1)}",
+          f"- Duração das paradas: {faixa([x['duracao'] for r in analises for x in r.get('paradas', [])], 2)} segundos", ""]
     md += [f"- {e}: {n} ({100 * n / max(len(transicoes), 1):.0f}%)" for e, n in etiquetas.most_common()]
     md += ["", "## Músicas identificadas (vezes em que aparecem)", ""]
     md += [f"- {m}: {n}" for m, n in musicas.most_common()] or ["- nenhuma"]
