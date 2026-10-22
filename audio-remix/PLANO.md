@@ -98,7 +98,7 @@ Observação: a GTX 1070 Ti tem 8 GB de memória de vídeo. É suficiente para s
 ## Etapas sugeridas
 
 1. **Etapa 0: Analisador (pronto para testar no PC).** Recebe vídeo ou link, separa as faixas, mostra o BPM ao longo do tempo, os oitos e as transições, e identifica as músicas. Usamos para estudar a playlist da Brotherhood. Veja o README.
-2. **Etapa 1: Editor por oitos.** Abrir uma música, ver as faixas por oito, ligar e desligar voz e bateria, volume, eco, copiar trechos, ouvir na hora, exportar MP3/WAV.
+2. **Etapa 1: Editor por oitos (primeira versão pronta para testar no PC, 22/10/2026).** Abrir uma música, ver as faixas por oito, ligar e desligar voz e bateria, volume, eco, copiar trechos, ouvir na hora, exportar MP3/WAV.
 3. **Etapa 2: Colagem com transições (Modo 1).** Várias músicas, ajuste automático de BPM, tom e volume, biblioteca de transições.
 4. **Etapa 3: Kits de estilo e injeção (Modo 2).** Baterias e baixos por estilo (da pesquisa), troca de groove por trecho.
 5. **Etapa 4: Pedidos por texto.** Escrever o pedido e o app transformar em instruções.

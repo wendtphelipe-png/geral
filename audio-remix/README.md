@@ -5,7 +5,30 @@ App para criar mixes profissionais e personalizados para coreografias de danças
 - [PLANO.md](PLANO.md): os três modos do app, o editor por contagens de 8, motores e etapas.
 - [PESQUISA-ESTILOS.md](PESQUISA-ESTILOS.md): a música de cada estilo, com origem e explicação.
 - [biblioteca/BIBLIOTECA.md](biblioteca/BIBLIOTECA.md): fichas de 11 estilos com BPM, groove, padrão de bateria, instrumentos, efeitos e mais de 260 músicas de referência. A fonte que o app usa é `biblioteca/estilos.json`.
+- [DESCOBERTAS.md](DESCOBERTAS.md): a fórmula dos mixes da Brotherhood na IDL.
 - `analisador/`: Etapa 0, o raio-x de mixes de competição.
+- `editor/`: Etapa 1, o editor por oitos.
+
+## Etapa 1: editor por oitos (no PC)
+
+Dois cliques em `ABRIR-EDITOR.bat`. O navegador abre em http://127.0.0.1:3060. Para desligar, feche a janela preta.
+
+1. **Nova música:** cole um link do YouTube ou arraste um arquivo de áudio. O editor separa voz, bateria, baixo e outros, acha as batidas e divide em oitos (1 a 3 minutos).
+2. **Música original:** os oitos numerados, com a letra da "parte" (as partes iguais têm a mesma letra: o refrão que se repete, por exemplo). Clique para ouvir; o **+** coloca o oito no mix.
+3. **Seu mix:** os blocos em ordem. Dá para:
+   - arrastar para reordenar;
+   - ligar e desligar Voz, Bateria, Baixo e Outros em cada bloco;
+   - ajustar o volume de cada faixa (0 a 150%) no painel de baixo;
+   - meio tempo e tempo dobrado;
+   - duplicar e apagar;
+   - desfazer e refazer.
+4. **Duração / alvo:** mostra o tempo do mix e o tempo desejado (padrão 2:45, editável).
+5. **O "1" da contagem:** se os oitos começarem no tempo errado, ajuste com as setas.
+6. **Exportar MP3:** salva em `audio-remix\dados\exportados\`.
+
+Atalhos: Espaço toca; dois cliques num bloco toca a partir dele; Delete apaga; Ctrl+D duplica; Ctrl+Z desfaz; V, B, G e O ligam e desligam voz, bateria, grave e outros.
+
+Tudo é salvo sozinho em `audio-remix\dados\projetos\`. A música original nunca é alterada.
 
 ## Etapa 0: analisar os mixes da Brotherhood (no PC)
 

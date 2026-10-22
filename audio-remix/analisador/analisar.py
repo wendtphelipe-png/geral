@@ -37,7 +37,7 @@ def log(msg):
 
 # ---------- separação em faixas ----------
 
-def separar(caminho, pasta_stems):
+def separar(caminho, pasta_stems, pasta_modelos=None):
     """Separa com Demucs (htdemucs) via audio-separator. Devolve {nome: caminho} ou None."""
     destino = pasta_stems / caminho.stem
     nomes = {"drums": "Drums", "bass": "Bass", "vocals": "Vocals", "other": "Other"}
@@ -61,7 +61,7 @@ def separar(caminho, pasta_stems):
     destino.mkdir(parents=True, exist_ok=True)
     try:
         import logging
-        sep = Separator(output_dir=str(destino), model_file_dir=str(pasta_stems.parent / "modelos"),
+        sep = Separator(output_dir=str(destino), model_file_dir=str(pasta_modelos or pasta_stems.parent / "modelos"),
                         log_level=logging.WARNING)
         log("  separando voz, bateria, baixo e outros (na primeira vez baixa o modelo, ~300 MB)")
         sep.load_model(model_filename="htdemucs.yaml")
