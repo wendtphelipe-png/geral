@@ -7,7 +7,7 @@ ok = True
 print(f"Python {sys.version.split()[0]}")
 for modulo, essencial in [("yt_dlp", True), ("librosa", True), ("numpy", True), ("scipy", True),
                           ("soundfile", True), ("matplotlib", False), ("shazamio", False),
-                          ("torch", False), ("audio_separator", False)]:
+                          ("torch", False), ("audio_separator.separator", False)]:
     try:
         m = importlib.import_module(modulo)
         extra = ""
@@ -15,7 +15,7 @@ for modulo, essencial in [("yt_dlp", True), ("librosa", True), ("numpy", True), 
             extra = f" | placa de vídeo: {m.cuda.get_device_name(0) if m.cuda.is_available() else 'NÃO (vai usar o processador)'}"
         print(f"  OK     {modulo} {getattr(m, '__version__', '')}{extra}")
     except Exception as erro:
-        print(f"  FALTA  {modulo}{' (essencial)' if essencial else ' (opcional)'}: {str(erro)[:100]}")
+        print(f"  FALTA  {modulo}{' (essencial)' if essencial else ' (opcional)'}: {str(erro)[:160]}")
         ok = ok and not essencial
 for programa in ["ffmpeg", "deno"]:
     print(f"  {'OK   ' if shutil.which(programa) else 'FALTA'}  {programa}")

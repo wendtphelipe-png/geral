@@ -28,9 +28,13 @@ if errorlevel 1 (
 )
 
 echo.
-"%PY%" -c "import audio_separator" >nul 2>nul || (
-  echo AVISO: o separador de faixas nao esta instalado. A analise vai sair incompleta
-  echo ^(sem saber onde tem voz, bateria e baixo^). Rode PREPARAR-ANALISADOR.bat e mande a foto do final.
+"%PY%" -c "import audio_separator.separator" >nul 2>nul || (
+  echo Completando a instalacao do separador de faixas...
+  "%PY%" -m pip install -r analisador\requirements-separar.txt
+)
+"%PY%" -c "import audio_separator.separator" >nul 2>nul || (
+  echo AVISO: o separador de faixas continua com problema. A analise vai sair sem as faixas.
+  "%PY%" -c "import audio_separator.separator"
 )
 echo === 2/4 Analisando ^(separa as faixas na placa de video; alguns minutos por video^)
 "%PY%" analisador\analisar.py dados\audios --saida analises

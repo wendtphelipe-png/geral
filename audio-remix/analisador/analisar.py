@@ -55,12 +55,15 @@ def separar(caminho, pasta_stems):
         return pronto
     try:
         from audio_separator.separator import Separator
-    except ImportError:
-        log("  (audio-separator não instalado: seguindo sem separar)")
+    except ImportError as erro:
+        log(f"  (separador indisponível, seguindo sem separar: {erro})")
         return None
     destino.mkdir(parents=True, exist_ok=True)
     try:
-        sep = Separator(output_dir=str(destino), model_file_dir=str(pasta_stems.parent / "modelos"))
+        import logging
+        sep = Separator(output_dir=str(destino), model_file_dir=str(pasta_stems.parent / "modelos"),
+                        log_level=logging.WARNING)
+        log("  separando voz, bateria, baixo e outros (na primeira vez baixa o modelo, ~300 MB)")
         sep.load_model(model_filename="htdemucs.yaml")
         sep.separate(str(caminho))
     except Exception as erro:  # a análise continua mesmo sem as faixas
@@ -396,7 +399,7 @@ def grafico(r, destino):
 
 def separador_disponivel():
     try:
-        import audio_separator  # noqa: F401
+        import audio_separator.separator  # noqa: F401
         return True
     except ImportError:
         return False
