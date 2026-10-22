@@ -1,0 +1,2025 @@
+{
+ "versao": 1,
+ "observacao": "Montada a partir de conhecimento geral sobre cada estilo. Validar com a dançarina e ampliar com as análises dos mixes. O padrão de bateria tem 16 passos por compasso (cada passo = 1/4 de tempo; 'x' = toca). 'swing' 0,5 = reto; acima disso, as notas fracas atrasam.",
+ "estilos": [
+  {
+   "id": "breaking",
+   "nome": "Breaking",
+   "bpm": [
+    105,
+    135
+   ],
+   "bpm_ideal": 115,
+   "swing": 0.54,
+   "groove": "Breakbeat: bateria de funk sincopada, repetida em loop",
+   "padrao": {
+    "bumbo": "x.x.......x.x...",
+    "caixa": "....x..x.x..x..x",
+    "chimbal": "x.x.x.x.x.x.x.x."
+   },
+   "instrumentos": [
+    "bateria crua de funk",
+    "bongôs e congas",
+    "metais",
+    "baixo funk",
+    "scratch"
+   ],
+   "efeitos": [
+    "loop do break",
+    "scratch",
+    "back-to-back (repetir o break)",
+    "corte no freeze"
+   ],
+   "assinatura": "O break de bateria isolado e repetido",
+   "referencias": [
+    {
+     "artista": "Incredible Bongo Band",
+     "titulo": "Apache",
+     "ano": 1973,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Incredible Bongo Band",
+     "titulo": "Bongo Rock",
+     "ano": 1973,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Jimmy Castor Bunch",
+     "titulo": "It's Just Begun",
+     "ano": 1972,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Jimmy Castor Bunch",
+     "titulo": "Troglodyte (Cave Man)",
+     "ano": 1972,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "James Brown",
+     "titulo": "Give It Up or Turnit a Loose",
+     "ano": 1969,
+     "tipo": "clássico",
+     "obs": "versão In the Jungle Groove (1986)"
+    },
+    {
+     "artista": "James Brown",
+     "titulo": "Funky Drummer",
+     "ano": 1970,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "James Brown",
+     "titulo": "Get Up, Get Into It, Get Involved",
+     "ano": 1970,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "The Winstons",
+     "titulo": "Amen, Brother",
+     "ano": 1969,
+     "tipo": "clássico",
+     "obs": "o famoso 'Amen break'"
+    },
+    {
+     "artista": "Babe Ruth",
+     "titulo": "The Mexican",
+     "ano": 1972,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Dennis Coffey",
+     "titulo": "Scorpio",
+     "ano": 1971,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Rare Earth",
+     "titulo": "Get Ready",
+     "ano": 1969,
+     "tipo": "clássico",
+     "obs": "versão longa"
+    },
+    {
+     "artista": "Baby Huey",
+     "titulo": "Listen to Me",
+     "ano": 1971,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Mandrill",
+     "titulo": "Fencewalk",
+     "ano": 1973,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "The Mohawks",
+     "titulo": "The Champ",
+     "ano": 1968,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Lyn Collins",
+     "titulo": "Think (About It)",
+     "ano": 1972,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Bob James",
+     "titulo": "Take Me to the Mardi Gras",
+     "ano": 1975,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Billy Squier",
+     "titulo": "The Big Beat",
+     "ano": 1980,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Herman Kelly & Life",
+     "titulo": "Dance to the Drummer's Beat",
+     "ano": 1978,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Skull Snaps",
+     "titulo": "It's a New Day",
+     "ano": 1973,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Melvin Bliss",
+     "titulo": "Synthetic Substitution",
+     "ano": 1973,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "The J.B.'s",
+     "titulo": "Pass the Peas",
+     "ano": 1972,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Booker T. & the M.G.'s",
+     "titulo": "Melting Pot",
+     "ano": 1971,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Cymande",
+     "titulo": "Bra",
+     "ano": 1972,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Kool & the Gang",
+     "titulo": "N.T.",
+     "ano": 1971,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Coke Escovedo",
+     "titulo": "I Wouldn't Change a Thing",
+     "ano": 1976,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "The Blackbyrds",
+     "titulo": "Rock Creek Park",
+     "ano": 1975,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Rock Steady Crew",
+     "titulo": "(Hey You) The Rock Steady Crew",
+     "ano": 1983,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Grandmaster Flash",
+     "titulo": "The Adventures of Grandmaster Flash on the Wheels of Steel",
+     "ano": 1981,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Mantronix",
+     "titulo": "King of the Beats",
+     "ano": 1988,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Nas",
+     "titulo": "Made You Look",
+     "ano": 2002,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Ultimate Breaks & Beats",
+     "titulo": "(coletânea, 25 volumes)",
+     "ano": 1986,
+     "tipo": "clássico",
+     "obs": "fonte clássica de breaks para DJs de breaking"
+    }
+   ]
+  },
+  {
+   "id": "locking",
+   "nome": "Locking",
+   "bpm": [
+    100,
+    120
+   ],
+   "bpm_ideal": 110,
+   "swing": 0.52,
+   "groove": "Funk anos 70, caixa forte no 2 e no 4, muitas paradas e acentos",
+   "padrao": {
+    "bumbo": "x......x.x......",
+    "caixa": "....x.......x...",
+    "chimbal": "x.x.x.x.x.x.x.x."
+   },
+   "instrumentos": [
+    "metais",
+    "baixo slap",
+    "guitarra funk (chicken scratch)",
+    "órgão",
+    "palmas"
+   ],
+   "efeitos": [
+    "parada de 1 tempo (stop) para o lock",
+    "acento de metais para os points",
+    "vinheta de Soul Train"
+   ],
+   "assinatura": "Metais e paradas secas que casam com o lock",
+   "referencias": [
+    {
+     "artista": "James Brown",
+     "titulo": "Get Up (I Feel Like Being a) Sex Machine",
+     "ano": 1970,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "James Brown",
+     "titulo": "Super Bad",
+     "ano": 1970,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Kool & the Gang",
+     "titulo": "Jungle Boogie",
+     "ano": 1973,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Kool & the Gang",
+     "titulo": "Hollywood Swinging",
+     "ano": 1974,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Kool & the Gang",
+     "titulo": "Funky Stuff",
+     "ano": 1973,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Earth, Wind & Fire",
+     "titulo": "Shining Star",
+     "ano": 1975,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Earth, Wind & Fire",
+     "titulo": "September",
+     "ano": 1978,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Earth, Wind & Fire",
+     "titulo": "Let's Groove",
+     "ano": 1981,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "The Jackson 5",
+     "titulo": "Dancing Machine",
+     "ano": 1974,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Sly & the Family Stone",
+     "titulo": "Thank You (Falettinme Be Mice Elf Agin)",
+     "ano": 1969,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Sly & the Family Stone",
+     "titulo": "Dance to the Music",
+     "ano": 1968,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "The Meters",
+     "titulo": "Cissy Strut",
+     "ano": 1969,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Tower of Power",
+     "titulo": "What Is Hip?",
+     "ano": 1973,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Rufus & Chaka Khan",
+     "titulo": "Tell Me Something Good",
+     "ano": 1974,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Ohio Players",
+     "titulo": "Love Rollercoaster",
+     "ano": 1975,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Ohio Players",
+     "titulo": "Fire",
+     "ano": 1974,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Commodores",
+     "titulo": "Machine Gun",
+     "ano": 1974,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Commodores",
+     "titulo": "Brick House",
+     "ano": 1977,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "MFSB",
+     "titulo": "TSOP (The Sound of Philadelphia)",
+     "ano": 1974,
+     "tipo": "clássico",
+     "obs": "tema do Soul Train"
+    },
+    {
+     "artista": "Wild Cherry",
+     "titulo": "Play That Funky Music",
+     "ano": 1976,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Parliament",
+     "titulo": "Give Up the Funk (Tear the Roof off the Sucker)",
+     "ano": 1975,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Average White Band",
+     "titulo": "Pick Up the Pieces",
+     "ano": 1974,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Stevie Wonder",
+     "titulo": "Superstition",
+     "ano": 1972,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Stevie Wonder",
+     "titulo": "Sir Duke",
+     "ano": 1976,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "The Isley Brothers",
+     "titulo": "Fight the Power",
+     "ano": 1975,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "KC and the Sunshine Band",
+     "titulo": "Get Down Tonight",
+     "ano": 1975,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Lakeside",
+     "titulo": "Fantastic Voyage",
+     "ano": 1980,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "The Brothers Johnson",
+     "titulo": "Stomp!",
+     "ano": 1980,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Mark Ronson ft. Bruno Mars",
+     "titulo": "Uptown Funk",
+     "ano": 2014,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Bruno Mars",
+     "titulo": "24K Magic",
+     "ano": 2016,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Jamiroquai",
+     "titulo": "Canned Heat",
+     "ano": 1999,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Vulfpeck",
+     "titulo": "Dean Town",
+     "ano": 2016,
+     "tipo": "moderno"
+    }
+   ]
+  },
+  {
+   "id": "popping",
+   "nome": "Popping",
+   "bpm": [
+    90,
+    112
+   ],
+   "bpm_ideal": 100,
+   "swing": 0.5,
+   "groove": "Funk/electro-funk lento e pesado; cada caixa é um 'pop'",
+   "padrao": {
+    "bumbo": "x.....x...x.....",
+    "caixa": "....x.......x...",
+    "chimbal": "xxxxxxxxxxxxxxxx"
+   },
+   "instrumentos": [
+    "sintetizador analógico",
+    "talkbox / vocoder",
+    "baixo synth",
+    "caixa seca e alta",
+    "bateria eletrônica 808"
+   ],
+   "efeitos": [
+    "reforço e secagem da caixa",
+    "glitch e picote (animation)",
+    "câmera lenta (slow motion)",
+    "robô (vocoder)"
+   ],
+   "assinatura": "Caixa seca e forte em cada pop, com som de sintetizador",
+   "referencias": [
+    {
+     "artista": "Zapp",
+     "titulo": "More Bounce to the Ounce",
+     "ano": 1980,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Zapp",
+     "titulo": "Dance Floor",
+     "ano": 1982,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Zapp",
+     "titulo": "So Ruff, So Tuff",
+     "ano": 1981,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Zapp & Roger",
+     "titulo": "Computer Love",
+     "ano": 1985,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Roger",
+     "titulo": "I Heard It Through the Grapevine",
+     "ano": 1981,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Roger",
+     "titulo": "Do It Roger",
+     "ano": 1981,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Dayton",
+     "titulo": "The Sound of Music",
+     "ano": 1983,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "The Gap Band",
+     "titulo": "Outstanding",
+     "ano": 1982,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "The Gap Band",
+     "titulo": "Early in the Morning",
+     "ano": 1982,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Midnight Star",
+     "titulo": "Freak-a-Zoid",
+     "ano": 1983,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Midnight Star",
+     "titulo": "No Parking (On the Dance Floor)",
+     "ano": 1983,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Kraftwerk",
+     "titulo": "Numbers",
+     "ano": 1981,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Kraftwerk",
+     "titulo": "Tour de France",
+     "ano": 1983,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Afrika Bambaataa & Soulsonic Force",
+     "titulo": "Planet Rock",
+     "ano": 1982,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Egyptian Lover",
+     "titulo": "Egypt, Egypt",
+     "ano": 1984,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Cybotron",
+     "titulo": "Clear",
+     "ano": 1983,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Newcleus",
+     "titulo": "Jam on It",
+     "ano": 1984,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Herbie Hancock",
+     "titulo": "Rockit",
+     "ano": 1983,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Tom Tom Club",
+     "titulo": "Genius of Love",
+     "ano": 1981,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Cameo",
+     "titulo": "Candy",
+     "ano": 1986,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Cameo",
+     "titulo": "Word Up!",
+     "ano": 1986,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Rick James",
+     "titulo": "Give It to Me Baby",
+     "ano": 1981,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Mtume",
+     "titulo": "Juicy Fruit",
+     "ano": 1983,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Steve Arrington",
+     "titulo": "Weak at the Knees",
+     "ano": 1983,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Michael Jackson",
+     "titulo": "Billie Jean",
+     "ano": 1982,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Michael Jackson",
+     "titulo": "Smooth Criminal",
+     "ano": 1987,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Dr. Dre ft. Snoop Dogg",
+     "titulo": "Nuthin' but a 'G' Thang",
+     "ano": 1992,
+     "tipo": "clássico",
+     "obs": "G-funk"
+    },
+    {
+     "artista": "Warren G & Nate Dogg",
+     "titulo": "Regulate",
+     "ano": 1994,
+     "tipo": "clássico",
+     "obs": "G-funk"
+    },
+    {
+     "artista": "Snoop Dogg",
+     "titulo": "Who Am I (What's My Name)?",
+     "ano": 1993,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Daft Punk",
+     "titulo": "Around the World",
+     "ano": 1997,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Gramatik",
+     "titulo": "Muy Tranquilo",
+     "ano": 2012,
+     "tipo": "moderno",
+     "obs": "glitch-hop, bom para animation"
+    },
+    {
+     "artista": "Skrillex",
+     "titulo": "Scary Monsters and Nice Sprites",
+     "ano": 2010,
+     "tipo": "moderno",
+     "obs": "dubstep, usado em animation e robot"
+    }
+   ]
+  },
+  {
+   "id": "hiphop",
+   "nome": "Hip-Hop Dance (freestyle)",
+   "bpm": [
+    85,
+    100
+   ],
+   "bpm_ideal": 92,
+   "swing": 0.58,
+   "groove": "Boom bap: bumbo e caixa marcados, balanço (bounce e rock)",
+   "padrao": {
+    "bumbo": "x.....x...x..x..",
+    "caixa": "....x.......x...",
+    "chimbal": "x.x.x.x.x.x.x.x."
+   },
+   "variantes": {
+    "trap": {
+     "bpm": [
+      130,
+      150
+     ],
+     "meio_tempo": true,
+     "padrao": {
+      "bumbo": "x......x..x.....",
+      "caixa": "........x.......",
+      "chimbal": "xxxxxxxxxxxxxxxx"
+     }
+    },
+    "new_jack_swing": {
+     "bpm": [
+      100,
+      112
+     ],
+     "swing": 0.62
+    }
+   },
+   "instrumentos": [
+    "samples de soul e jazz",
+    "scratch",
+    "baixo grave",
+    "vocal de rap",
+    "piano/rhodes"
+   ],
+   "efeitos": [
+    "swing na bateria",
+    "reforço de grave",
+    "scratch de transição",
+    "corte de beat (beat drop)"
+   ],
+   "assinatura": "Bumbo e caixa com balanço; o groove pesa para baixo",
+   "referencias": [
+    {
+     "artista": "A Tribe Called Quest",
+     "titulo": "Scenario",
+     "ano": 1992,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "A Tribe Called Quest",
+     "titulo": "Can I Kick It?",
+     "ano": 1990,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "A Tribe Called Quest",
+     "titulo": "Electric Relaxation",
+     "ano": 1993,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Pete Rock & C.L. Smooth",
+     "titulo": "They Reminisce Over You (T.R.O.Y.)",
+     "ano": 1992,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Gang Starr",
+     "titulo": "Mass Appeal",
+     "ano": 1994,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Black Sheep",
+     "titulo": "The Choice Is Yours",
+     "ano": 1991,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Naughty by Nature",
+     "titulo": "Hip Hop Hooray",
+     "ano": 1993,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "House of Pain",
+     "titulo": "Jump Around",
+     "ano": 1992,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Wu-Tang Clan",
+     "titulo": "C.R.E.A.M.",
+     "ano": 1993,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Mobb Deep",
+     "titulo": "Shook Ones, Pt. II",
+     "ano": 1995,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "The Notorious B.I.G.",
+     "titulo": "Juicy",
+     "ano": 1994,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "The Notorious B.I.G.",
+     "titulo": "Hypnotize",
+     "ano": 1997,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Busta Rhymes",
+     "titulo": "Woo Hah!! Got You All in Check",
+     "ano": 1996,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Nas",
+     "titulo": "N.Y. State of Mind",
+     "ano": 1994,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Eric B. & Rakim",
+     "titulo": "Paid in Full",
+     "ano": 1987,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Rob Base & DJ E-Z Rock",
+     "titulo": "It Takes Two",
+     "ano": 1988,
+     "tipo": "clássico",
+     "obs": "party dances"
+    },
+    {
+     "artista": "Kris Kross",
+     "titulo": "Jump",
+     "ano": 1992,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Bobby Brown",
+     "titulo": "Every Little Step",
+     "ano": 1988,
+     "tipo": "clássico",
+     "obs": "new jack swing"
+    },
+    {
+     "artista": "Bell Biv DeVoe",
+     "titulo": "Poison",
+     "ano": 1990,
+     "tipo": "clássico",
+     "obs": "new jack swing"
+    },
+    {
+     "artista": "Aaliyah",
+     "titulo": "Are You That Somebody?",
+     "ano": 1998,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Ginuwine",
+     "titulo": "Pony",
+     "ano": 1996,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Missy Elliott",
+     "titulo": "Get Ur Freak On",
+     "ano": 2001,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Missy Elliott",
+     "titulo": "Work It",
+     "ano": 2002,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "OutKast",
+     "titulo": "So Fresh, So Clean",
+     "ano": 2000,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "OutKast",
+     "titulo": "B.O.B.",
+     "ano": 2000,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Usher ft. Lil Jon & Ludacris",
+     "titulo": "Yeah!",
+     "ano": 2004,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Ciara ft. Missy Elliott",
+     "titulo": "1, 2 Step",
+     "ano": 2004,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Chris Brown",
+     "titulo": "Run It!",
+     "ano": 2005,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "J Dilla",
+     "titulo": "Donuts (álbum)",
+     "ano": 2006,
+     "tipo": "moderno",
+     "obs": "beats instrumentais com swing"
+    },
+    {
+     "artista": "Kendrick Lamar",
+     "titulo": "HUMBLE.",
+     "ano": 2017,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Kendrick Lamar",
+     "titulo": "DNA.",
+     "ano": 2017,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Travis Scott",
+     "titulo": "SICKO MODE",
+     "ano": 2018,
+     "tipo": "moderno",
+     "obs": "trap, várias mudanças de beat"
+    }
+   ]
+  },
+  {
+   "id": "house",
+   "nome": "House Dance",
+   "bpm": [
+    118,
+    128
+   ],
+   "bpm_ideal": 123,
+   "swing": 0.54,
+   "groove": "Quatro no chão: bumbo em todo tempo, chimbal aberto no contratempo",
+   "padrao": {
+    "bumbo": "x...x...x...x...",
+    "caixa": "....x.......x...",
+    "chimbal": "..x...x...x...x.",
+    "shaker": "xxxxxxxxxxxxxxxx"
+   },
+   "instrumentos": [
+    "piano house",
+    "órgão",
+    "vocal soul/gospel",
+    "congas e percussão latina",
+    "baixo redondo"
+   ],
+   "efeitos": [
+    "filtro passa-baixa entrando e saindo",
+    "break de percussão",
+    "loop vocal",
+    "build-up com caixa"
+   ],
+   "assinatura": "O bumbo contínuo e o chimbal no contratempo",
+   "referencias": [
+    {
+     "artista": "Frankie Knuckles",
+     "titulo": "Your Love",
+     "ano": 1987,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Frankie Knuckles",
+     "titulo": "The Whistle Song",
+     "ano": 1991,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Marshall Jefferson",
+     "titulo": "Move Your Body",
+     "ano": 1986,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Mr. Fingers",
+     "titulo": "Can You Feel It",
+     "ano": 1986,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Fingers Inc.",
+     "titulo": "Mystery of Love",
+     "ano": 1985,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Joe Smooth",
+     "titulo": "Promised Land",
+     "ano": 1987,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Ten City",
+     "titulo": "That's the Way Love Is",
+     "ano": 1989,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Inner City",
+     "titulo": "Good Life",
+     "ano": 1988,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Lil Louis",
+     "titulo": "French Kiss",
+     "ano": 1989,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Black Box",
+     "titulo": "Ride on Time",
+     "ano": 1989,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Technotronic",
+     "titulo": "Pump Up the Jam",
+     "ano": 1989,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "CeCe Peniston",
+     "titulo": "Finally",
+     "ano": 1991,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Crystal Waters",
+     "titulo": "Gypsy Woman (She's Homeless)",
+     "ano": 1991,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Robin S",
+     "titulo": "Show Me Love",
+     "ano": 1993,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Barbara Tucker",
+     "titulo": "Beautiful People",
+     "ano": 1994,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "The Bucketheads",
+     "titulo": "The Bomb! (These Sounds Fall into My Mind)",
+     "ano": 1995,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Nuyorican Soul",
+     "titulo": "It's Alright, I Feel It!",
+     "ano": 1997,
+     "tipo": "clássico",
+     "obs": "Masters at Work"
+    },
+    {
+     "artista": "Ultra Naté",
+     "titulo": "Free",
+     "ano": 1997,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Todd Terry",
+     "titulo": "Something Goin' On",
+     "ano": 1997,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Stardust",
+     "titulo": "Music Sounds Better with You",
+     "ano": 1998,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Kerri Chandler",
+     "titulo": "Rain",
+     "ano": 1998,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Armand Van Helden",
+     "titulo": "You Don't Know Me",
+     "ano": 1999,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Modjo",
+     "titulo": "Lady (Hear Me Tonight)",
+     "ano": 2000,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Daft Punk",
+     "titulo": "One More Time",
+     "ano": 2000,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Black Coffee",
+     "titulo": "Superman",
+     "ano": 2009,
+     "tipo": "moderno",
+     "obs": "afro house"
+    },
+    {
+     "artista": "Disclosure ft. Sam Smith",
+     "titulo": "Latch",
+     "ano": 2012,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Disclosure",
+     "titulo": "When a Fire Starts to Burn",
+     "ano": 2013,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Fisher",
+     "titulo": "Losing It",
+     "ano": 2018,
+     "tipo": "moderno",
+     "obs": "tech house"
+    }
+   ]
+  },
+  {
+   "id": "waacking",
+   "nome": "Waacking",
+   "bpm": [
+    110,
+    130
+   ],
+   "bpm_ideal": 120,
+   "swing": 0.5,
+   "groove": "Disco: bumbo no tempo, chimbal no contratempo, viradas de bateria",
+   "padrao": {
+    "bumbo": "x...x...x...x...",
+    "caixa": "....x.......x...",
+    "chimbal": "..x...x...x...x."
+   },
+   "instrumentos": [
+    "cordas (violinos)",
+    "metais",
+    "vocal de diva",
+    "baixo disco em oitavas",
+    "guitarra funk"
+   ],
+   "efeitos": [
+    "pausa dramática para pose",
+    "eco no vocal",
+    "subida de cordas",
+    "filtro disco"
+   ],
+   "assinatura": "Cordas e vocal dramático; acentos para as poses",
+   "referencias": [
+    {
+     "artista": "Donna Summer",
+     "titulo": "I Feel Love",
+     "ano": 1977,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Donna Summer",
+     "titulo": "Last Dance",
+     "ano": 1978,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Donna Summer",
+     "titulo": "Hot Stuff",
+     "ano": 1979,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Chic",
+     "titulo": "Le Freak",
+     "ano": 1978,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Chic",
+     "titulo": "Good Times",
+     "ano": 1979,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Chic",
+     "titulo": "I Want Your Love",
+     "ano": 1978,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Sylvester",
+     "titulo": "You Make Me Feel (Mighty Real)",
+     "ano": 1978,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Gloria Gaynor",
+     "titulo": "I Will Survive",
+     "ano": 1978,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Sister Sledge",
+     "titulo": "He's the Greatest Dancer",
+     "ano": 1979,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Sister Sledge",
+     "titulo": "Lost in Music",
+     "ano": 1979,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Sister Sledge",
+     "titulo": "We Are Family",
+     "ano": 1979,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Diana Ross",
+     "titulo": "Love Hangover",
+     "ano": 1976,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Diana Ross",
+     "titulo": "Upside Down",
+     "ano": 1980,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Diana Ross",
+     "titulo": "I'm Coming Out",
+     "ano": 1980,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Cheryl Lynn",
+     "titulo": "Got to Be Real",
+     "ano": 1978,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Evelyn 'Champagne' King",
+     "titulo": "Shame",
+     "ano": 1977,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Chaka Khan",
+     "titulo": "I'm Every Woman",
+     "ano": 1978,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Thelma Houston",
+     "titulo": "Don't Leave Me This Way",
+     "ano": 1976,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Loleatta Holloway",
+     "titulo": "Love Sensation",
+     "ano": 1980,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "The Trammps",
+     "titulo": "Disco Inferno",
+     "ano": 1976,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Candi Staton",
+     "titulo": "Young Hearts Run Free",
+     "ano": 1976,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "A Taste of Honey",
+     "titulo": "Boogie Oogie Oogie",
+     "ano": 1978,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "First Choice",
+     "titulo": "Doctor Love",
+     "ano": 1977,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Michael Jackson",
+     "titulo": "Don't Stop 'Til You Get Enough",
+     "ano": 1979,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Teena Marie",
+     "titulo": "Behind the Groove",
+     "ano": 1980,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Patrice Rushen",
+     "titulo": "Forget Me Nots",
+     "ano": 1982,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Dua Lipa",
+     "titulo": "Don't Start Now",
+     "ano": 2019,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Dua Lipa",
+     "titulo": "Levitating",
+     "ano": 2020,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Jessie Ware",
+     "titulo": "Spotlight",
+     "ano": 2020,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Beyoncé",
+     "titulo": "Cuff It",
+     "ano": 2022,
+     "tipo": "moderno"
+    }
+   ]
+  },
+  {
+   "id": "vogue",
+   "nome": "Vogue",
+   "bpm": [
+    120,
+    135
+   ],
+   "bpm_ideal": 128,
+   "swing": 0.5,
+   "groove": "Ballroom beat seco, com o prato 'ha' marcando os golpes (dips, duckwalk)",
+   "padrao": {
+    "bumbo": "x...x...x...x...",
+    "palma": "....x.......x...",
+    "ha": "............x..."
+   },
+   "obs_padrao": "A posição do 'ha' muda muito: o app deixa escolher em quais tempos ele cai.",
+   "instrumentos": [
+    "prato crash do 'The Ha Dance'",
+    "bateria eletrônica seca",
+    "chamadas do MC (commentator)",
+    "baixo synth"
+   ],
+   "efeitos": [
+    "'ha' no dip",
+    "meio tempo para catwalk",
+    "chamadas do MC",
+    "corte seco para pose"
+   ],
+   "assinatura": "O 'ha' (crash) nos golpes e a voz do MC",
+   "referencias": [
+    {
+     "artista": "Masters at Work",
+     "titulo": "The Ha Dance",
+     "ano": 1991,
+     "tipo": "clássico",
+     "obs": "a base de quase toda música de vogue"
+    },
+    {
+     "artista": "Malcolm McLaren",
+     "titulo": "Deep in Vogue",
+     "ano": 1989,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Madonna",
+     "titulo": "Vogue",
+     "ano": 1990,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "MFSB",
+     "titulo": "Love Is the Message",
+     "ano": 1973,
+     "tipo": "clássico",
+     "obs": "hino do ballroom"
+    },
+    {
+     "artista": "George Kranz",
+     "titulo": "Din Daa Daa",
+     "ano": 1983,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Cheryl Lynn",
+     "titulo": "Got to Be Real",
+     "ano": 1978,
+     "tipo": "clássico",
+     "obs": "trilha de Paris Is Burning"
+    },
+    {
+     "artista": "Junior Vasquez",
+     "titulo": "Get Your Hands Off My Man",
+     "ano": 1995,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Beyoncé",
+     "titulo": "Break My Soul",
+     "ano": 2022,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Beyoncé",
+     "titulo": "Pure/Honey",
+     "ano": 2022,
+     "tipo": "moderno",
+     "obs": "ballroom"
+    },
+    {
+     "artista": "Beyoncé",
+     "titulo": "Alien Superstar",
+     "ano": 2022,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Kevin Aviance",
+     "titulo": "Cunty (The Feeling)",
+     "ano": null,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Kevin Aviance",
+     "titulo": "Din Da Da",
+     "ano": null,
+     "tipo": "clássico",
+     "obs": "versão do George Kranz"
+    },
+    {
+     "artista": "Johnny Dynell ft. David Ian Xtravaganza",
+     "titulo": "Elements of Vogue",
+     "ano": null,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Strafe",
+     "titulo": "Set It Off",
+     "ano": 1984,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Fast Eddie",
+     "titulo": "Let's Go",
+     "ano": null,
+     "tipo": "clássico",
+     "obs": "citada por Kiddy Smile como clássico dos anos 90"
+    },
+    {
+     "artista": "Chris Lake & Armand Van Helden",
+     "titulo": "Work!",
+     "ano": null,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Duke Dumont",
+     "titulo": "Runway (MikeQ Remix)",
+     "ano": null,
+     "tipo": "moderno"
+    }
+   ],
+   "produtores_para_pesquisar": [
+    "MikeQ",
+    "Vjuan Allure",
+    "Kevin JZ Prodigy",
+    "Byrell the Great",
+    "DJ Angel X",
+    "Qween Beat (coletivo)"
+   ],
+   "obs": "No vogue, a maior parte do repertório são 'ballroom beats' de produtores, mais do que canções. Buscar por 'ballroom beat', 'ha crash vogue beat' e pelos produtores acima."
+  },
+  {
+   "id": "krump",
+   "nome": "Krump",
+   "bpm": [
+    70,
+    100
+   ],
+   "bpm_ideal": 85,
+   "swing": 0.5,
+   "groove": "Pesado e agressivo, muito espaço entre as batidas; muitas vezes meio tempo de 140",
+   "padrao": {
+    "bumbo": "x.........x.....",
+    "caixa": "........x.......",
+    "impacto": "x..............."
+   },
+   "instrumentos": [
+    "808 distorcido",
+    "sintetizadores escuros",
+    "impactos cinematográficos",
+    "coros e cordas tensas"
+   ],
+   "efeitos": [
+    "meio tempo",
+    "distorção de grave",
+    "impacto no stomp",
+    "silêncio antes do golpe"
+   ],
+   "assinatura": "Grave pesado e tensão; impacto em cada stomp e chest pop",
+   "referencias": [
+    {
+     "artista": "DMX",
+     "titulo": "X Gon' Give It to Ya",
+     "ano": 2003,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "DMX",
+     "titulo": "Party Up (Up in Here)",
+     "ano": 1999,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Busta Rhymes",
+     "titulo": "Break Ya Neck",
+     "ano": 2001,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Kanye West",
+     "titulo": "Black Skinhead",
+     "ano": 2013,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Kendrick Lamar",
+     "titulo": "DNA.",
+     "ano": 2017,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Travis Scott",
+     "titulo": "Goosebumps",
+     "ano": 2016,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Crime Mob ft. Lil Scrappy",
+     "titulo": "Knuck If You Buck",
+     "ano": 2004,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Flii Stylz",
+     "titulo": "I Krump",
+     "ano": null,
+     "tipo": "clássico",
+     "obs": "feita para a cena"
+    },
+    {
+     "artista": "Flii Stylz & Tenashus",
+     "titulo": "Break It On Down (Battlezone)",
+     "ano": null,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Flii Stylz, Lil C & Bloezart",
+     "titulo": "GET KRUMPED",
+     "ano": null,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "J-SQUAD",
+     "titulo": "Hall of Fame Anthem",
+     "ano": null,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "J-SQUAD",
+     "titulo": "Jurassic Park Bucc",
+     "ano": null,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Krump Kings",
+     "titulo": "BUCK",
+     "ano": null,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Krump Kings",
+     "titulo": "RAMPAGE",
+     "ano": null,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Krump Kings",
+     "titulo": "Gettin Krumped",
+     "ano": null,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Krump Kings",
+     "titulo": "Lightnin",
+     "ano": null,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "(compilação)",
+     "titulo": "Super Buck",
+     "ano": null,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "(compilação)",
+     "titulo": "Torture",
+     "ano": null,
+     "tipo": "clássico"
+    }
+   ],
+   "produtores_para_pesquisar": [
+    "'krump beats' / 'buck beats' no YouTube",
+    "trilha do documentário Rize (2005)",
+    "heavy trap e hybrid trap",
+    "trilhas épicas (estilo trailer de cinema)"
+   ],
+   "obs": "Krump dança-se muito em beats feitos para as sessões, não em canções conhecidas. Lista a validar com a dançarina; prioridade para ampliar com as análises."
+  },
+  {
+   "id": "passinho",
+   "nome": "Passinho",
+   "bpm": [
+    128,
+    150
+   ],
+   "bpm_ideal": 130,
+   "swing": 0.5,
+   "groove": "Tamborzão / beat do funk carioca (130) ou 'funk 150'",
+   "padrao": {
+    "bumbo": "x..x..x...x..x..",
+    "caixa": "....x.......x...",
+    "tambor": "x.xx.x.xx.x.x.x."
+   },
+   "obs_padrao": "Padrão aproximado do tamborzão; validar com referências reais.",
+   "instrumentos": [
+    "tamborzão / atabaque",
+    "beat eletrônico do funk",
+    "vocal de MC",
+    "vinhetas e samples de pancadão"
+   ],
+   "efeitos": [
+    "vinheta de DJ",
+    "acelerar para 150",
+    "corte de beat para o passinho",
+    "eco no grito do MC"
+   ],
+   "assinatura": "O tamborzão e o vocal de MC",
+   "referencias": [
+    {
+     "artista": "Cidinho & Doca",
+     "titulo": "Rap da Felicidade (Eu Só Quero É Ser Feliz)",
+     "ano": 1995,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Cidinho & Doca",
+     "titulo": "Rap das Armas",
+     "ano": 1994,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "MC Bob Rum",
+     "titulo": "Rap do Silva",
+     "ano": 1995,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Bonde do Tigrão",
+     "titulo": "Cerol na Mão",
+     "ano": 2001,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "MC Federado e os Leleks",
+     "titulo": "Passinho do Volante (Ah Lelek Lek Lek)",
+     "ano": 2013,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Anitta",
+     "titulo": "Show das Poderosas",
+     "ano": 2013,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "MC João",
+     "titulo": "Baile de Favela",
+     "ano": 2015,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "MC Bin Laden",
+     "titulo": "Tá Tranquilo, Tá Favorável",
+     "ano": 2015,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "MC Kevinho",
+     "titulo": "Olha a Explosão",
+     "ano": 2016,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "MC Fioti",
+     "titulo": "Bum Bum Tam Tam",
+     "ano": 2017,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "MC Livinho",
+     "titulo": "Fazer Falta",
+     "ano": 2017,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "MC Kevin o Chris",
+     "titulo": "Ela É do Tipo",
+     "ano": 2018,
+     "tipo": "moderno",
+     "obs": "funk 150"
+    },
+    {
+     "artista": "MC Rennan da Penha",
+     "titulo": "Hoje Eu Vou Parar na Gaiola",
+     "ano": 2019,
+     "tipo": "moderno",
+     "obs": "funk 150"
+    },
+    {
+     "artista": "Pedro Sampaio",
+     "titulo": "Galopa",
+     "ano": null,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Claudinho & Buchecha",
+     "titulo": "Nosso Sonho",
+     "ano": 1996,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "MC Marcinho",
+     "titulo": "Garota Nota 100",
+     "ano": null,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "MC Marcinho",
+     "titulo": "Glamurosa",
+     "ano": null,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Bola de Fogo",
+     "titulo": "Atoladinha",
+     "ano": null,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Valesca Popozuda",
+     "titulo": "Beijinho no Ombro",
+     "ano": 2013,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "MC Nandinho & Nego Bam",
+     "titulo": "Malandramente",
+     "ano": 2016,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Anitta",
+     "titulo": "Vai Malandra",
+     "ano": 2017,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "MC Loma e as Gêmeas Lacração",
+     "titulo": "Envolvimento",
+     "ano": 2018,
+     "tipo": "moderno"
+    }
+   ],
+   "obs": "Nas batalhas, muitas montagens são só o 'ponto' (o beat sem letra). O app deve ter beats de funk sem voz.",
+   "produtores_para_pesquisar": [
+    "DJ Marlboro",
+    "Furacão 2000",
+    "DJ Rennan da Penha",
+    "Dennis DJ",
+    "'batalha do passinho' no YouTube"
+   ]
+  },
+  {
+   "id": "dancehall",
+   "nome": "Dancehall",
+   "bpm": [
+    90,
+    110
+   ],
+   "bpm_ideal": 100,
+   "swing": 0.5,
+   "groove": "Riddim jamaicano, caixa no padrão 3+3+2 (dembow)",
+   "padrao": {
+    "bumbo": "x...x...x...x...",
+    "caixa": "...x..x....x..x.",
+    "chimbal": "x.x.x.x.x.x.x.x."
+   },
+   "instrumentos": [
+    "riddim eletrônico",
+    "vocal de deejay (toasting)",
+    "sirene e air horn",
+    "baixo sub"
+   ],
+   "efeitos": [
+    "rewind (pull up)",
+    "air horn",
+    "troca de riddim"
+   ],
+   "assinatura": "O riddim e a caixa sincopada",
+   "referencias": [
+    {
+     "artista": "Sean Paul",
+     "titulo": "Get Busy",
+     "ano": 2002,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Sean Paul",
+     "titulo": "Temperature",
+     "ano": 2005,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Beenie Man",
+     "titulo": "Who Am I",
+     "ano": 1998,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Mr. Vegas",
+     "titulo": "Heads High",
+     "ano": 1998,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Elephant Man",
+     "titulo": "Pon de River, Pon de Bank",
+     "ano": 2003,
+     "tipo": "clássico"
+    },
+    {
+     "artista": "Vybz Kartel",
+     "titulo": "Clarks",
+     "ano": 2010,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Busy Signal",
+     "titulo": "Watch Out for This (Bumaye)",
+     "ano": 2013,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Popcaan",
+     "titulo": "Everything Nice",
+     "ano": 2014,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Charly Black",
+     "titulo": "Gyal You a Party Animal",
+     "ano": 2014,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Spice",
+     "titulo": "So Mi Like It",
+     "ano": 2014,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Diwali Riddim",
+     "titulo": "(vários artistas)",
+     "ano": 2002,
+     "tipo": "clássico"
+    }
+   ]
+  },
+  {
+   "id": "afro",
+   "nome": "Afro / Amapiano",
+   "bpm": [
+    100,
+    115
+   ],
+   "bpm_ideal": 112,
+   "swing": 0.56,
+   "groove": "Afrobeats (100–110) e amapiano (110–115) com o 'log drum'",
+   "padrao": {
+    "bumbo": "x.......x.......",
+    "log_drum": "x..x..x...x.x...",
+    "shaker": "xxxxxxxxxxxxxxxx",
+    "palma": "....x.......x..."
+   },
+   "instrumentos": [
+    "log drum",
+    "shaker e percussão",
+    "piano",
+    "vocal afro"
+   ],
+   "efeitos": [
+    "break de percussão",
+    "log drum sozinho",
+    "filtro"
+   ],
+   "assinatura": "Percussão com balanço e o log drum do amapiano",
+   "referencias": [
+    {
+     "artista": "Wizkid",
+     "titulo": "Ojuelegba",
+     "ano": 2014,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Wizkid ft. Tems",
+     "titulo": "Essence",
+     "ano": 2020,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Burna Boy",
+     "titulo": "Ye",
+     "ano": 2018,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Davido",
+     "titulo": "Fall",
+     "ano": 2017,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Mr Eazi",
+     "titulo": "Leg Over",
+     "ano": 2016,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Master KG",
+     "titulo": "Jerusalema",
+     "ano": 2019,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Focalistic",
+     "titulo": "Ke Star",
+     "ano": 2020,
+     "tipo": "moderno",
+     "obs": "amapiano"
+    },
+    {
+     "artista": "Kabza De Small",
+     "titulo": "Asibe Happy",
+     "ano": 2020,
+     "tipo": "moderno",
+     "obs": "amapiano"
+    },
+    {
+     "artista": "Uncle Waffles",
+     "titulo": "Tanzania",
+     "ano": 2022,
+     "tipo": "moderno",
+     "obs": "amapiano"
+    },
+    {
+     "artista": "Kizz Daniel",
+     "titulo": "Buga",
+     "ano": 2022,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Rema",
+     "titulo": "Calm Down",
+     "ano": 2022,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Asake",
+     "titulo": "Terminator",
+     "ano": 2022,
+     "tipo": "moderno"
+    },
+    {
+     "artista": "Tyla",
+     "titulo": "Water",
+     "ano": 2023,
+     "tipo": "moderno",
+     "obs": "amapiano"
+    }
+   ]
+  }
+ ]
+}

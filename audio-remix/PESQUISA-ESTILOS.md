@@ -2,6 +2,8 @@
 
 Base de conhecimento do app. Cada estilo vira um **"kit de estilo"** dentro do programa: uma ficha com BPM, groove, instrumentos e recursos de mixagem que o app usa para "injetar" o estilo numa música.
 
+> A lista completa de referências (mais de 260 músicas) e os padrões de bateria de cada estilo estão em [biblioteca/BIBLIOTECA.md](biblioteca/BIBLIOTECA.md).
+
 > Os BPMs são faixas típicas, não regras. O que mais define o estilo é o **groove** (onde caem as batidas fortes e o balanço) e a **sonoridade**. Tudo aqui deve ser conferido com a filha do Phelipe e com coreógrafos antes de virar regra no app.
 
 ## Resumo rápido

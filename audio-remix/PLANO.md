@@ -37,6 +37,11 @@ Uma música só, transformada em vários estilos sem perder a identidade.
 - Sem direito autoral de terceiros.
 - Usa modelos de IA que geram música, por trechos, e depois o mesmo editor dos outros modos para ajustar.
 
+## Duração da trilha
+- O usuário define o **tempo total** (por exemplo 2:30, ou "20 oitos a 120 BPM"). O app mostra quantos oitos cabem, conforme o BPM.
+- A sugestão inicial (duração total, tamanho de cada trecho, quantidade de transições) vem do `RESUMO.md` da análise da playlist da Brotherhood.
+- Se a trilha passar ou faltar tempo, o app sugere onde cortar ou repetir oitos, sempre em blocos de 8 para não quebrar a contagem.
+
 ## O editor: mexer em pedaços pequenos sem renderizar tudo
 
 É o coração do app. Funciona como um **projeto não destrutivo**:
@@ -92,7 +97,7 @@ Observação: a GTX 1070 Ti tem 8 GB de memória de vídeo. É suficiente para s
 
 ## Etapas sugeridas
 
-1. **Etapa 0: Analisador.** Recebe vídeo ou link, separa as faixas, mostra o BPM ao longo do tempo, os oitos e as transições. Usamos para estudar a playlist da Brotherhood. Já é útil sozinho.
+1. **Etapa 0: Analisador (pronto para testar no PC).** Recebe vídeo ou link, separa as faixas, mostra o BPM ao longo do tempo, os oitos e as transições, e identifica as músicas. Usamos para estudar a playlist da Brotherhood. Veja o README.
 2. **Etapa 1: Editor por oitos.** Abrir uma música, ver as faixas por oito, ligar e desligar voz e bateria, volume, eco, copiar trechos, ouvir na hora, exportar MP3/WAV.
 3. **Etapa 2: Colagem com transições (Modo 1).** Várias músicas, ajuste automático de BPM, tom e volume, biblioteca de transições.
 4. **Etapa 3: Kits de estilo e injeção (Modo 2).** Baterias e baixos por estilo (da pesquisa), troca de groove por trecho.
