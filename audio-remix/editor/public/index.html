@@ -3,302 +3,348 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Audio Remix · Editor</title>
+<title>Audio Remix</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0A0E16; --panel:#111723; --panel2:#151C2A; --line:#222C3D; --ink:#EAF0F7; --muted:#8592A8; --dim:#5F6B80;
-  --blue:#3FA9F5; --ok:#34B886; --bad:#F05A6E;
-  --voz:#3FA9F5; --bateria:#FF7A59; --baixo:#9B7BFF; --outros:#3DD6B5;
-  --r:12px;
+  --noite:#080C13; --chao:#0C111A; --pista:#0F1520; --pista2:#111824; --borda:#1E2736; --borda2:#2A3547;
+  --tinta:#E9EEF5; --apagado:#8390A5; --fraco:#566277;
+  --sel:#3FA9F5; --play:#FFFFFF;
+  --voz:#5CC8FF; --bateria:#FF7A59; --baixo:#A08BFF; --outros:#3DD6B5;
+  --cab:184px;   /* largura da coluna dos nomes das faixas */
 }
 *{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Archivo,system-ui,sans-serif;font-size:15px}
+html,body{margin:0;height:100%;background:var(--noite);color:var(--tinta);font-family:Archivo,system-ui,sans-serif;font-size:14px;overflow:hidden}
 button,input,select{font:inherit;color:inherit}
-svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+button{cursor:pointer}
+svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
 .hidden{display:none!important}
+:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
 
-header{display:flex;align-items:center;gap:16px;padding:14px 24px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(10,14,22,.94);backdrop-filter:blur(8px);z-index:20}
-.marca{display:flex;align-items:baseline;gap:10px;margin-right:auto}
-.marca b{font-weight:800;font-size:18px;letter-spacing:.2px}
-.marca span{color:var(--muted);font-size:13px}
-.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--panel);padding:8px 14px;border-radius:10px;cursor:pointer;white-space:nowrap}
-.btn:hover{border-color:#34425A}
-.btn.prim{background:var(--blue);border-color:var(--blue);color:#06111C;font-weight:700}
-.btn.prim:hover{filter:brightness(1.08)}
-.btn:disabled{opacity:.45;cursor:default}
-.icone{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:9px;border:1px solid transparent;background:none;cursor:pointer;color:var(--muted)}
-.icone:hover{color:var(--ink);background:var(--panel2);border-color:var(--line)}
-select{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 10px;max-width:340px}
+#app{display:grid;grid-template-rows:auto 1fr auto auto;height:100vh}
 
-main{padding:20px 24px 140px;max-width:1500px;margin:0 auto}
-.vazio{text-align:center;color:var(--muted);padding:90px 20px}
-.vazio h2{color:var(--ink);font-size:24px;margin:0 0 8px}
+/* ---------- barra de cima: transporte */
+.topo{display:flex;align-items:center;gap:14px;padding:10px 16px;background:var(--chao);border-bottom:1px solid var(--borda);min-width:0}
+.marca{font-weight:800;font-size:15px;white-space:nowrap}
+.marca small{font-weight:500;color:var(--fraco);margin-left:6px}
+select.musica{background:var(--pista);border:1px solid var(--borda);border-radius:8px;padding:6px 8px;flex:0 1 240px;min-width:120px}
+.transporte{display:flex;align-items:center;gap:6px;margin-left:8px}
+.bt{display:inline-grid;place-items:center;height:32px;min-width:32px;padding:0 8px;border-radius:8px;border:1px solid var(--borda);background:var(--pista);color:var(--tinta)}
+.bt:hover{border-color:var(--borda2);background:var(--pista2)}
+.bt.on{background:var(--sel);border-color:var(--sel);color:#04101B}
+.bt:disabled{opacity:.4;cursor:default}
+.bt.grande{width:40px;height:40px;border-radius:50%;background:var(--tinta);color:var(--noite);border:0}
+.bt.grande svg{width:18px;height:18px;fill:currentColor}
+.relogio{font-size:22px;font-weight:700;letter-spacing:.3px;min-width:112px;white-space:nowrap}
+.relogio small{font-size:13px;color:var(--fraco);font-weight:500}
+.info{display:flex;gap:18px;align-items:center;color:var(--apagado);font-size:13px;white-space:nowrap}
+.info b{color:var(--tinta);font-weight:700}
+.alvo{display:flex;align-items:center;gap:8px}
+.alvo input{width:56px;background:var(--pista);border:1px solid var(--borda);border-radius:6px;padding:3px 6px;font-weight:700}
+.barra{width:90px;height:5px;background:var(--borda);border-radius:4px;overflow:hidden}
+.barra i{display:block;height:100%;background:var(--sel)}
+.barra.passou i{background:#F05A6E}
+.dir{margin-left:auto;display:flex;gap:8px;align-items:center}
+.botao{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 12px;border-radius:8px;border:1px solid var(--borda);background:var(--pista);white-space:nowrap}
+.botao:hover{border-color:var(--borda2)}
+.botao.prim{background:var(--sel);border-color:var(--sel);color:#04101B;font-weight:700}
 
-.topo{display:flex;flex-wrap:wrap;align-items:flex-end;gap:24px;margin-bottom:18px}
-.titulo h1{margin:0;font-size:24px;font-weight:800}
-.titulo .sub{color:var(--muted);margin-top:4px;font-size:13px}
-.dados{display:flex;gap:22px;margin-left:auto;flex-wrap:wrap}
-.dado small{display:block;color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
-.dado b{font-size:18px}
-.dado input{width:70px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:3px 6px;font-weight:700;font-size:16px}
-.medidor{height:6px;background:var(--line);border-radius:6px;margin-top:6px;overflow:hidden;width:160px}
-.medidor i{display:block;height:100%;background:var(--blue);border-radius:6px}
-.medidor.passou i{background:var(--bad)}
-.aviso{background:#2A1E10;border:1px solid #5A3E14;color:#FFD9A0;padding:10px 14px;border-radius:10px;margin-bottom:16px;font-size:13px}
+/* ---------- palco: régua + faixas, rolagem horizontal */
+.palco{position:relative;overflow:auto;background:var(--noite)}
+.conteudo{position:relative;min-height:100%;width:max-content;min-width:100%}
+.linha{display:flex;position:relative}
+.cab{position:sticky;left:0;z-index:5;width:var(--cab);flex:none;background:var(--chao);border-right:1px solid var(--borda)}
+.area{position:relative;flex:none}
 
-section{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:16px}
-section > .cab{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
-section > .cab h3{margin:0;font-size:15px;font-weight:700}
-section > .cab .dica{color:var(--dim);font-size:12.5px}
-.contagem{margin-left:auto;display:flex;align-items:center;gap:4px;color:var(--muted);font-size:13px}
+/* régua do tempo (clicar = pular para o ponto) */
+.regua-tempo{height:22px;border-bottom:1px solid var(--borda);background:var(--chao);position:sticky;top:0;z-index:7}
+.regua-tempo .cab{display:flex;align-items:center;padding:0 10px;color:var(--fraco);font-size:11px}
+.regua-tempo .area{cursor:pointer;height:22px}
+.regua-tempo .seg{position:absolute;top:0;bottom:0;border-left:1px solid var(--borda2);font-size:10.5px;color:var(--fraco);padding:4px 0 0 4px}
 
-.legenda{display:flex;gap:14px;font-size:12px;color:var(--muted)}
-.legenda i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+/* régua da contagem: o elemento principal */
+.contagem{height:58px;border-bottom:1px solid var(--borda);background:var(--chao);position:sticky;top:22px;z-index:7}
+.contagem .cab{display:flex;flex-direction:column;justify-content:center;padding:0 12px;gap:2px}
+.contagem .cab b{font-size:13px}
+.contagem .cab span{font-size:11px;color:var(--fraco)}
+.oito{position:absolute;top:0;bottom:0;border-left:1px solid var(--borda2);cursor:pointer;user-select:none;overflow:hidden}
+.oito:hover{background:rgba(255,255,255,.025)}
+.oito .faixa-parte{position:absolute;left:0;right:0;bottom:0;height:4px;opacity:.9}
+.oito .n{position:absolute;left:7px;top:5px;font-size:20px;font-weight:800;line-height:1}
+.oito .orig{position:absolute;left:7px;top:29px;font-size:10.5px;color:var(--apagado);white-space:nowrap}
+.oito .vel{position:absolute;right:6px;top:6px;font-size:11px;font-weight:800;color:var(--noite);background:var(--tinta);border-radius:4px;padding:0 4px}
+.oito .batidas{position:absolute;left:0;right:0;bottom:6px;height:10px}
+.oito .batidas i{position:absolute;bottom:0;width:1px;height:5px;background:var(--borda2)}
+.oito .batidas i.forte{height:9px;background:var(--fraco)}
+.oito.sel{background:rgba(63,169,245,.16)}
+.oito.sel .n{color:var(--sel)}
+.oito.especial .n{font-size:13px;top:8px;color:var(--apagado)}
 
-/* música original */
-.original{display:flex;flex-wrap:wrap;gap:6px}
-.u{position:relative;width:70px;border:1px solid var(--line);border-radius:9px;background:var(--panel2);padding:5px 6px 6px;cursor:pointer;user-select:none}
-.u:hover{border-color:#3A4A64}
-.u.tocando{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue)}
-.u .l{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:3px}
-.u .l b{color:var(--ink)}
-.u canvas{width:100%;height:26px;display:block}
-.u .mais{position:absolute;right:-7px;top:-7px;width:22px;height:22px;border-radius:50%;background:var(--blue);color:#06111C;border:0;display:none;place-items:center;cursor:pointer;padding:0}
-.u .mais svg{width:14px;height:14px;stroke-width:3}
-.u:hover .mais{display:grid}
-.parte{display:inline-block;min-width:16px;text-align:center;border-radius:4px;padding:0 3px;font-weight:700;font-size:10.5px;color:#0A0E16}
+/* faixas */
+.faixa{height:var(--alt,74px);border-bottom:1px solid var(--borda)}
+.faixa .cab{display:grid;grid-template-columns:1fr auto auto;grid-template-rows:auto auto;align-items:center;gap:4px 6px;padding:8px 10px 8px 14px}
+.faixa .cab::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--cor)}
+.faixa .nome{font-weight:700;font-size:13.5px}
+.ms{width:24px;height:22px;border-radius:5px;border:1px solid var(--borda2);background:none;font-size:11px;font-weight:800;color:var(--apagado);padding:0}
+.ms.mudo.on{background:#F05A6E;border-color:#F05A6E;color:#fff}
+.ms.solo.on{background:#FFD25A;border-color:#FFD25A;color:#1A1300}
+.faixa .vol{grid-column:1/-1;display:flex;align-items:center;gap:8px}
+.faixa .vol input{flex:1;min-width:0;accent-color:var(--cor);height:14px}
+.faixa .vol output{font-size:11px;color:var(--fraco);width:34px;text-align:right}
+.faixa .area{background:var(--pista)}
+.faixa.calada .area{opacity:.35}
+.cel{position:absolute;top:0;bottom:0;border-left:1px solid var(--borda)}
+.cel canvas{width:100%;height:100%;display:block}
+.cel.sel{background:rgba(63,169,245,.14);box-shadow:inset 0 2px 0 rgba(63,169,245,.55)}
+.cel .liga{position:absolute;right:4px;top:4px;width:22px;height:20px;border-radius:5px;border:1px solid var(--borda2);background:var(--chao);display:none;place-items:center;padding:0;color:var(--tinta)}
+.cel .liga svg{width:13px;height:13px}
+.cel:hover .liga{display:grid}
+.cel .pct{position:absolute;left:5px;top:4px;font-size:10px;color:var(--tinta);background:rgba(8,12,19,.75);border-radius:4px;padding:0 4px}
 
-/* mix */
-.mix{display:flex;flex-wrap:wrap;gap:8px}
-.b{width:164px;border:1px solid var(--line);border-radius:11px;background:var(--panel2);padding:8px;cursor:grab;user-select:none;position:relative}
-.b.sel{border-color:var(--blue);background:#13243A}
-.b.tocando::after{content:"";position:absolute;left:-1px;right:-1px;bottom:-1px;height:3px;background:var(--blue);border-radius:0 0 11px 11px}
-.b.arrastando{opacity:.35}
-.b.alvo-antes{box-shadow:-4px 0 0 var(--blue)}
-.b.alvo-depois{box-shadow:4px 0 0 var(--blue)}
-.b .l{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin-bottom:5px}
-.b .l .n{color:var(--ink);font-weight:700;font-size:13px}
-.b .l .vel{margin-left:auto;font-size:11px;color:var(--blue);font-weight:700}
-.b canvas{width:100%;height:34px;display:block;margin-bottom:6px}
-.pills{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
-.pill{border:1px solid var(--line);border-radius:6px;font-size:10px;padding:3px 0;overflow:hidden;text-align:center;background:none;cursor:pointer;color:var(--dim);font-weight:600}
-.pill.on{color:#0A0E16}
-.pill.on.voz{background:var(--voz);border-color:var(--voz)}
-.pill.on.bateria{background:var(--bateria);border-color:var(--bateria)}
-.pill.on.baixo{background:var(--baixo);border-color:var(--baixo)}
-.pill.on.outros{background:var(--outros);border-color:var(--outros)}
-.pill.meio{opacity:.65}
+.cursor{position:absolute;top:0;bottom:0;width:2px;background:var(--play);z-index:6;pointer-events:none;box-shadow:0 0 0 1px rgba(0,0,0,.4)}
+.insercao{position:absolute;top:22px;bottom:0;width:3px;background:var(--sel);z-index:8;pointer-events:none}
+.laco{position:absolute;top:22px;height:58px;border:1px solid #FFD25A;border-radius:3px;pointer-events:none;z-index:8}
 
-/* painel do bloco selecionado */
-.painel{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px 22px;align-items:center}
-.painel .grupo{grid-column:1/-1}
-.faixa{display:flex;align-items:center;gap:10px}
-.faixa label{width:70px;font-size:13px;font-weight:600}
-.faixa input[type=range]{flex:1;accent-color:var(--blue)}
-.faixa output{width:44px;text-align:right;color:var(--muted);font-size:12.5px;font-variant-numeric:tabular-nums}
-.grupo{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.grupo .rot{color:var(--muted);font-size:13px;margin-right:4px}
-.seg{border:1px solid var(--line);background:none;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--muted)}
-.seg.on{background:var(--blue);border-color:var(--blue);color:#06111C;font-weight:700}
+/* ---------- barra de comando */
+.comando{display:grid;grid-template-columns:var(--cab) 1fr;border-top:1px solid var(--borda);background:var(--chao)}
+.comando .qual{padding:10px 14px;border-right:1px solid var(--borda);font-size:12.5px;color:var(--apagado);display:flex;flex-direction:column;justify-content:center}
+.comando .qual b{color:var(--tinta);font-size:13.5px}
+.comando .corpo{padding:10px 14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.pedido{display:flex;gap:8px}
+.pedido input{flex:1;min-width:0;background:var(--pista);border:1px solid var(--borda2);border-radius:9px;padding:9px 12px;font-size:14px}
+.pedido input::placeholder{color:var(--fraco)}
+.pedido input:disabled{opacity:.5}
+.rapidos{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.rapido{height:26px;padding:0 10px;border-radius:13px;border:1px solid var(--borda2);background:none;font-size:12px;color:var(--apagado)}
+.rapido:hover{color:var(--tinta);border-color:var(--fraco)}
+.rapido:disabled{opacity:.4;cursor:default}
+.resposta{font-size:12.5px;color:var(--apagado);min-height:17px}
+.resposta b{color:var(--tinta)}
+.resposta.aviso{color:#FFC27A}
+.sep{width:1px;height:18px;background:var(--borda2);margin:0 4px}
 
-/* player fixo */
-.player{position:fixed;left:0;right:0;bottom:0;background:rgba(17,23,35,.97);border-top:1px solid var(--line);padding:12px 24px;display:flex;align-items:center;gap:16px;z-index:30;backdrop-filter:blur(8px)}
-.play{width:46px;height:46px;border-radius:50%;background:var(--blue);border:0;display:grid;place-items:center;cursor:pointer;color:#06111C;flex:none}
-.play svg{width:20px;height:20px;fill:#06111C;stroke:#06111C}
-.tempo{font-variant-numeric:tabular-nums;color:var(--muted);font-size:13px;min-width:92px}
-.trilha{flex:1;height:30px;position:relative;cursor:pointer;border-radius:7px;overflow:hidden;background:var(--panel2);border:1px solid var(--line)}
-.trilha .blocos{position:absolute;inset:0;display:flex}
-.trilha .blocos i{border-right:1px solid var(--bg);height:100%;opacity:.55}
-.trilha .cursor{position:absolute;top:0;bottom:0;width:2px;background:#fff;left:0;pointer-events:none}
-.status{font-size:12px;color:var(--dim);min-width:120px;text-align:right}
+/* ---------- música original */
+.origem{border-top:1px solid var(--borda);background:var(--chao);display:grid;grid-template-columns:var(--cab) 1fr}
+.origem .cab2{padding:8px 14px;border-right:1px solid var(--borda);display:flex;flex-direction:column;justify-content:center;gap:4px}
+.origem .cab2 b{font-size:13px}
+.origem .cab2 .um{display:flex;align-items:center;gap:4px;font-size:11.5px;color:var(--apagado)}
+.origem .cab2 .um button{width:22px;height:22px;border-radius:5px;border:1px solid var(--borda2);background:none;padding:0;display:grid;place-items:center}
+.fita{display:flex;gap:4px;overflow-x:auto;padding:8px 10px}
+.u{flex:none;width:64px;height:52px;border:1px solid var(--borda);border-radius:7px;background:var(--pista);position:relative;cursor:grab;user-select:none;overflow:hidden}
+.u:hover{border-color:var(--borda2)}
+.u.tocando{border-color:var(--sel)}
+.u canvas{position:absolute;left:0;right:0;bottom:4px;width:100%;height:28px}
+.u .n{position:absolute;left:6px;top:4px;font-weight:800;font-size:12px}
+.u .parte{position:absolute;left:0;right:0;bottom:0;height:3px}
+.u .letra{position:absolute;right:5px;top:4px;font-size:10.5px;font-weight:800}
 
-/* janela nova música */
-.fundo{position:fixed;inset:0;background:rgba(3,6,12,.72);display:grid;place-items:center;z-index:50;padding:16px}
-.janela{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px;width:min(560px,100%)}
-.janela h2{margin:0 0 4px;font-size:20px}
-.janela p{color:var(--muted);margin:0 0 18px;font-size:13.5px}
-.campo{display:flex;gap:8px;margin-bottom:14px}
-.campo input{flex:1;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
-.soltar{border:1.5px dashed #34425A;border-radius:12px;padding:26px;text-align:center;color:var(--muted);cursor:pointer}
-.soltar.sobre{border-color:var(--blue);color:var(--ink)}
-.ou{text-align:center;color:var(--dim);font-size:12px;margin:12px 0}
-.progresso{margin-top:16px;padding:12px 14px;background:var(--bg);border-radius:10px;font-size:13.5px;display:flex;gap:10px;align-items:center}
-.girando{width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--blue);border-radius:50%;animation:gira 1s linear infinite;flex:none}
+/* ---------- janelas */
+.fundo{position:fixed;inset:0;background:rgba(3,6,12,.75);display:grid;place-items:center;z-index:50;padding:16px}
+.janela{background:var(--chao);border:1px solid var(--borda2);border-radius:14px;padding:22px;width:min(540px,100%)}
+.janela h2{margin:0 0 6px;font-size:19px}
+.janela p{color:var(--apagado);margin:0 0 16px;font-size:13.5px;line-height:1.45}
+.campo{display:flex;gap:8px}
+.campo input{flex:1;background:var(--noite);border:1px solid var(--borda2);border-radius:9px;padding:9px 12px}
+.soltar{display:block;border:1.5px dashed var(--borda2);border-radius:12px;padding:24px;text-align:center;color:var(--apagado);cursor:pointer;margin-top:12px}
+.soltar.sobre{border-color:var(--sel);color:var(--tinta)}
+.andamento{display:flex;gap:10px;align-items:center;background:var(--noite);padding:12px 14px;border-radius:9px;margin-top:14px}
+.girando{width:16px;height:16px;border:2px solid var(--borda2);border-top-color:var(--sel);border-radius:50%;animation:gira 1s linear infinite;flex:none}
 @keyframes gira{to{transform:rotate(360deg)}}
-.erro{color:var(--bad)}
-.atalhos{color:var(--dim);font-size:12px;margin-top:6px}
-.atalhos kbd{border:1px solid var(--line);border-radius:4px;padding:0 4px;font-family:inherit;font-size:11px;color:var(--muted)}
-@media (max-width:700px){header,main{padding-left:16px;padding-right:16px}header{gap:10px}.marca span,.txt{display:none}select{max-width:none;flex:1;min-width:0}.marca{margin-right:0}
-.player{padding:10px 16px;flex-wrap:wrap;gap:10px}.trilha{order:5;flex-basis:100%}.status{display:none}.player .btn{margin-left:auto}.b{width:calc(50% - 4px)}.dados{margin-left:0}}
+@media (prefers-reduced-motion:reduce){.girando{animation-duration:3s}}
+.erro{color:#F05A6E}
+.boasvindas{display:grid;place-items:center;height:100%;text-align:center;color:var(--apagado);padding:20px}
+.boasvindas h1{color:var(--tinta);font-size:26px;margin:0 0 8px}
+.aviso-simples{background:#2A1E10;border:1px solid #5A3E14;color:#FFD9A0;padding:4px 10px;border-radius:7px;font-size:12px;white-space:nowrap;cursor:help}
+
+@media (max-width:1520px){.marca small,.botao .txt,.aviso-simples,.sep{display:none}.barra{width:60px}}
+@media (max-width:900px){
+  :root{--cab:120px}
+  .info .bpm,.marca small,.botao .txt,.aviso-simples,#zoomMenos,#zoomMais,.sep{display:none}
+  .info{display:none}
+  select.musica{min-width:0;flex:1}
+  .marca,#desfazer,#refazer,.relogio small{display:none}
+  .relogio{font-size:16px;min-width:0}
+  .transporte{margin-left:0}
+  .topo{gap:8px;padding:8px 10px}
+  .rapidos .rapido:nth-child(n+7){display:none}
+  .faixa .vol{display:none}
+  .comando .qual,.origem .cab2{padding:8px}
+}
 </style>
 </head>
 <body>
 <svg style="display:none">
-  <symbol id="i-play" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><polygon points="7 4 20 12 7 20 7 4"/></symbol>
   <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></symbol>
+  <symbol id="i-inicio" viewBox="0 0 24 24"><path d="M19 20 9 12l10-8v16zM5 19V5"/></symbol>
+  <symbol id="i-laco" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
-  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
-  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+  <symbol id="i-menos" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
   <symbol id="i-undo" viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></symbol>
   <symbol id="i-redo" viewBox="0 0 24 24"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 15-6.7L21 13"/></symbol>
   <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
   <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></symbol>
   <symbol id="i-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
   <symbol id="i-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
-  <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
-  <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></symbol>
+  <symbol id="i-som" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></symbol>
+  <symbol id="i-mudo" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m22 9-6 6M16 9l6 6"/></symbol>
+  <symbol id="i-enviar" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
 </svg>
 
-<header>
-  <div class="marca"><b>Audio Remix</b><span>Editor por oitos</span></div>
-  <select id="projetos" title="Músicas"></select>
-  <button class="btn prim" id="nova"><svg><use href="#i-plus"/></svg><span class="txt">Nova música</span></button>
-</header>
-
-<main id="principal">
-  <div class="vazio" id="vazio">
-    <h2>Comece por uma música</h2>
-    <p>Cole um link do YouTube ou envie um arquivo. O editor separa voz, bateria, baixo e outros e divide a música em oitos.</p>
-    <button class="btn prim" onclick="abrirJanela()"><svg><use href="#i-plus"/></svg>Nova música</button>
+<div id="app">
+  <div class="topo">
+    <div class="marca">Audio Remix<small>editor</small></div>
+    <select class="musica" id="projetos" title="Escolher música"></select>
+    <div class="transporte">
+      <button class="bt" id="paraInicio" title="Voltar ao início (Home)"><svg><use href="#i-inicio"/></svg></button>
+      <button class="bt grande" id="play" title="Tocar ou pausar (Espaço)"><svg><use href="#i-play"/></svg></button>
+      <button class="bt" id="laco" title="Repetir a seleção sem parar (L)"><svg><use href="#i-laco"/></svg></button>
+    </div>
+    <div class="relogio num" id="relogio">0:00.0 <small>/ 0:00</small></div>
+    <div class="info">
+      <span class="bpm"><b id="bpm" class="num">–</b> BPM</span>
+      <span class="alvo" title="Duração do mix / duração que você quer">
+        <b id="dur" class="num">0:00</b> de <input id="alvo" class="num" aria-label="Duração desejada">
+        <span class="barra" id="barra"><i></i></span>
+      </span>
+    </div>
+    <span class="aviso-simples hidden" id="avisoSimples" title="O separador de faixas não estava disponível quando esta música foi importada. Rode PREPARAR-ANALISADOR.bat e importe de novo.">Voz não separada</span>
+    <div class="dir">
+      <button class="bt" id="desfazer" title="Desfazer (Ctrl+Z)"><svg><use href="#i-undo"/></svg></button>
+      <button class="bt" id="refazer" title="Refazer (Ctrl+Y)"><svg><use href="#i-redo"/></svg></button>
+      <span class="sep"></span>
+      <button class="bt" id="zoomMenos" title="Afastar (Ctrl + rodinha)"><svg><use href="#i-menos"/></svg></button>
+      <button class="bt" id="zoomMais" title="Aproximar (Ctrl + rodinha)"><svg><use href="#i-plus"/></svg></button>
+      <span class="sep"></span>
+      <button class="botao" id="nova"><svg><use href="#i-plus"/></svg><span class="txt">Nova música</span></button>
+      <button class="botao prim" id="exportar"><svg><use href="#i-download"/></svg><span class="txt">Exportar MP3</span></button>
+    </div>
   </div>
 
-  <div id="editor" class="hidden">
-    <div class="topo">
-      <div class="titulo"><h1 id="titulo"></h1><div class="sub" id="sub"></div></div>
-      <div class="dados">
-        <div class="dado"><small>BPM</small><b id="bpm"></b></div>
-        <div class="dado"><small>Oitos no mix</small><b id="noitos"></b></div>
-        <div class="dado"><small>Duração / alvo</small><b id="dur"></b> / <input id="alvo" title="Duração desejada (minutos:segundos)">
-          <div class="medidor" id="medidor"><i></i></div></div>
+  <div class="palco" id="palco">
+    <div class="boasvindas" id="boasvindas">
+      <div><h1>Abra uma música para começar</h1>
+      <p>Use um link do YouTube ou um arquivo. O editor separa voz, bateria, baixo e outros e divide tudo em oitos.</p>
+      <button class="botao prim" onclick="abrirJanela()"><svg><use href="#i-plus"/></svg>Nova música</button></div>
+    </div>
+    <div class="conteudo hidden" id="conteudo">
+      <div class="linha regua-tempo"><div class="cab">tempo</div><div class="area" id="reguaTempo"></div></div>
+      <div class="linha contagem"><div class="cab"><b>Contagem</b><span>clique ou arraste</span></div><div class="area" id="reguaOitos"></div></div>
+      <div id="faixas"></div>
+      <div class="cursor" id="cursor"></div>
+    </div>
+  </div>
+
+  <div class="comando" id="comando">
+    <div class="qual" id="qual"><b>Nada selecionado</b>clique nos oitos acima</div>
+    <div class="corpo">
+      <div class="pedido">
+        <input id="pedido" placeholder="Selecione oitos e escreva o que fazer. Ex.: tira a voz e deixa o grave mais forte" disabled>
+        <button class="botao prim" id="aplicar" disabled><svg><use href="#i-enviar"/></svg>Aplicar</button>
+      </div>
+      <div class="rapidos" id="rapidos">
+        <button class="rapido" data-t="tira a voz">Tirar a voz</button>
+        <button class="rapido" data-t="só a voz">Só a voz</button>
+        <button class="rapido" data-t="tira o baixo">Tirar o grave</button>
+        <button class="rapido" data-t="tira a bateria">Tirar a bateria</button>
+        <button class="rapido" data-t="mais graves">Mais grave</button>
+        <button class="rapido" data-t="meio tempo">Meio tempo</button>
+        <button class="rapido" data-t="tempo dobrado">Tempo dobrado</button>
+        <button class="rapido" data-t="repete">Repetir</button>
+        <button class="rapido" data-t="volta ao original">Original</button>
+        <button class="rapido" data-t="apaga esses oitos">Apagar</button>
+        <span class="resposta" id="resposta"></span>
       </div>
     </div>
-    <div class="aviso hidden" id="avisoSimples">Esta música foi dividida no modo simples, porque o separador de faixas não estava disponível. A voz não fica separada. Rode PREPARAR-ANALISADOR.bat e importe a música de novo.</div>
-
-    <section>
-      <div class="cab">
-        <h3>Música original</h3>
-        <span class="dica">Clique para ouvir um oito. O + coloca no mix, depois do bloco selecionado.</span>
-        <div class="contagem" title="Se o 1 da contagem não estiver no lugar certo, ajuste aqui. Isso recomeça o mix.">
-          O "1" da contagem
-          <button class="icone" onclick="moverContagem(-1)" title="Uma batida antes"><svg><use href="#i-left"/></svg></button>
-          <b id="desloc"></b>
-          <button class="icone" onclick="moverContagem(1)" title="Uma batida depois"><svg><use href="#i-right"/></svg></button>
-        </div>
-      </div>
-      <div class="original" id="original"></div>
-    </section>
-
-    <section>
-      <div class="cab">
-        <h3>Seu mix</h3>
-        <span class="dica">Arraste para reordenar. Shift + clique seleciona vários.</span>
-        <div class="legenda" style="margin-left:auto">
-          <span><i style="background:var(--voz)"></i>Voz</span><span><i style="background:var(--bateria)"></i>Bateria</span>
-          <span><i style="background:var(--baixo)"></i>Baixo</span><span><i style="background:var(--outros)"></i>Outros</span>
-        </div>
-        <button class="icone" id="desfazer" onclick="desfazer()" title="Desfazer (Ctrl+Z)"><svg><use href="#i-undo"/></svg></button>
-        <button class="icone" id="refazer" onclick="refazer()" title="Refazer (Ctrl+Y)"><svg><use href="#i-redo"/></svg></button>
-        <button class="icone" onclick="recomecar()" title="Voltar à música original"><svg><use href="#i-reset"/></svg></button>
-      </div>
-      <div class="mix" id="mix"></div>
-    </section>
-
-    <section id="secPainel" class="hidden">
-      <div class="cab"><h3 id="painelTitulo">Bloco selecionado</h3>
-        <button class="btn" onclick="duplicar()" style="margin-left:auto"><svg><use href="#i-copy"/></svg>Duplicar</button>
-        <button class="btn" onclick="apagar()"><svg><use href="#i-trash"/></svg>Apagar</button>
-      </div>
-      <div class="painel">
-        <div class="faixa"><label style="color:var(--voz)">Voz</label><input type="range" min="0" max="150" step="5" data-f="voz"><output></output></div>
-        <div class="faixa"><label style="color:var(--bateria)">Bateria</label><input type="range" min="0" max="150" step="5" data-f="bateria"><output></output></div>
-        <div class="faixa"><label style="color:var(--baixo)">Baixo</label><input type="range" min="0" max="150" step="5" data-f="baixo"><output></output></div>
-        <div class="faixa"><label style="color:var(--outros)">Outros</label><input type="range" min="0" max="150" step="5" data-f="outros"><output></output></div>
-        <div class="grupo"><span class="rot">Velocidade</span>
-          <button class="seg" data-vel="1">Normal</button><button class="seg" data-vel="0.5">Meio tempo</button><button class="seg" data-vel="2">Tempo dobrado</button>
-        </div>
-      </div>
-      <div class="atalhos"><kbd>Espaço</kbd> tocar · <kbd>Delete</kbd> apagar · <kbd>Ctrl+D</kbd> duplicar · <kbd>Ctrl+Z</kbd> desfazer · <kbd>V</kbd> <kbd>B</kbd> <kbd>G</kbd> <kbd>O</kbd> liga/desliga voz, bateria, grave, outros</div>
-    </section>
   </div>
-</main>
 
-<div class="player hidden" id="player">
-  <button class="play" id="play" title="Tocar (Espaço)"><svg><use href="#i-play"/></svg></button>
-  <div class="tempo" id="tempo">0:00 / 0:00</div>
-  <div class="trilha" id="trilha"><div class="blocos" id="trilhaBlocos"></div><div class="cursor" id="cursor"></div></div>
-  <div class="status" id="status"></div>
-  <button class="btn" onclick="exportar()" title="Exportar MP3"><svg><use href="#i-download"/></svg><span class="txt">Exportar MP3</span></button>
+  <div class="origem" id="origem">
+    <div class="cab2">
+      <b>Música original</b>
+      <div class="um" title="Se a contagem começar no tempo errado, mova o 1. Isso recomeça o mix.">o "1" na batida
+        <button onclick="moverContagem(-1)" aria-label="Uma batida antes"><svg><use href="#i-left"/></svg></button>
+        <b id="desloc" class="num">1</b>
+        <button onclick="moverContagem(1)" aria-label="Uma batida depois"><svg><use href="#i-right"/></svg></button>
+      </div>
+    </div>
+    <div class="fita" id="fita"></div>
+  </div>
 </div>
 
 <div class="fundo hidden" id="janela">
   <div class="janela">
     <h2>Nova música</h2>
-    <p>A preparação separa as faixas na placa de vídeo e encontra os oitos. Leva de 1 a 3 minutos.</p>
+    <p>O editor separa voz, bateria, baixo e outros na placa de vídeo e encontra os oitos. Leva de 1 a 3 minutos.</p>
     <div id="formNova">
-      <div class="campo"><input id="link" placeholder="Link do YouTube"><button class="btn prim" onclick="enviarLink()">Usar link</button></div>
-      <div class="ou">ou</div>
-      <label class="soltar" id="soltar"><svg style="width:26px;height:26px;margin-bottom:6px"><use href="#i-upload"/></svg><br>Arraste um arquivo de áudio aqui ou clique para escolher
+      <div class="campo"><input id="link" placeholder="Cole o link do YouTube"><button class="botao prim" onclick="enviarLink()">Usar link</button></div>
+      <label class="soltar" id="soltar"><svg style="width:24px;height:24px"><use href="#i-upload"/></svg><br>ou arraste um arquivo de áudio aqui
         <input type="file" id="arquivo" accept="audio/*,video/*" class="hidden"></label>
     </div>
-    <div class="progresso hidden" id="progresso"><div class="girando"></div><span id="etapa"></span></div>
-    <div style="display:flex;justify-content:flex-end;margin-top:16px"><button class="btn" onclick="fecharJanela()">Fechar</button></div>
+    <div class="andamento hidden" id="andamento"><div class="girando"></div><span id="etapa"></span></div>
+    <div style="display:flex;justify-content:flex-end;margin-top:16px"><button class="botao" onclick="fecharJanela()">Fechar</button></div>
   </div>
 </div>
 
 <audio id="audio" preload="auto"></audio>
 <audio id="previa"></audio>
 
+<script src="comandos.js"></script>
 <script>
 const FAIXAS = ["voz", "bateria", "baixo", "outros"];
-const ROTULO = {voz: "Voz", bateria: "Bat", baixo: "Baixo", outros: "Outros"};
-const COR = {voz: "#3FA9F5", bateria: "#FF7A59", baixo: "#9B7BFF", outros: "#3DD6B5"};
-const COR_PARTE = ["#3FA9F5", "#FFB224", "#3DD6B5", "#FF7A59", "#9B7BFF", "#F05A9E", "#B7E04A", "#EAF0F7"];
+const NOME = {voz: "Voz", bateria: "Bateria", baixo: "Baixo", outros: "Outros"};
+const COR = {voz: "#5CC8FF", bateria: "#FF7A59", baixo: "#A08BFF", outros: "#3DD6B5"};
+const COR_PARTE = ["#5CC8FF", "#FFD25A", "#3DD6B5", "#FF7A59", "#A08BFF", "#F05A9E", "#B7E04A", "#E9EEF5"];
+const SR = 44100;
 const $ = s => document.querySelector(s);
-
-let proj = null;         // dados do projeto aberto
-let unid = {};           // unidades por id
-let tl = [];             // linha do tempo (blocos)
-let sel = new Set();     // índices selecionados
-let ancora = null;
-let historico = [], futuro = [];
-let inicios = [];        // início de cada bloco no áudio montado (s)
-let versaoAudio = 0, urlAudio = null, timerAudio = null, timerSalvar = null;
 const audio = $("#audio"), previa = $("#previa");
 
-// ------------------------------------------------------------ utilidades
-const mmss = s => { s = Math.max(0, Math.round(s)); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
+let proj = null, unid = {}, tl = [], mixer = {};
+let sel = new Set(), ancora = null;
+let historico = [], futuro = [];
+let pxs = 40;                 // pixels por segundo (zoom)
+let posicoes = [];            // [inicio, largura] em segundos de cada bloco (linha do tempo do mix)
+let inicios = [];             // início de cada bloco no áudio montado
+let laco = false;
+let versaoAudio = 0, urlAudio = null, timerAudio = null, timerSalvar = null;
+
+// ---------------------------------------------------------------- utilidades
+const mmss = s => { s = Math.max(0, s); return Math.floor(s / 60) + ":" + String(Math.floor(s % 60)).padStart(2, "0"); };
+const mmssd = s => mmss(s) + "." + Math.floor((s % 1) * 10);
 const lerMmss = t => { const m = String(t).trim().match(/^(\d+)(?::(\d{1,2}))?$/); return m ? (m[2] !== undefined ? +m[1] * 60 + +m[2] : +m[1]) : null; };
 const copia = o => JSON.parse(JSON.stringify(o));
-const durUnid = u => (u.fim - u.ini) / 44100;
+const durUnid = u => (u.fim - u.ini) / SR;
 const durBloco = b => durUnid(unid[b.u]) / b.vel;
+const corParte = p => COR_PARTE[(p.charCodeAt(0) - 65) % COR_PARTE.length];
+const nomeUnid = u => u.tipo === "oito" ? "oito " + u.rotulo : u.rotulo;
 async function api(caminho, opcoes = {}) {
   const r = await fetch("/api/" + caminho, opcoes);
   if (!r.ok) { let m = r.statusText; try { m = (await r.json()).erro; } catch (e) {} throw new Error(m); }
   return r;
 }
 const json = (metodo, corpo) => ({method: metodo, headers: {"Content-Type": "application/json"}, body: JSON.stringify(corpo)});
-function status(t) { $("#status").textContent = t || ""; }
+function responder(html, aviso) { const r = $("#resposta"); r.innerHTML = html; r.classList.toggle("aviso", !!aviso); }
 
-// ------------------------------------------------------------ projetos
-async function listarProjetos(selecionar) {
+// ---------------------------------------------------------------- projetos
+async function listarProjetos(escolher) {
   const lista = await (await api("projetos")).json();
   const s = $("#projetos");
-  s.innerHTML = lista.length ? "" : "<option value=''>Nenhuma música ainda</option>";
+  s.innerHTML = lista.length ? "" : "<option value=''>Nenhuma música</option>";
   for (const p of lista) {
     const o = document.createElement("option");
     o.value = p.id;
-    o.textContent = p.titulo + (p.estado === "pronto" ? "" : p.estado === "preparando" ? " (preparando)" : " (com problema)");
+    o.textContent = p.titulo + (p.estado === "pronto" ? "" : p.estado === "preparando" ? " (preparando)" : " (incompleta)");
     s.appendChild(o);
   }
-  const alvo = selecionar || localStorage.getItem("remix.projeto") || (lista[0] && lista[0].id);
-  if (alvo && lista.some(p => p.id === alvo)) { s.value = alvo; await abrir(alvo); }
+  let alvo = escolher;
+  try { alvo = alvo || localStorage.getItem("remix.projeto"); } catch (e) {}
+  alvo = alvo && lista.some(p => p.id === alvo) ? alvo : lista[0] && lista[0].id;
+  if (alvo) { s.value = alvo; await abrir(alvo); }
 }
 $("#projetos").onchange = e => abrir(e.target.value);
 
 async function abrir(id) {
-  if (!id) return;
   const d = await (await api("projetos/" + id)).json();
   if (d.estado !== "pronto") {
     if (d.estado === "preparando") { abrirJanela(); acompanhar(id); }
@@ -306,210 +352,357 @@ async function abrir(id) {
     return;
   }
   try { localStorage.setItem("remix.projeto", id); } catch (e) {}
+  audio.pause();
   proj = d; unid = {};
   for (const u of d.analise.unidades) unid[u.id] = u;
-  tl = d.timeline; sel = new Set(); historico = []; futuro = [];
-  $("#vazio").classList.add("hidden"); $("#editor").classList.remove("hidden"); $("#player").classList.remove("hidden");
-  $("#titulo").textContent = d.titulo;
-  $("#sub").textContent = `Música original: ${mmss(d.analise.duracao)} · ${d.analise.unidades.filter(u => u.tipo === "oito").length} oitos`;
+  tl = d.timeline; mixer = d.mixer; sel = new Set(); historico = []; futuro = [];
+  $("#boasvindas").classList.add("hidden"); $("#conteudo").classList.remove("hidden");
   $("#bpm").textContent = d.analise.bpm.toFixed(1);
   $("#alvo").value = mmss(d.alvo);
-  $("#desloc").textContent = "batida " + (d.analise.deslocamento + 1);
+  $("#desloc").textContent = d.analise.deslocamento + 1;
   $("#avisoSimples").classList.toggle("hidden", !d.separacao_simples);
-  desenharOriginal(); desenharMix(); atualizarAudio(true);
+  montarFaixas(); desenharFita(); desenhar(); atualizarAudio(true);
+  $("#palco").scrollLeft = 0;
 }
 
-// ------------------------------------------------------------ desenho
-function onda(canvas, u, ganhos) {
+// ---------------------------------------------------------------- desenho
+function montarFaixas() {
+  $("#faixas").innerHTML = FAIXAS.map(f => `
+    <div class="linha faixa" data-f="${f}" style="--cor:${COR[f]}">
+      <div class="cab">
+        <span class="nome">${NOME[f]}</span>
+        <button class="ms mudo" data-f="${f}" title="Silenciar a faixa inteira">M</button>
+        <button class="ms solo" data-f="${f}" title="Ouvir só esta faixa">S</button>
+        <div class="vol"><input type="range" min="0" max="150" step="5" data-f="${f}" aria-label="Volume ${NOME[f]}"><output></output></div>
+      </div>
+      <div class="area"></div>
+    </div>`).join("");
+  document.querySelectorAll(".ms").forEach(b => b.onclick = () => {
+    const f = b.dataset.f, campo = b.classList.contains("mudo") ? "mudo" : "solo";
+    mixer[f][campo] = !mixer[f][campo]; atualizarMixer();
+  });
+  document.querySelectorAll(".faixa .vol input").forEach(inp => {
+    inp.oninput = () => { inp.nextElementSibling.textContent = inp.value + "%"; mixer[inp.dataset.f].ganho = inp.value / 100; };
+    inp.onchange = () => atualizarMixer();
+  });
+}
+function atualizarMixer() {
+  const algumSolo = FAIXAS.some(f => mixer[f].solo);
+  for (const f of FAIXAS) {
+    const linha = document.querySelector(`.faixa[data-f="${f}"]`);
+    linha.querySelector(".mudo").classList.toggle("on", mixer[f].mudo);
+    linha.querySelector(".solo").classList.toggle("on", mixer[f].solo);
+    linha.classList.toggle("calada", mixer[f].mudo || (algumSolo && !mixer[f].solo));
+    const inp = linha.querySelector(".vol input");
+    inp.value = Math.round(mixer[f].ganho * 100); inp.nextElementSibling.textContent = inp.value + "%";
+  }
+  salvarDepois(); atualizarAudio();
+}
+
+function calcularPosicoes() {
+  let t = 0;
+  posicoes = tl.map(b => { const d = durBloco(b); const p = [t, d]; t += d; return p; });
+  return t;
+}
+
+function ajustarAltura() {
+  const livre = $("#palco").clientHeight - 22 - 58 - 4;
+  const alt = Math.max(64, Math.min(170, Math.floor(livre / FAIXAS.length)));
+  document.documentElement.style.setProperty("--alt", alt + "px");
+}
+function desenhar() {
+  ajustarAltura();
+  const total = calcularPosicoes();
+  const largura = Math.max(total * pxs + 200, $("#palco").clientWidth - parseInt(getComputedStyle(document.documentElement).getPropertyValue("--cab")));
+  document.querySelectorAll(".area").forEach(a => a.style.width = largura + "px");
+
+  // régua do tempo
+  const passo = pxs >= 60 ? 2 : pxs >= 25 ? 5 : 10;
+  let h = "";
+  for (let s = 0; s <= total + passo; s += passo) h += `<div class="seg num" style="left:${s * pxs}px">${mmss(s)}</div>`;
+  $("#reguaTempo").innerHTML = h;
+
+  // régua da contagem
+  h = "";
+  tl.forEach((b, i) => {
+    const u = unid[b.u], [ini, d] = posicoes[i];
+    const esp = u.tipo !== "oito";
+    let bat = "";
+    if (!esp) for (let k = 0; k < 8; k++) bat += `<i class="${k === 0 || k === 4 ? "forte" : ""}" style="left:${k / 8 * 100}%"></i>`;
+    const vel = b.vel === 0.5 ? "½" : b.vel === 2 ? "2×" : "";
+    h += `<div class="oito ${esp ? "especial" : ""} ${sel.has(i) ? "sel" : ""}" data-i="${i}" style="left:${ini * pxs}px;width:${d * pxs}px"
+      title="${nomeUnid(u)} da original${u.parte ? ", parte " + u.parte : ""}">
+      ${!esp || d * pxs > 52 ? `<span class="n num">${esp ? u.rotulo : i + 1}</span>` : ""}
+      ${d * pxs > 70 && !esp ? `<span class="orig">${nomeUnid(u)}${u.parte ? " · " + u.parte : ""}</span>` : ""}
+      ${vel ? `<span class="vel">${vel}</span>` : ""}
+      <div class="batidas">${bat}</div>
+      ${u.parte ? `<div class="faixa-parte" style="background:${corParte(u.parte)}"></div>` : ""}
+    </div>`;
+  });
+  $("#reguaOitos").innerHTML = h;
+
+  // faixas
+  for (const f of FAIXAS) {
+    const area = document.querySelector(`.faixa[data-f="${f}"] .area`);
+    area.innerHTML = tl.map((b, i) => {
+      const [ini, d] = posicoes[i], g = b.faixas[f];
+      return `<div class="cel ${sel.has(i) ? "sel" : ""}" data-i="${i}" data-f="${f}" style="left:${ini * pxs}px;width:${d * pxs}px">
+        <canvas></canvas>
+        ${g !== 1 && g > 0 ? `<span class="pct num">${Math.round(g * 100)}%</span>` : ""}
+        <button class="liga" title="${g > 0 ? "Silenciar" : "Ligar"} ${NOME[f].toLowerCase()} neste oito"><svg><use href="#i-${g > 0 ? "mudo" : "som"}"/></svg></button>
+      </div>`;
+    }).join("");
+    area.querySelectorAll(".cel").forEach(c => ondaFaixa(c.querySelector("canvas"), unid[tl[+c.dataset.i].u], f, tl[+c.dataset.i].faixas[f]));
+  }
+  const algumSolo = FAIXAS.some(f => mixer[f].solo);
+  for (const f of FAIXAS) {
+    const linha = document.querySelector(`.faixa[data-f="${f}"]`);
+    linha.querySelector(".mudo").classList.toggle("on", mixer[f].mudo);
+    linha.querySelector(".solo").classList.toggle("on", mixer[f].solo);
+    linha.classList.toggle("calada", mixer[f].mudo || (algumSolo && !mixer[f].solo));
+    const inp = linha.querySelector(".vol input"); inp.value = Math.round(mixer[f].ganho * 100); inp.nextElementSibling.textContent = inp.value + "%";
+  }
+
+  // números de cima
+  $("#dur").textContent = mmss(total);
+  const alvo = lerMmss($("#alvo").value) || proj.alvo;
+  $("#barra").classList.toggle("passou", total > alvo + 0.5);
+  $("#barra i").style.width = Math.min(100, total / alvo * 100) + "%";
+  $("#desfazer").disabled = !historico.length; $("#refazer").disabled = !futuro.length;
+  desenharSelecao();
+}
+
+function ondaFaixa(canvas, u, f, ganho) {
   const dpr = window.devicePixelRatio || 1, w = canvas.clientWidth, h = canvas.clientHeight;
+  if (!w || !h) return;
   canvas.width = w * dpr; canvas.height = h * dpr;
   const c = canvas.getContext("2d"); c.scale(dpr, dpr);
-  const n = u.onda.voz.length, larg = w / n;
-  for (let i = 0; i < n; i++) {
-    let y = h;
-    for (const f of ["baixo", "bateria", "outros", "voz"]) {
-      const g = ganhos ? Math.min(ganhos[f], 1.5) : 1;
-      const alt = u.onda[f][i] * g * h * 0.42;
-      if (alt <= 0) continue;
-      c.fillStyle = COR[f]; c.globalAlpha = 0.85;
-      c.fillRect(i * larg + 0.5, y - alt, Math.max(1, larg - 1), alt);
-      y -= alt;
+  const v = u.onda[f], n = v.length, meio = h / 2;
+  if (ganho <= 0) {
+    // faixa desligada neste oito: listras
+    c.strokeStyle = "rgba(255,255,255,.07)"; c.lineWidth = 1;
+    for (let x = -h; x < w; x += 8) { c.beginPath(); c.moveTo(x, h); c.lineTo(x + h, 0); c.stroke(); }
+    c.fillStyle = COR[f]; c.globalAlpha = .18;
+  } else { c.fillStyle = COR[f]; c.globalAlpha = .9; }
+  const g = ganho <= 0 ? 1 : Math.min(ganho, 1.6);
+  c.beginPath(); c.moveTo(0, meio);
+  for (let i = 0; i < n; i++) c.lineTo((i + .5) / n * w, meio - Math.min(meio - 2, v[i] * g * (meio - 4)));
+  for (let i = n - 1; i >= 0; i--) c.lineTo((i + .5) / n * w, meio + Math.min(meio - 2, v[i] * g * (meio - 4)));
+  c.closePath(); c.fill();
+}
+
+function desenharSelecao() {
+  document.querySelectorAll(".oito, .cel").forEach(el => el.classList.toggle("sel", sel.has(+el.dataset.i)));
+  const l = alvos(), qual = $("#qual");
+  const tem = l.length > 0;
+  $("#pedido").disabled = !tem; $("#aplicar").disabled = !tem;
+  document.querySelectorAll(".rapido").forEach(b => b.disabled = !tem);
+  if (!tem) { qual.innerHTML = "<b>Nada selecionado</b>clique nos oitos acima"; return; }
+  const dur = l.reduce((s, i) => s + posicoes[i][1], 0);
+  const faixa = l.length === 1 ? `bloco ${l[0] + 1}` : contiguo(l) ? `blocos ${l[0] + 1} a ${l[l.length - 1] + 1}` : `${l.length} blocos`;
+  qual.innerHTML = `<b>${l.length === 1 ? "1 oito" : l.length + " oitos"}</b>${faixa} · ${dur.toFixed(1)} s`;
+  desenharLaco();
+}
+const contiguo = l => l.every((v, k) => k === 0 || v === l[k - 1] + 1);
+function desenharLaco() {
+  document.querySelectorAll(".laco").forEach(x => x.remove());
+  if (!laco || !sel.size) return;
+  const l = alvos(), cab = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--cab"));
+  const ini = posicoes[l[0]][0], fim = posicoes[l[l.length - 1]][0] + posicoes[l[l.length - 1]][1];
+  const d = document.createElement("div"); d.className = "laco";
+  d.style.left = (cab + ini * pxs) + "px"; d.style.width = ((fim - ini) * pxs) + "px";
+  $("#conteudo").appendChild(d);
+}
+
+function desenharFita() {
+  const el = $("#fita"); el.innerHTML = "";
+  for (const u of proj.analise.unidades) {
+    const d = document.createElement("div");
+    d.className = "u"; d.draggable = true; d.dataset.u = u.id;
+    d.title = `${nomeUnid(u)}${u.parte ? ", parte " + u.parte : ""}. Clique para ouvir, arraste para o mix ou dê dois cliques para inserir depois da seleção.`;
+    d.innerHTML = `<span class="n num">${u.rotulo}</span>${u.parte ? `<span class="letra" style="color:${corParte(u.parte)}">${u.parte}</span><div class="parte" style="background:${corParte(u.parte)}"></div>` : ""}<canvas></canvas>`;
+    d.onclick = () => ouvirUnidade(u.id, d);
+    d.ondblclick = () => inserir(u.id, sel.size ? Math.max(...sel) + 1 : tl.length);
+    d.ondragstart = e => { e.dataTransfer.setData("text/remix-unidade", u.id); e.dataTransfer.effectAllowed = "copy"; };
+    el.appendChild(d);
+    const cv = d.querySelector("canvas"), dpr = window.devicePixelRatio || 1;
+    cv.width = cv.clientWidth * dpr; cv.height = cv.clientHeight * dpr;
+    const c = cv.getContext("2d"); c.scale(dpr, dpr);
+    const w = cv.clientWidth, h = cv.clientHeight, n = u.onda.voz.length;
+    for (let i = 0; i < n; i++) {
+      let y = h;
+      for (const f of ["baixo", "bateria", "outros", "voz"]) {
+        const a = u.onda[f][i] * h * .3; if (a <= 0) continue;
+        c.fillStyle = COR[f]; c.globalAlpha = .8; c.fillRect(i / n * w, y - a, Math.max(1, w / n), a); y -= a;
+      }
     }
   }
 }
-function corParte(p) { return COR_PARTE[(p.charCodeAt(0) - 65) % COR_PARTE.length]; }
-function etiquetaParte(u) { return u.parte ? `<span class="parte" style="background:${corParte(u.parte)}">${u.parte}</span>` : ""; }
-function nomeUnid(u) { return u.tipo === "oito" ? "oito " + u.rotulo : u.rotulo; }
 
-function desenharOriginal() {
-  const el = $("#original"); el.innerHTML = "";
-  for (const u of proj.analise.unidades) {
-    const d = document.createElement("div");
-    d.className = "u"; d.dataset.u = u.id;
-    d.title = nomeUnid(u) + (u.parte ? " · parte " + u.parte : "") + " · " + durUnid(u).toFixed(1) + " s";
-    d.innerHTML = `<div class="l"><b>${u.rotulo}</b>${etiquetaParte(u)}</div><canvas></canvas>
-      <button class="mais" title="Colocar no mix"><svg><use href="#i-plus"/></svg></button>`;
-    d.onclick = e => { if (e.target.closest(".mais")) return; ouvirUnidade(u.id, d); };
-    d.querySelector(".mais").onclick = e => { e.stopPropagation(); inserir(u.id); };
-    el.appendChild(d);
-    onda(d.querySelector("canvas"), u);
-  }
+// ---------------------------------------------------------------- seleção e arraste na régua
+function alvos() { return [...sel].sort((a, b) => a - b); }
+function indiceNoX(x) {   // x em pixels dentro da área
+  const t = x / pxs;
+  for (let i = 0; i < posicoes.length; i++) if (t < posicoes[i][0] + posicoes[i][1]) return i;
+  return posicoes.length - 1;
+}
+function pontoDeInsercao(x) {  // devolve o índice antes do qual inserir
+  const t = x / pxs;
+  for (let i = 0; i < posicoes.length; i++) if (t < posicoes[i][0] + posicoes[i][1] / 2) return i;
+  return posicoes.length;
+}
+function xDoIndice(i) { return (i < posicoes.length ? posicoes[i][0] : posicoes.length ? posicoes[posicoes.length - 1][0] + posicoes[posicoes.length - 1][1] : 0) * pxs; }
+function mostrarInsercao(i) {
+  let m = document.querySelector(".insercao");
+  if (i === null) { if (m) m.remove(); return; }
+  if (!m) { m = document.createElement("div"); m.className = "insercao"; $("#conteudo").appendChild(m); }
+  m.style.left = (parseInt(getComputedStyle(document.documentElement).getPropertyValue("--cab")) + xDoIndice(i) - 1) + "px";
 }
 
-function desenharMix() {
-  const el = $("#mix"); el.innerHTML = "";
-  tl.forEach((b, i) => {
-    const u = unid[b.u];
-    const d = document.createElement("div");
-    d.className = "b" + (sel.has(i) ? " sel" : ""); d.draggable = true; d.dataset.i = i;
-    const vel = b.vel === 0.5 ? "½ tempo" : b.vel === 2 ? "2× tempo" : "";
-    d.innerHTML = `<div class="l"><span class="n">${i + 1}</span><span>${nomeUnid(u)}</span>${etiquetaParte(u)}<span class="vel">${vel}</span></div>
-      <canvas></canvas>
-      <div class="pills">${FAIXAS.map(f => `<button class="pill ${f} ${b.faixas[f] > 0 ? "on" : ""} ${b.faixas[f] > 0 && b.faixas[f] < 1 ? "meio" : ""}" data-f="${f}" title="${f}: ${Math.round(b.faixas[f] * 100)}%">${ROTULO[f]}</button>`).join("")}</div>`;
-    d.onclick = e => {
-      const pill = e.target.closest(".pill");
-      if (pill) { alternarFaixa(pill.dataset.f, sel.has(i) && sel.size > 1 ? [...sel] : [i]); return; }
-      selecionar(i, e.shiftKey, e.ctrlKey || e.metaKey);
-    };
-    d.ondblclick = e => { if (!e.target.closest(".pill")) tocarDe(i); };
-    ligarArraste(d, i);
-    el.appendChild(d);
-    onda(d.querySelector("canvas"), u, b.faixas);
+function ligarRegua() {
+  const area = $("#reguaOitos");
+  let estado = null;
+  area.addEventListener("pointerdown", e => {
+    const el = e.target.closest(".oito"); if (!el || e.button !== 0) return;
+    const i = +el.dataset.i, r = area.getBoundingClientRect();
+    estado = {i, x0: e.clientX, mover: sel.has(i) && !e.shiftKey && !(e.ctrlKey || e.metaKey), arrastou: false, shift: e.shiftKey, ctrl: e.ctrlKey || e.metaKey, r};
+    area.setPointerCapture(e.pointerId);
   });
-  const total = tl.reduce((s, b) => s + durBloco(b), 0);
-  $("#noitos").textContent = tl.filter(b => unid[b.u].tipo === "oito").length;
-  $("#dur").textContent = mmss(total);
-  const alvo = lerMmss($("#alvo").value) || proj.alvo;
-  $("#medidor").classList.toggle("passou", total > alvo + 0.5);
-  $("#medidor i").style.width = Math.min(100, total / alvo * 100) + "%";
-  $("#desfazer").disabled = !historico.length; $("#refazer").disabled = !futuro.length;
-  desenharPainel(); desenharTrilha();
-}
-
-function desenharPainel() {
-  const sec = $("#secPainel");
-  if (!sel.size) { sec.classList.add("hidden"); return; }
-  sec.classList.remove("hidden");
-  const lista = [...sel].sort((a, b) => a - b);
-  const b = tl[lista[0]];
-  $("#painelTitulo").textContent = lista.length > 1 ? `${lista.length} blocos selecionados` : `Bloco ${lista[0] + 1} · ${nomeUnid(unid[b.u])}`;
-  document.querySelectorAll(".faixa input").forEach(inp => {
-    inp.value = Math.round(b.faixas[inp.dataset.f] * 100);
-    inp.nextElementSibling.textContent = inp.value + "%";
+  area.addEventListener("pointermove", e => {
+    if (!estado) return;
+    if (!estado.arrastou && Math.abs(e.clientX - estado.x0) < 5) return;
+    estado.arrastou = true;
+    const x = e.clientX - estado.r.left;
+    if (estado.mover) { estado.destino = pontoDeInsercao(x); mostrarInsercao(estado.destino); }
+    else {
+      const j = indiceNoX(x); sel = new Set();
+      for (let k = Math.min(estado.i, j); k <= Math.max(estado.i, j); k++) sel.add(k);
+      ancora = estado.i; desenharSelecao();
+    }
   });
-  document.querySelectorAll(".seg[data-vel]").forEach(s => s.classList.toggle("on", +s.dataset.vel === b.vel));
+  area.addEventListener("pointerup", () => {
+    if (!estado) return;
+    const s = estado; estado = null; mostrarInsercao(null);
+    if (!s.arrastou) return selecionar(s.i, s.shift, s.ctrl);
+    if (s.mover && s.destino !== undefined) moverPara(alvos(), s.destino);
+  });
 }
-
-function desenharTrilha() {
-  const total = tl.reduce((s, b) => s + durBloco(b), 0) || 1;
-  $("#trilhaBlocos").innerHTML = tl.map((b, i) => {
-    const u = unid[b.u];
-    return `<i style="width:${durBloco(b) / total * 100}%;background:${u.parte ? corParte(u.parte) : "#34425A"}" title="Bloco ${i + 1}"></i>`;
-  }).join("");
-}
-
-// ------------------------------------------------------------ edição
-function mudar(fn) {
-  historico.push(copia(tl)); if (historico.length > 200) historico.shift();
-  futuro = [];
-  fn();
-  desenharMix(); salvarDepois(); atualizarAudio();
-}
-function desfazer() { if (!historico.length) return; futuro.push(copia(tl)); tl = historico.pop(); sel.clear(); desenharMix(); salvarDepois(); atualizarAudio(); }
-function refazer() { if (!futuro.length) return; historico.push(copia(tl)); tl = futuro.pop(); sel.clear(); desenharMix(); salvarDepois(); atualizarAudio(); }
-function recomecar() {
-  if (!confirm("Voltar à música original? (dá para desfazer)")) return;
-  mudar(() => { tl = proj.analise.unidades.map(u => novoBloco(u.id)); sel.clear(); });
-}
-const novoBloco = uid => ({u: uid, faixas: {voz: 1, bateria: 1, baixo: 1, outros: 1}, vel: 1});
-
 function selecionar(i, shift, ctrl) {
   if (shift && ancora !== null) { sel = new Set(); for (let k = Math.min(ancora, i); k <= Math.max(ancora, i); k++) sel.add(k); }
   else if (ctrl) { sel.has(i) ? sel.delete(i) : sel.add(i); ancora = i; }
   else { sel = new Set([i]); ancora = i; }
-  desenharMix();
+  desenharSelecao();
 }
-function alvos() { return [...sel].sort((a, b) => a - b); }
-function alternarFaixa(f, indices) {
-  const ligar = !indices.every(i => tl[i].faixas[f] > 0);
-  mudar(() => indices.forEach(i => tl[i].faixas[f] = ligar ? 1 : 0));
-}
-function inserir(uid) {
-  const pos = sel.size ? Math.max(...sel) + 1 : tl.length;
-  mudar(() => { tl.splice(pos, 0, novoBloco(uid)); sel = new Set([pos]); ancora = pos; });
-}
-function duplicar() {
-  const l = alvos(); if (!l.length) return;
+function moverPara(lista, destino) {
+  if (lista.includes(destino) && contiguo(lista)) return;
   mudar(() => {
-    const novos = l.map(i => copia(tl[i])), pos = l[l.length - 1] + 1;
-    tl.splice(pos, 0, ...novos);
-    sel = new Set(novos.map((_, k) => pos + k));
+    const blocos = lista.map(k => tl[k]);
+    let pos = destino;
+    for (const k of [...lista].reverse()) { tl.splice(k, 1); if (k < pos) pos--; }
+    tl.splice(pos, 0, ...blocos);
+    sel = new Set(blocos.map((_, k) => pos + k)); ancora = pos;
   });
 }
-function apagar() {
-  const l = alvos(); if (!l.length) return;
-  mudar(() => { for (const i of l.reverse()) tl.splice(i, 1); sel.clear(); });
+
+// cliques nas faixas: selecionar o oito, ou ligar/desligar a faixa naquele oito
+$("#faixas").addEventListener("click", e => {
+  const cel = e.target.closest(".cel"); if (!cel) return;
+  const i = +cel.dataset.i, f = cel.dataset.f;
+  if (e.target.closest(".liga")) {
+    const lista = sel.has(i) && sel.size > 1 ? alvos() : [i];
+    const ligar = !(tl[i].faixas[f] > 0);
+    mudar(() => lista.forEach(k => tl[k].faixas[f] = ligar ? 1 : 0));
+    return;
+  }
+  selecionar(i, e.shiftKey, e.ctrlKey || e.metaKey);
+});
+$("#faixas").addEventListener("dblclick", e => { const cel = e.target.closest(".cel"); if (cel && !e.target.closest(".liga")) tocarDe(+cel.dataset.i); });
+
+// soltar oitos da música original no mix
+const palco = $("#palco");
+palco.addEventListener("dragover", e => {
+  if (!e.dataTransfer.types.includes("text/remix-unidade")) return;
+  e.preventDefault();
+  const r = $("#reguaOitos").getBoundingClientRect();
+  mostrarInsercao(pontoDeInsercao(e.clientX - r.left));
+});
+palco.addEventListener("dragleave", e => { if (!palco.contains(e.relatedTarget)) mostrarInsercao(null); });
+palco.addEventListener("drop", e => {
+  const uid = e.dataTransfer.getData("text/remix-unidade"); if (!uid) return;
+  e.preventDefault(); mostrarInsercao(null);
+  const r = $("#reguaOitos").getBoundingClientRect();
+  inserir(uid, pontoDeInsercao(e.clientX - r.left));
+});
+
+// ---------------------------------------------------------------- edição
+function mudar(fn) {
+  historico.push(copia(tl)); if (historico.length > 300) historico.shift();
+  futuro = [];
+  fn();
+  desenhar(); salvarDepois(); atualizarAudio();
 }
-document.querySelectorAll(".faixa input").forEach(inp => {
-  inp.oninput = () => { inp.nextElementSibling.textContent = inp.value + "%"; };
-  inp.onchange = () => { const v = inp.value / 100, l = alvos(); mudar(() => l.forEach(i => tl[i].faixas[inp.dataset.f] = v)); };
-});
-document.querySelectorAll(".seg[data-vel]").forEach(s => s.onclick = () => {
-  const v = +s.dataset.vel, l = alvos(); mudar(() => l.forEach(i => tl[i].vel = v));
-});
+function desfazer() { if (!historico.length) return; futuro.push(copia(tl)); tl = historico.pop(); sel.clear(); desenhar(); salvarDepois(); atualizarAudio(); }
+function refazer() { if (!futuro.length) return; historico.push(copia(tl)); tl = futuro.pop(); sel.clear(); desenhar(); salvarDepois(); atualizarAudio(); }
+$("#desfazer").onclick = desfazer; $("#refazer").onclick = refazer;
+const novoBloco = uid => ({u: uid, faixas: {voz: 1, bateria: 1, baixo: 1, outros: 1}, vel: 1});
+function inserir(uid, pos) {
+  mudar(() => { tl.splice(pos, 0, novoBloco(uid)); sel = new Set([pos]); ancora = pos; });
+  responder(`<b>Inserido:</b> ${nomeUnid(unid[uid])} na posição ${pos + 1}`);
+}
+
+function executar(texto) {
+  const l = alvos();
+  if (!l.length) { responder("Selecione um ou mais oitos na régua de contagem primeiro.", true); return; }
+  const r = Comandos.entender(texto);
+  if (!r.acoes.length) {
+    const falta = r.faltando.length ? `Ainda não sei fazer <b>${r.faltando.join(", ")}</b>. ` : "Não entendi. ";
+    responder(falta + "Hoje eu entendo: tirar ou deixar só uma faixa, mais ou menos volume (com %), meio tempo, tempo dobrado, repetir e apagar.", true);
+    return;
+  }
+  mudar(() => { sel = new Set(Comandos.aplicar(tl, l, r.acoes)); });
+  let msg = `<b>Feito:</b> ${r.frases.join(", ")}.`;
+  if (r.faltando.length) msg += ` Ainda não sei fazer ${r.faltando.join(", ")}.`;
+  responder(msg, r.faltando.length > 0);
+}
+$("#aplicar").onclick = () => { executar($("#pedido").value); $("#pedido").value = ""; };
+$("#pedido").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); $("#aplicar").click(); } if (e.key === "Escape") e.target.blur(); });
+document.querySelectorAll(".rapido").forEach(b => b.onclick = () => executar(b.dataset.t));
+
 $("#alvo").onchange = () => {
   const s = lerMmss($("#alvo").value);
   if (s) { proj.alvo = s; salvarDepois(); }
-  $("#alvo").value = mmss(proj.alvo); desenharMix();
+  $("#alvo").value = mmss(proj.alvo); desenhar();
 };
-
-// arrastar para reordenar
-let arrastando = null;
-function ligarArraste(d, i) {
-  d.ondragstart = e => {
-    arrastando = sel.has(i) ? alvos() : [i];
-    d.classList.add("arrastando"); e.dataTransfer.effectAllowed = "move";
-    e.dataTransfer.setData("text/plain", "x");
-  };
-  d.ondragend = () => { arrastando = null; document.querySelectorAll(".b").forEach(x => x.classList.remove("arrastando", "alvo-antes", "alvo-depois")); };
-  d.ondragover = e => {
-    if (!arrastando) return; e.preventDefault();
-    const r = d.getBoundingClientRect(), depois = e.clientX > r.left + r.width / 2;
-    document.querySelectorAll(".b").forEach(x => x.classList.remove("alvo-antes", "alvo-depois"));
-    d.classList.add(depois ? "alvo-depois" : "alvo-antes");
-  };
-  d.ondrop = e => {
-    e.preventDefault(); if (!arrastando) return;
-    const r = d.getBoundingClientRect();
-    let pos = i + (e.clientX > r.left + r.width / 2 ? 1 : 0);
-    const mover = arrastando;
-    mudar(() => {
-      const blocos = mover.map(k => tl[k]);
-      for (const k of [...mover].reverse()) { tl.splice(k, 1); if (k < pos) pos--; }
-      tl.splice(pos, 0, ...blocos);
-      sel = new Set(blocos.map((_, k) => pos + k));
-    });
-  };
+function zoom(fator, ancoraX) {
+  const p = $("#palco"), cab = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--cab"));
+  const x = ancoraX ?? p.clientWidth / 2, t = (p.scrollLeft + x - cab) / pxs;
+  pxs = Math.max(6, Math.min(240, pxs * fator));
+  desenhar(); p.scrollLeft = t * pxs - x + cab;
 }
+$("#zoomMais").onclick = () => zoom(1.4); $("#zoomMenos").onclick = () => zoom(1 / 1.4);
+palco.addEventListener("wheel", e => { if (e.ctrlKey) { e.preventDefault(); zoom(e.deltaY < 0 ? 1.15 : 1 / 1.15, e.clientX - palco.getBoundingClientRect().left); } }, {passive: false});
 
-// ------------------------------------------------------------ salvar e áudio
+// ---------------------------------------------------------------- salvar e som
+function timelineEfetiva() {
+  const algumSolo = FAIXAS.some(f => mixer[f].solo);
+  return tl.map(b => ({u: b.u, vel: b.vel, faixas: Object.fromEntries(FAIXAS.map(f => {
+    const m = mixer[f], calada = m.mudo || (algumSolo && !m.solo);
+    return [f, calada ? 0 : Math.round(b.faixas[f] * m.ganho * 100) / 100];
+  }))}));
+}
 function salvarDepois() {
   clearTimeout(timerSalvar);
   timerSalvar = setTimeout(async () => {
-    try { await api(`projetos/${proj.id}/timeline`, json("PUT", {timeline: tl, alvo: proj.alvo})); }
-    catch (e) { status("erro ao salvar: " + e.message); }
+    try { await api(`projetos/${proj.id}/timeline`, json("PUT", {timeline: tl, alvo: proj.alvo, mixer})); }
+    catch (e) { responder("Não consegui salvar: " + e.message, true); }
   }, 600);
 }
-
-function atualizarAudio(imediato) {
-  clearTimeout(timerAudio);
-  timerAudio = setTimeout(montarAudio, imediato ? 0 : 350);
-}
+function atualizarAudio(agora) { clearTimeout(timerAudio); timerAudio = setTimeout(montarAudio, agora ? 0 : 300); }
 async function montarAudio() {
+  if (!proj) return;
   const minha = ++versaoAudio;
-  status("atualizando o som...");
   try {
-    const r = await api(`projetos/${proj.id}/audio`, json("POST", {timeline: tl}));
+    const r = await api(`projetos/${proj.id}/audio`, json("POST", {timeline: timelineEfetiva()}));
     const blob = await r.blob();
     if (minha !== versaoAudio) return;
     inicios = JSON.parse(r.headers.get("X-Inicios") || "[]");
@@ -518,28 +711,40 @@ async function montarAudio() {
     urlAudio = URL.createObjectURL(blob);
     audio.src = urlAudio;
     audio.onloadedmetadata = () => { audio.currentTime = Math.min(pos, audio.duration || 0); if (tocando) audio.play(); };
-    status("");
-  } catch (e) { if (minha === versaoAudio) status("erro: " + e.message); }
+  } catch (e) { if (minha === versaoAudio) responder("Não consegui montar o som: " + e.message, true); }
 }
 
-function tocarDe(i) { previa.pause(); audio.currentTime = inicios[i] || 0; audio.play(); }
-$("#play").onclick = () => { previa.pause(); audio.paused ? audio.play() : audio.pause(); };
-audio.onplay = audio.onpause = () => { $("#play use").setAttribute("href", audio.paused ? "#i-play" : "#i-pause"); };
-$("#trilha").onclick = e => {
-  const r = e.currentTarget.getBoundingClientRect();
-  if (audio.duration) audio.currentTime = (e.clientX - r.left) / r.width * audio.duration;
+function tocarDe(i) { previa.pause(); audio.currentTime = inicios[i] ?? posicoes[i][0]; audio.play(); }
+$("#play").onclick = () => {
+  previa.pause();
+  if (audio.paused) {
+    if (laco && sel.size) { const l = alvos(), ini = inicios[l[0]] ?? 0, fim = fimDe(l[l.length - 1]); if (audio.currentTime < ini || audio.currentTime >= fim) audio.currentTime = ini; }
+    audio.play();
+  } else audio.pause();
 };
-let ultimoTocando = -1;
+$("#paraInicio").onclick = () => { audio.currentTime = laco && sel.size ? inicios[alvos()[0]] : 0; $("#palco").scrollLeft = 0; };
+$("#laco").onclick = () => { laco = !laco; $("#laco").classList.toggle("on", laco); desenharLaco(); };
+audio.onplay = audio.onpause = () => $("#play use").setAttribute("href", audio.paused ? "#i-play" : "#i-pause");
+const fimDe = i => (inicios[i + 1] ?? audio.duration);
+$("#reguaTempo").addEventListener("click", e => {
+  const r = e.currentTarget.getBoundingClientRect();
+  const t = (e.clientX - r.left) / pxs;
+  // posição na linha do tempo -> posição no áudio montado (iguais, salvo arredondamentos)
+  audio.currentTime = Math.max(0, Math.min(t, audio.duration || t));
+});
 function quadro() {
-  const t = audio.currentTime, d = audio.duration || 0;
-  $("#tempo").textContent = mmss(t) + " / " + mmss(d);
-  $("#cursor").style.left = d ? (t / d * 100) + "%" : "0";
-  let i = -1;
-  if (!audio.paused) for (let k = 0; k < inicios.length; k++) if (inicios[k] <= t) i = k;
-  if (i !== ultimoTocando) {
-    document.querySelectorAll(".b.tocando").forEach(x => x.classList.remove("tocando"));
-    const el = document.querySelector(`.b[data-i="${i}"]`); if (el) el.classList.add("tocando");
-    ultimoTocando = i;
+  const t = audio.currentTime || 0, d = audio.duration || 0;
+  if (laco && sel.size && !audio.paused) {
+    const l = alvos(), ini = inicios[l[0]] ?? 0, fim = fimDe(l[l.length - 1]);
+    if (t >= fim - 0.01) audio.currentTime = ini;
+  }
+  $("#relogio").innerHTML = `${mmssd(t)} <small>/ ${mmss(d)}</small>`;
+  if (proj) {
+    const cab = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--cab"));
+    const x = cab + t * pxs;
+    $("#cursor").style.left = x + "px";
+    const p = $("#palco");
+    if (!audio.paused && (x > p.scrollLeft + p.clientWidth - 60 || x < p.scrollLeft + cab)) p.scrollLeft = x - cab - 80;
   }
   requestAnimationFrame(quadro);
 }
@@ -553,82 +758,81 @@ function ouvirUnidade(uid, el) {
   el.classList.add("tocando"); previa.play();
   previa.onended = previa.onpause = () => el.classList.remove("tocando");
 }
-
 async function moverContagem(passo) {
-  if (!confirm("Mudar onde fica o 1 da contagem recomeça o mix do zero. Continuar?")) return;
-  status("recalculando os oitos...");
+  if (!confirm("Mover o 1 da contagem recomeça o mix do zero. Continuar?")) return;
   await api(`projetos/${proj.id}/contagem`, json("POST", {deslocamento: proj.analise.deslocamento + passo}));
   await abrir(proj.id);
 }
-
-async function exportar() {
-  status("exportando...");
+$("#exportar").onclick = async () => {
+  if (!proj) return;
+  responder("Exportando...");
   try {
-    const d = await (await api(`projetos/${proj.id}/exportar`, json("POST", {timeline: tl, formato: "mp3"}))).json();
-    status("");
-    alert("Mix exportado em:\n" + d.arquivo);
-  } catch (e) { status("erro: " + e.message); }
-}
+    const d = await (await api(`projetos/${proj.id}/exportar`, json("POST", {timeline: timelineEfetiva(), formato: "mp3"}))).json();
+    responder(`<b>Exportado:</b> ${d.arquivo}`);
+  } catch (e) { responder("Não consegui exportar: " + e.message, true); }
+};
 
-// ------------------------------------------------------------ teclado
+// ---------------------------------------------------------------- teclado
 document.addEventListener("keydown", e => {
-  if (!proj || e.target.matches("input, select")) return;
+  if (!proj || e.target.matches("input, select, textarea")) return;
   const ctrl = e.ctrlKey || e.metaKey, k = e.key.toLowerCase();
   if (e.code === "Space") { e.preventDefault(); $("#play").click(); }
   else if (ctrl && k === "z") { e.preventDefault(); e.shiftKey ? refazer() : desfazer(); }
   else if (ctrl && k === "y") { e.preventDefault(); refazer(); }
-  else if (ctrl && k === "d") { e.preventDefault(); duplicar(); }
-  else if (k === "delete" || k === "backspace") { if (sel.size) { e.preventDefault(); apagar(); } }
-  else if (!ctrl && sel.size && ({v: "voz", b: "bateria", g: "baixo", o: "outros"})[k]) alternarFaixa(({v: "voz", b: "bateria", g: "baixo", o: "outros"})[k], alvos());
-  else if (k === "escape") { sel.clear(); desenharMix(); }
+  else if (ctrl && k === "d") { e.preventDefault(); if (sel.size) executar("repete"); }
+  else if (ctrl && k === "a") { e.preventDefault(); sel = new Set(tl.map((_, i) => i)); desenharSelecao(); }
+  else if (k === "delete" || k === "backspace") { if (sel.size) { e.preventDefault(); executar("apaga esses oitos"); } }
+  else if (k === "l") $("#laco").click();
+  else if (k === "home") $("#paraInicio").click();
+  else if (k === "/" || k === "enter") { if (sel.size) { e.preventDefault(); $("#pedido").focus(); } }
+  else if (k === "escape") { sel.clear(); desenharSelecao(); }
   else if ((k === "arrowright" || k === "arrowleft") && tl.length) {
-    const atual = sel.size ? Math.max(...sel) : -1;
-    const novo = Math.max(0, Math.min(tl.length - 1, atual + (k === "arrowright" ? 1 : -1)));
-    selecionar(novo, e.shiftKey, false);
+    const atual = sel.size ? (k === "arrowright" ? Math.max(...sel) : Math.min(...sel)) : -1;
+    selecionar(Math.max(0, Math.min(tl.length - 1, atual + (k === "arrowright" ? 1 : -1))), e.shiftKey, false);
   }
 });
 
-// ------------------------------------------------------------ nova música
+// ---------------------------------------------------------------- nova música
 function abrirJanela() {
   $("#janela").classList.remove("hidden"); $("#formNova").classList.remove("hidden");
-  $("#progresso").classList.add("hidden"); $("#link").value = ""; $("#link").focus();
+  $("#andamento").classList.add("hidden"); $("#link").value = ""; $("#link").focus();
 }
 function fecharJanela() { $("#janela").classList.add("hidden"); }
 $("#nova").onclick = abrirJanela;
-
 async function enviarLink() {
-  const link = $("#link").value.trim();
-  if (!link) return;
-  const d = await (await api("projetos", json("POST", {link}))).json();
-  acompanhar(d.id);
+  const link = $("#link").value.trim(); if (!link) return;
+  try { acompanhar((await (await api("projetos", json("POST", {link}))).json()).id); }
+  catch (e) { etapa("Não deu certo: " + e.message, true); }
 }
 async function enviarArquivo(f) {
-  mostrarEtapa("enviando o arquivo...");
+  etapa("Enviando o arquivo...");
   const r = await api("projetos", {method: "POST", headers: {"X-Nome": encodeURIComponent(f.name), "Content-Type": "application/octet-stream"}, body: f});
   acompanhar((await r.json()).id);
 }
+$("#link").addEventListener("keydown", e => { if (e.key === "Enter") enviarLink(); });
 $("#arquivo").onchange = e => e.target.files[0] && enviarArquivo(e.target.files[0]);
 const soltar = $("#soltar");
 soltar.ondragover = e => { e.preventDefault(); soltar.classList.add("sobre"); };
 soltar.ondragleave = () => soltar.classList.remove("sobre");
 soltar.ondrop = e => { e.preventDefault(); soltar.classList.remove("sobre"); if (e.dataTransfer.files[0]) enviarArquivo(e.dataTransfer.files[0]); };
-
-function mostrarEtapa(t, erro) {
-  $("#formNova").classList.add("hidden"); $("#progresso").classList.remove("hidden");
-  $("#progresso .girando").classList.toggle("hidden", !!erro);
+function etapa(t, erro) {
+  $("#formNova").classList.add("hidden"); $("#andamento").classList.remove("hidden");
+  $("#andamento .girando").classList.toggle("hidden", !!erro);
   $("#etapa").textContent = t; $("#etapa").classList.toggle("erro", !!erro);
 }
 async function acompanhar(id) {
   for (;;) {
     const d = await (await api("projetos/" + id)).json();
     if (d.estado === "pronto") { fecharJanela(); await listarProjetos(id); return; }
-    if (d.estado === "erro" || d.estado === "incompleto") { mostrarEtapa("Não deu certo: " + (d.erro || "a preparação foi interrompida"), true); return; }
-    mostrarEtapa(d.etapa ? d.etapa.charAt(0).toUpperCase() + d.etapa.slice(1) + "..." : "Preparando...");
+    if (d.estado === "erro" || d.estado === "incompleto") { etapa("Não deu certo: " + (d.erro || "a preparação foi interrompida. Importe de novo."), true); return; }
+    etapa(d.etapa ? d.etapa.charAt(0).toUpperCase() + d.etapa.slice(1) + "..." : "Preparando...");
     await new Promise(r => setTimeout(r, 2000));
   }
 }
 
-listarProjetos().catch(e => status("erro: " + e.message));
+ligarRegua();
+window.addEventListener("resize", () => proj && desenhar());
+listarProjetos().catch(e => responder("Não consegui falar com o editor: " + e.message, true));
 </script>
 </body>
 </html>

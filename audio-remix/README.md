@@ -13,22 +13,42 @@ App para criar mixes profissionais e personalizados para coreografias de danças
 
 Dois cliques em `ABRIR-EDITOR.bat`. O navegador abre em http://127.0.0.1:3060. Para desligar, feche a janela preta.
 
-1. **Nova música:** cole um link do YouTube ou arraste um arquivo de áudio. O editor separa voz, bateria, baixo e outros, acha as batidas e divide em oitos (1 a 3 minutos).
-2. **Música original:** os oitos numerados, com a letra da "parte" (as partes iguais têm a mesma letra: o refrão que se repete, por exemplo). Clique para ouvir; o **+** coloca o oito no mix.
-3. **Seu mix:** os blocos em ordem. Dá para:
-   - arrastar para reordenar;
-   - ligar e desligar Voz, Bateria, Baixo e Outros em cada bloco;
-   - ajustar o volume de cada faixa (0 a 150%) no painel de baixo;
-   - meio tempo e tempo dobrado;
-   - duplicar e apagar;
-   - desfazer e refazer.
-4. **Duração / alvo:** mostra o tempo do mix e o tempo desejado (padrão 2:45, editável).
-5. **O "1" da contagem:** se os oitos começarem no tempo errado, ajuste com as setas.
-6. **Exportar MP3:** salva em `audio-remix\dados\exportados\`.
+A tela é como a de um editor de áudio:
+- **Barra de cima:** tocar e pausar, voltar ao início, repetir a seleção sem parar, o relógio, o BPM, a duração do mix e a duração desejada (padrão 2:45), desfazer e refazer, aproximar e afastar, nova música e exportar MP3.
+- **Régua da contagem:** cada oito do mix, com o número grande, as 8 batidas marcadas e a cor da "parte" da música (partes iguais têm a mesma cor e letra).
+  - clique para selecionar;
+  - Shift + clique ou arrastar seleciona vários;
+  - arrastar um oito já selecionado muda ele de lugar.
+- **Faixas na horizontal:** Voz, Bateria, Baixo e Outros.
+  - **M** silencia a faixa inteira;
+  - **S** deixa só aquela faixa;
+  - o controle deslizante muda o volume da faixa inteira;
+  - passando o mouse num oito de uma faixa, o botão de alto-falante liga ou desliga aquela faixa só naquele oito.
+- **Barra de comando:** selecione oitos e escreva o que fazer, ou use os botões rápidos. Exemplos que ele entende:
+  - "tira a voz e deixa o grave 30% mais alto";
+  - "deixe apenas os instrumentos";
+  - "só a voz";
+  - "voz 30% mais baixa";
+  - "meio tempo";
+  - "repete 2 vezes";
+  - "apaga esses oitos".
 
-Atalhos: Espaço toca; dois cliques num bloco toca a partir dele; Delete apaga; Ctrl+D duplica; Ctrl+Z desfaz; V, B, G e O ligam e desligam voz, bateria, grave e outros.
+  Pedidos que ainda não existem (eco, filtros, paradas, mudar o tom, trazer a voz de outro trecho, injetar estilo) são avisados, e nada é mudado.
+- **Música original (embaixo):** os oitos da música. Clique para ouvir, arraste para o mix ou dê dois cliques para inserir depois da seleção. As setas ajustam onde fica o "1" da contagem.
 
-Tudo é salvo sozinho em `audio-remix\dados\projetos\`. A música original nunca é alterada.
+Atalhos:
+- Espaço: tocar ou pausar;
+- L: repetir a seleção;
+- Ctrl+Z: desfazer;
+- Ctrl+D: repetir a seleção;
+- Delete: apagar;
+- Ctrl+A: selecionar tudo;
+- Enter: escrever um pedido;
+- Ctrl + rodinha do mouse: zoom.
+
+Tudo é salvo sozinho em `audio-remix\dados\projetos\`. A música original nunca é alterada. O MP3 vai para `audio-remix\dados\exportados\`.
+
+Teste do entendedor de pedidos: `node editor/testes/comandos.test.js`.
 
 ## Etapa 0: analisar os mixes da Brotherhood (no PC)
 

@@ -160,6 +160,7 @@ class Pedido(BaseHTTPRequestHandler):
                 proj = abrir(pid)
                 info.update({"analise": {k: analise[k] for k in ("bpm", "duracao", "deslocamento", "unidades", "versao")},
                              "timeline": meta["timeline"], "alvo": meta.get("alvo", 165),
+                             "mixer": meta.get("mixer") or mixer_padrao(),
                              "duracao_mix": round(proj.duracao(meta["timeline"]), 2)})
             return self.enviar(info)
 
@@ -169,6 +170,8 @@ class Pedido(BaseHTTPRequestHandler):
             timeline = validar_timeline(dados.get("timeline"), proj)
             meta = motor.ler_json(p / "projeto.json")
             meta["timeline"] = timeline
+            if isinstance(dados.get("mixer"), dict):
+                meta["mixer"] = validar_mixer(dados["mixer"])
             if "alvo" in dados:
                 meta["alvo"] = max(10, min(900, float(dados["alvo"])))
             motor.gravar_json(p / "projeto.json", meta)
@@ -238,6 +241,19 @@ class Pedido(BaseHTTPRequestHandler):
                     restante -= len(pedaco)
             iniciar_trabalho(pid, {"arquivo": str(arquivo), "nome": nome})
         return self.enviar({"id": pid})
+
+
+def mixer_padrao():
+    return {f: {"ganho": 1.0, "mudo": False, "solo": False} for f in motor.FAIXAS}
+
+
+def validar_mixer(mixer):
+    saida = mixer_padrao()
+    for f in motor.FAIXAS:
+        m = mixer.get(f) or {}
+        saida[f] = {"ganho": max(0.0, min(2.0, float(m.get("ganho", 1)))),
+                    "mudo": bool(m.get("mudo")), "solo": bool(m.get("solo"))}
+    return saida
 
 
 def validar_timeline(timeline, proj):

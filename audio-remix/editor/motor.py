@@ -244,7 +244,7 @@ def descrever_unidades(faixas, unidades):
         energias = []
         for nome, s in sinais.items():
             trecho = s[a:b]
-            partes = np.array_split(np.abs(trecho), 32) if len(trecho) >= 32 else [np.abs(trecho)]
+            partes = np.array_split(np.abs(trecho), 96) if len(trecho) >= 96 else [np.abs(trecho)]
             u["onda"][nome] = [round(float(p.max()) if len(p) else 0.0, 3) for p in partes]
             energias.append(float(np.sqrt(np.mean(trecho ** 2))) if len(trecho) else 0.0)
         total = sum(energias) + 1e-9
