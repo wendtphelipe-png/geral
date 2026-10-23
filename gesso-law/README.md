@@ -48,6 +48,10 @@ o personagem entra como relevo baixo a partir de um desenho de contorno.
 
 Para gerar de novo: `pip install manifold3d trimesh numpy` e depois `python estrela_natal.py`.
 
+## Lotes prontos
+- `modelos/toy-story/`: 6 rostos (Woody, Buzz, Jessie, Rex, Alien, Sr. Cabeça de Batata), até 62 mm.
+  O motor comum das peças em relevo fica em `modelos/gesso.py`.
+
 ## Como pedir uma nova peça
 Mande, do jeito que for mais fácil:
 - o tema e o que deve aparecer (ex.: "foguete com o número 5");
