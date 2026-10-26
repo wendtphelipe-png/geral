@@ -11,7 +11,7 @@ Cada `*.png` mostra a peça de frente, em 3/4, de baixo e de lado.
 | Jessie | `jessie.stl` | 59 x 48 x 38 mm | 35 g |
 | Rex (de perfil) | `rex.stl` | 56 x 58 x 30 mm | 56 g |
 | Alien | `alien.stl` | 61 x 52 x 30 mm | 43 g |
-| Sr. Cabeça de Batata | `batata.stl` | 48 x 53 x 30 mm | 35 g |
+| Sr. Cabeça de Batata | `batata.stl` | 55 x 60 x 32 mm | 48 g |
 
 Todas cabem na impressora (máximo 70 mm) e as malhas estão fechadas.
 
@@ -24,7 +24,8 @@ Todas cabem na impressora (máximo 70 mm) e as malhas estão fechadas.
 - Buzz: o recorte é mais próximo, então a cabeça ocupa mais da peça e fica encaixada no peitoral.
 - Rex de perfil; o bracinho da frente foi retirado.
 - Jessie com a trança e o laço, presos à gola por baixo.
-- Sr. Cabeça de Batata: orelhas e aba do chapéu unidas à cabeça com curvas arredondadas.
+- Sr. Cabeça de Batata: corte das costas logo atrás das orelhas (elas ficam inteiras e apoiadas no fundo);
+  braços e pés retirados; vãos entre orelha e cabeça preenchidos por trás.
 - Partes finas engrossadas para pelo menos 2 mm.
 
 ## Como gerar de novo

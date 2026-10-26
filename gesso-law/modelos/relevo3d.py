@@ -242,7 +242,12 @@ def peca_inteira(malha, tamanho, profundidade, recuo, curva, furos, corte_y=-1e9
         # retira partes que ficam na frente (ex.: um braço) e mede a frente de novo
         for bx0, bx1, by0, by1, bz in remover:
             caixa = ((X[None, :] >= bx0) & (X[None, :] <= bx1) & (X[:, None] >= by0) & (X[:, None] <= by1))
-            frac[caixa[:, :, None] & (zs > bz)[None, None, :]] = 0
+            # z positivo-ou-zero relativo: apaga o que está à frente de bz; com bz < -500, apaga o que
+            # está atrás de (bz + 1000) (ex.: -1029 apaga atrás de z = -29)
+            if bz < -500:
+                frac[caixa[:, :, None] & (zs < bz + 1000)[None, None, :]] = 0
+            else:
+                frac[caixa[:, :, None] & (zs > bz)[None, None, :]] = 0
         ocupado = (frac > 0.5) & manter[:, :, None]
         frente = zs[np.nonzero(ocupado.any(axis=(0, 1)))[0].max()]
         plano = frente - profundidade
@@ -356,6 +361,7 @@ def main():
     ap.add_argument("--altura", type=float, default=5.0, help="só no modo medalha")
     ap.add_argument("--compressao", type=float, default=0.6, help="só no modo medalha")
     ap.add_argument("--furo", type=float, nargs=2)
+    ap.add_argument("--altura-final", type=float, help="amplia/reduz a peça pronta para esta altura (mm)")
     ap.add_argument("--olho", type=float, nargs=3, action="append", default=[],
                     help="x y raio da íris (mm); repita para cada olho")
     ap.add_argument("--manter", type=float, nargs=4, action="append", default=[],
@@ -389,6 +395,8 @@ def main():
         p.furos = furos
         p.finalizar()
         tm = p.malha()
+    if a.altura_final:
+        tm.apply_scale(a.altura_final / tm.extents[1])
     tm.export(a.saida + ".stl")
     e = tm.extents
     print(f"{a.saida}: {e[0]:.1f} x {e[1]:.1f} x {e[2]:.1f} mm | {len(tm.faces)} triângulos | fechada={tm.is_watertight}")
