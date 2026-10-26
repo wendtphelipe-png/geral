@@ -1,11 +1,15 @@
 """Transforma um modelo 3D (STL, OBJ, GLB) em peça de relevo para molde de gesso.
 
-A técnica é a de "baixo-relevo" usada em medalhas: olha o modelo de frente,
-mede a profundidade de cada ponto e comprime essa profundidade (achata o fundo
-e preserva os detalhes). O resultado continua sem contrassaída, com costas planas.
+Modo "inteiro" (padrão): mantém a profundidade real do personagem. Olha o
+modelo de frente e corta as costas num plano reto (--profundidade). O que fica
+escondido atrás de partes finas (aba do chapéu, orelha, braço) é preenchido até
+as costas: isso é o "suporte" que impede que quebrem no gesso. Partes finas na
+silhueta são engrossadas (--minimo).
+
+Modo "medalha": comprime a profundidade, como numa medalha.
 
 Uso:
-  python relevo3d.py modelo.glb saida --tamanho 60 --girar 0 0 0 --altura 5 --furo 0 24
+  python relevo3d.py modelo.stl saida --tamanho 60 --profundidade 25 --furo 0 24
 """
 import argparse
 import os
@@ -100,6 +104,9 @@ def main():
     ap.add_argument("--altura", type=float, default=5.0)
     ap.add_argument("--compressao", type=float, default=0.6)
     ap.add_argument("--furo", type=float, nargs=2)
+    ap.add_argument("--modo", choices=["inteiro", "medalha"], default="inteiro")
+    ap.add_argument("--profundidade", type=float, default=25.0, help="espessura máxima da peça (mm)")
+    ap.add_argument("--minimo", type=float, default=1.5, help="largura mínima de partes finas (mm)")
     a = ap.parse_args()
 
     malha = carregar(a.modelo, a.girar, a.tamanho)
@@ -107,14 +114,34 @@ def main():
     tri = malha.vertices[malha.faces].astype(np.float64)
     Z = _zbuffer(tri, p.X[0, 0] - p.dx / 2, p.Y[0, 0] - p.dx / 2, p.dx, p.X.shape[1], p.X.shape[0])
     dentro = Z > -1e8
-    dentro = ndimage.binary_opening(ndimage.binary_fill_holes(dentro), iterations=2)
-    rel = baixo_relevo(Z, dentro, p.dx, a.altura, a.compressao)
-    p.contorno(dentro)
-    p.iniciar()
-    p.H = p.H + rel
+    if a.modo == "medalha":
+        dentro = ndimage.binary_opening(ndimage.binary_fill_holes(dentro), iterations=2)
+        rel = baixo_relevo(Z, dentro, p.dx, a.altura, a.compressao)
+        p.contorno(dentro)
+        p.iniciar()
+        p.H = p.H + rel
+    else:
+        plano = Z[dentro].max() - a.profundidade
+        dentro &= Z > plano + 0.5
+        dentro = ndimage.binary_fill_holes(dentro)
+        # engrossa partes finas: fecha frestas e alarga o que for mais fino que o mínimo
+        r = max(1, int(round(a.minimo / 2 / p.dx)))
+        disco = np.hypot(*np.mgrid[-r:r + 1, -r:r + 1]) <= r
+        fino = dentro & ~ndimage.binary_opening(dentro, structure=disco)
+        dentro = ndimage.binary_closing(dentro, structure=disco) | ndimage.binary_dilation(fino, structure=disco)
+        Zp = np.where(Z > -1e8, Z, plano)
+        Zp = ndimage.grey_closing(Zp, size=3)       # tapa furinhos da malha
+        alt = np.clip(Zp - plano, 0, None)
+        alt = np.where(dentro, np.maximum(alt, 1.5), 0)   # parte fina ganha base mínima
+        p.H = np.where(dentro, alt, -1.0)
+        p.silhueta = dentro
     if a.furo:
         p.furo(*a.furo)
-    p.finalizar()
+    if a.modo == "medalha":
+        p.finalizar()
+    else:
+        for cx, cy, r in p.furos:
+            p.H = np.minimum(p.H, 5.0 * (np.hypot(p.X - cx, p.Y - cy) - r))
     tm = p.malha()
     tm.export(a.saida + ".stl")
     from PIL import Image
