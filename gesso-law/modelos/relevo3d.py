@@ -138,32 +138,59 @@ def _suave_uniao(a, b, k):
     return b * (1 - h) + a * h - k * h * (1 - h)
 
 
+def _degrau(t):
+    t = np.clip(t, 0, 1)
+    return t * t * (3 - 2 * t)
+
+
 def esculpir_olhos(d, Xg, Yg, zs, dx, olhos):
-    """Íris (sulco em anel) e pupila (rebaixo) na frente de cada olho.
+    """Íris em "pratinho" côncavo com um ponto de brilho em relevo (a pupila fica para a pintura).
 
     olhos: lista de (x, y, raio_da_íris) em mm, já na posição para onde o olho olha.
+    O rebaixo acompanha a curva do olho (desloca a superfície para dentro).
     """
     dentro = d < 0
     tem = dentro.any(axis=2)
     zf = np.where(tem, zs[len(zs) - 1 - np.argmax(dentro[:, :, ::-1], axis=2)], -1e9)
-    zf = ndimage.gaussian_filter(zf, 1.0)
-    corte = np.zeros(d.shape, bool)
+    prof = np.zeros(Xg.shape, np.float32)
     for cx, cy, r in olhos:
         rr = np.hypot(Xg - cx, Yg - cy)
-        anel = np.abs(rr - r) < 0.3            # contorno da íris: sulco de 0,6 mm
-        pupila = rr < 0.45 * r                 # pupila rebaixada
-        brilho = np.hypot(Xg - (cx + 0.28 * r), Yg - (cy + 0.3 * r)) < 0.16 * r  # brilho fica alto
-        prof = np.where(anel, 0.35, 0.0)
-        prof = np.where(pupila & ~brilho, 0.5, prof)
-        sel = prof > 0
-        corte |= sel[:, :, None] & (zs[None, None, :] > (zf - prof)[:, :, None])
-    if corte.any():
-        d_corte = ndimage.gaussian_filter(_dist(corte, dx), 0.6)
-        d = np.maximum(d, -d_corte)
+        # íris: um "pratinho" côncavo (mais fundo no meio), borda bem definida
+        t = np.clip(rr / r, 0, 1)
+        iris = _degrau((r - rr) / 0.2) * (0.25 + 0.25 * (1 - t * t))
+        # pontinho de brilho que fica em relevo dentro da íris
+        brilho = _degrau((0.2 * r - np.hypot(Xg - (cx + 0.35 * r), Yg - (cy + 0.35 * r))) / 0.1)
+        prof = np.maximum(prof, iris * (1 - brilho))
+    perto = _degrau(1 - (zf[:, :, None] - zs[None, None, :]) / 1.5)   # só perto da frente
+    return d + prof[:, :, None] * perto
+
+
+def dar_massa(d, Xg, Yg, zs, dx, regioes):
+    """Preenche vãos vistos de frente (pescoço fino, vão entre cabeça e gola) dentro de regiões
+    ovais, como massa de modelar alisada. Nunca põe material na frente de uma parte que já existe:
+    só sobe o fundo dos vãos estreitos até a altura das bordas em volta.
+
+    regioes: (x, y, raio_x, raio_y, raio) em mm; vãos mais estreitos que 2 x raio são preenchidos.
+    """
+    dentro = d < 0
+    tem = dentro.any(axis=2)
+    zf = np.where(tem, zs[len(zs) - 1 - np.argmax(dentro[:, :, ::-1], axis=2)], zs[0])
+    for cx, cy, rx, ry, r in regioes:
+        oval = np.hypot((Xg - cx) / rx, (Yg - cy) / ry) <= 1
+        k = int(round(r / dx))
+        disco = np.hypot(*np.mgrid[-k:k + 1, -k:k + 1]) <= k
+        hc = ndimage.grey_closing(zf, footprint=disco)
+        hc = ndimage.gaussian_filter(hc, 1.0 / dx)
+        novo = oval & (hc > zf + 0.3)
+        if not novo.any():
+            continue
+        preencher = novo[:, :, None] & (zs[None, None, :] <= hc[:, :, None])
+        d_fill = ndimage.gaussian_filter(_dist(np.pad(preencher, 3), dx), 1.0)[3:-3, 3:-3, 3:-3]
+        d = _suave_uniao(d, d_fill, 1.0)
     return d
 
 
-def peca_inteira(malha, tamanho, profundidade, recuo, curva, furos, corte_y=-1e9, arco=0.0, minimo=2.0, ombro=None, largura=40.0, lateral=False, fundo_vaos=3.0, placas=(), olhos=(), dx=0.2):
+def peca_inteira(malha, tamanho, profundidade, recuo, curva, furos, corte_y=-1e9, arco=0.0, minimo=2.0, ombro=None, largura=40.0, lateral=False, fundo_vaos=3.0, placas=(), olhos=(), manter_ovais=(), massa=(), remover=(), dx=0.2):
     from skimage.measure import marching_cubes
     import fast_simplification
     lado = tamanho + 6
@@ -172,12 +199,6 @@ def peca_inteira(malha, tamanho, profundidade, recuo, curva, furos, corte_y=-1e9
     tri = malha.vertices[malha.faces].astype(np.float64)
     z, sen, cont = _camadas(tri, x0, y0, dx, n, n)
     X = (np.arange(n) + 0.5) * dx + x0
-    frente = 0.0  # carregar() já põe a frente da parte recortada em z = 0
-    plano = max(frente - profundidade, malha.bounds[0, 2])
-    zs = np.arange(plano - 2 * dx, frente + 3 * dx, dx, dtype=np.float64)
-    frac = _ocupacao(z, sen, cont, zs, dx)
-    del z, sen
-    frac[:, :, zs < plano] = 0
     # recorte do busto: base em arco (mais baixa no meio, sobe nas laterais)
     fundo = corte_y + arco * (X[None, :] / (tamanho / 2)) ** 2
     manter = X[:, None] >= fundo
@@ -187,6 +208,29 @@ def peca_inteira(malha, tamanho, profundidade, recuo, curva, furos, corte_y=-1e9
         manter &= (X[:, None] >= ombro) | oval
         if lateral:
             manter &= np.abs(X[None, :]) <= largura / 2
+    if manter_ovais:
+        # recorte livre: fica só o que estiver dentro de algum dos ovais
+        manter = np.zeros_like(manter)
+        for cx, cy, rx, ry in manter_ovais:
+            manter |= ((X[None, :] - cx) / rx) ** 2 + ((X[:, None] - cy) / ry) ** 2 <= 1
+    # a frente é o ponto mais à frente DENTRO do recorte (um braço cortado fora não conta)
+    zz = np.where(np.isfinite(z), z, -np.inf).max(axis=2)
+    frente = zz[manter & (cont > 0)].max()
+    # com remoção, a frente final fica mais funda: reserva espaço até o z mais fundo das caixas
+    fundo_rem = min((r[4] for r in remover), default=frente)
+    plano = max(min(frente, fundo_rem) - profundidade, malha.bounds[0, 2])
+    zs = np.arange(plano - 2 * dx, frente + 3 * dx, dx, dtype=np.float64)
+    frac = _ocupacao(z, sen, cont, zs, dx)
+    del z, sen, zz
+    if remover:
+        # retira partes que ficam na frente (ex.: um braço) e mede a frente de novo
+        for bx0, bx1, by0, by1, bz in remover:
+            caixa = ((X[None, :] >= bx0) & (X[None, :] <= bx1) & (X[:, None] >= by0) & (X[:, None] <= by1))
+            frac[caixa[:, :, None] & (zs > bz)[None, None, :]] = 0
+        ocupado = (frac > 0.5) & manter[:, :, None]
+        frente = zs[np.nonzero(ocupado.any(axis=(0, 1)))[0].max()]
+        plano = frente - profundidade
+    frac[:, :, zs < plano] = 0
     # distância (mm) até a linha de corte do busto, para um corte liso e com borda arredondada
     d_corte = ndimage.gaussian_filter(
         (ndimage.distance_transform_edt(~manter) - ndimage.distance_transform_edt(manter)).astype(np.float32) * dx, 2.0)
@@ -222,6 +266,8 @@ def peca_inteira(malha, tamanho, profundidade, recuo, curva, furos, corte_y=-1e9
         d_placa = np.maximum(d_oval[:, :, None], (zs - (plano + esp))[None, None, :])
         d_placa = ndimage.gaussian_filter(d_placa, 1.5 / dx / 2)
         d = _suave_uniao(d, d_placa, 1.5)
+    if massa:
+        d = dar_massa(d, Xg, Yg, zs, dx, massa)
     if olhos:
         d = esculpir_olhos(d, Xg, Yg, zs, dx, olhos)
     d = np.maximum(d, d_plano)
@@ -294,6 +340,12 @@ def main():
     ap.add_argument("--furo", type=float, nargs=2)
     ap.add_argument("--olho", type=float, nargs=3, action="append", default=[],
                     help="x y raio da íris (mm); repita para cada olho")
+    ap.add_argument("--manter", type=float, nargs=4, action="append", default=[],
+                    help="x y raio_x raio_y (mm): recorte livre, fica só o que está dentro dos ovais")
+    ap.add_argument("--massa", type=float, nargs=5, action="append", default=[],
+                    help="x y raio_x raio_y raio (mm): preenche reentrâncias dentro do oval")
+    ap.add_argument("--remover", type=float, nargs=5, action="append", default=[],
+                    help="x0 x1 y0 y1 z (mm): apaga o que estiver na caixa e à frente de z (ex.: um braço)")
     ap.add_argument("--placa", type=float, nargs=5, action="append", default=[],
                     help="x y raio_x raio_y espessura (mm): reforço oval atrás de uma região")
     ap.add_argument("--busto", type=float, default=1.0, help="fração de cima do modelo que vira peça (0.3 = 30%%)")
@@ -303,7 +355,7 @@ def main():
     malha, corte_y = carregar(a.modelo, a.girar, a.tamanho, a.busto, a.ajuste)
     furos = [(a.furo[0], a.furo[1], 1.8)] if a.furo else []
     if a.modo == "inteiro":
-        tm = peca_inteira(malha, a.tamanho, a.profundidade, a.recuo, a.curva, furos, corte_y, a.arco, a.minimo, a.ombro, a.largura, a.lateral, a.fundo_vaos, a.placa, a.olho)
+        tm = peca_inteira(malha, a.tamanho, a.profundidade, a.recuo, a.curva, furos, corte_y, a.arco, a.minimo, a.ombro, a.largura, a.lateral, a.fundo_vaos, a.placa, a.olho, a.manter, a.massa, a.remover)
     else:
         p = Peca(os.path.basename(a.saida), largura=a.tamanho + 4, altura=a.tamanho + 4, dx=0.15)
         tri = malha.vertices[malha.faces].astype(np.float64)
