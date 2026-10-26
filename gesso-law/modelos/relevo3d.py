@@ -111,7 +111,7 @@ def carregar(caminho, girar=(0, 0, 0), tamanho=60.0, busto=1.0, ajuste="maior"):
     centro = (lo + hi) / 2
     if ajuste == "altura":
         centro[0] = np.median(v[:, 0])
-    centro[2] = malha.bounds[1, 2]  # frente em z = 0
+    centro[2] = v[:, 2].max()  # frente da parte recortada em z = 0
     malha.apply_translation(-centro)
     escala = tamanho / ((hi[1] - lo[1]) if ajuste == "altura" else max(hi[0] - lo[0], hi[1] - lo[1]))
     malha.apply_scale(escala)
@@ -138,7 +138,32 @@ def _suave_uniao(a, b, k):
     return b * (1 - h) + a * h - k * h * (1 - h)
 
 
-def peca_inteira(malha, tamanho, profundidade, recuo, curva, furos, corte_y=-1e9, arco=0.0, minimo=2.0, ombro=None, largura=40.0, lateral=False, fundo_vaos=3.0, dx=0.2):
+def esculpir_olhos(d, Xg, Yg, zs, dx, olhos):
+    """Íris (sulco em anel) e pupila (rebaixo) na frente de cada olho.
+
+    olhos: lista de (x, y, raio_da_íris) em mm, já na posição para onde o olho olha.
+    """
+    dentro = d < 0
+    tem = dentro.any(axis=2)
+    zf = np.where(tem, zs[len(zs) - 1 - np.argmax(dentro[:, :, ::-1], axis=2)], -1e9)
+    zf = ndimage.gaussian_filter(zf, 1.0)
+    corte = np.zeros(d.shape, bool)
+    for cx, cy, r in olhos:
+        rr = np.hypot(Xg - cx, Yg - cy)
+        anel = np.abs(rr - r) < 0.3            # contorno da íris: sulco de 0,6 mm
+        pupila = rr < 0.45 * r                 # pupila rebaixada
+        brilho = np.hypot(Xg - (cx + 0.28 * r), Yg - (cy + 0.3 * r)) < 0.16 * r  # brilho fica alto
+        prof = np.where(anel, 0.35, 0.0)
+        prof = np.where(pupila & ~brilho, 0.5, prof)
+        sel = prof > 0
+        corte |= sel[:, :, None] & (zs[None, None, :] > (zf - prof)[:, :, None])
+    if corte.any():
+        d_corte = ndimage.gaussian_filter(_dist(corte, dx), 0.6)
+        d = np.maximum(d, -d_corte)
+    return d
+
+
+def peca_inteira(malha, tamanho, profundidade, recuo, curva, furos, corte_y=-1e9, arco=0.0, minimo=2.0, ombro=None, largura=40.0, lateral=False, fundo_vaos=3.0, placas=(), olhos=(), dx=0.2):
     from skimage.measure import marching_cubes
     import fast_simplification
     lado = tamanho + 6
@@ -147,7 +172,7 @@ def peca_inteira(malha, tamanho, profundidade, recuo, curva, furos, corte_y=-1e9
     tri = malha.vertices[malha.faces].astype(np.float64)
     z, sen, cont = _camadas(tri, x0, y0, dx, n, n)
     X = (np.arange(n) + 0.5) * dx + x0
-    frente = malha.bounds[1, 2]
+    frente = 0.0  # carregar() já põe a frente da parte recortada em z = 0
     plano = max(frente - profundidade, malha.bounds[0, 2])
     zs = np.arange(plano - 2 * dx, frente + 3 * dx, dx, dtype=np.float64)
     frac = _ocupacao(z, sen, cont, zs, dx)
@@ -189,6 +214,16 @@ def peca_inteira(malha, tamanho, profundidade, recuo, curva, furos, corte_y=-1e9
     d_miolo = ndimage.gaussian_filter(np.clip(_dist(alcance, dx), -20, 20), curva / dx / 2) + recuo
     d = _suave_uniao(d_modelo, d_miolo, curva)
     d = -_suave_uniao(-d, -(d_corte[:, :, None] + 0.2), 0.8)
+    Yg, Xg = np.meshgrid(X, X, indexing="ij")
+    for cx, cy, rx, ry, esp in placas:
+        # placa de reforço oval atrás de uma região (dá massa a cabeças estreitas)
+        q = np.hypot((Xg - cx) / rx, (Yg - cy) / ry)
+        d_oval = (q - 1) * min(rx, ry)
+        d_placa = np.maximum(d_oval[:, :, None], (zs - (plano + esp))[None, None, :])
+        d_placa = ndimage.gaussian_filter(d_placa, 1.5 / dx / 2)
+        d = _suave_uniao(d, d_placa, 1.5)
+    if olhos:
+        d = esculpir_olhos(d, Xg, Yg, zs, dx, olhos)
     d = np.maximum(d, d_plano)
     for cx, cy, r in furos:
         dist_xy = np.hypot(X[None, :] - cx, X[:, None] - cy) - r
@@ -257,6 +292,10 @@ def main():
     ap.add_argument("--altura", type=float, default=5.0, help="só no modo medalha")
     ap.add_argument("--compressao", type=float, default=0.6, help="só no modo medalha")
     ap.add_argument("--furo", type=float, nargs=2)
+    ap.add_argument("--olho", type=float, nargs=3, action="append", default=[],
+                    help="x y raio da íris (mm); repita para cada olho")
+    ap.add_argument("--placa", type=float, nargs=5, action="append", default=[],
+                    help="x y raio_x raio_y espessura (mm): reforço oval atrás de uma região")
     ap.add_argument("--busto", type=float, default=1.0, help="fração de cima do modelo que vira peça (0.3 = 30%%)")
     ap.add_argument("--arco", type=float, default=0.0, help="curva da base do busto (mm)")
     a = ap.parse_args()
@@ -264,7 +303,7 @@ def main():
     malha, corte_y = carregar(a.modelo, a.girar, a.tamanho, a.busto, a.ajuste)
     furos = [(a.furo[0], a.furo[1], 1.8)] if a.furo else []
     if a.modo == "inteiro":
-        tm = peca_inteira(malha, a.tamanho, a.profundidade, a.recuo, a.curva, furos, corte_y, a.arco, a.minimo, a.ombro, a.largura, a.lateral, a.fundo_vaos)
+        tm = peca_inteira(malha, a.tamanho, a.profundidade, a.recuo, a.curva, furos, corte_y, a.arco, a.minimo, a.ombro, a.largura, a.lateral, a.fundo_vaos, a.placa, a.olho)
     else:
         p = Peca(os.path.basename(a.saida), largura=a.tamanho + 4, altura=a.tamanho + 4, dx=0.15)
         tri = malha.vertices[malha.faces].astype(np.float64)
