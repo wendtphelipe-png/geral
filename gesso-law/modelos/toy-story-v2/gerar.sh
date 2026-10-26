@@ -7,10 +7,11 @@ python3 $R woody_fig.stl woody --girar -90 0 0 --busto 0.34 --tamanho 60 --profu
     --ombro -20 --largura 34
 python3 $R buzz_fig.stl buzz --girar -90 0 0 --busto 0.28 --tamanho 60 --ajuste altura --profundidade 28 \
     --ombro -10 --largura 58 --lateral
-python3 $R jessie_fig.stl jessie --girar -90 0 0 --busto 0.35 --tamanho 60 --profundidade 30 \
-    --ombro -18 --largura 34
+python3 $R jessie_fig.stl jessie --girar -90 0 0 --busto 0.35 --tamanho 60 --profundidade 38 \
+    --manter -1 15 30 11 --manter 0 -1 16 14 --manter 2 -17 10 5 --manter 20 -12 12 8 --fundir 14 -16.5 9 3 2.0
 python3 $R rex_fig.stl rex --girar -90 90 0 --busto 0.40 --tamanho 58 --ajuste altura --profundidade 30 \
     --remover -11 1 -31 -15 -21
 python3 $R alien_fig.stl alien --girar -70 -20 0 --busto 0.62 --tamanho 62 --profundidade 30 --arco 3
 python3 $R batata_fig.stl batata --girar -90 0 0 --busto 0.85 --tamanho 62 --profundidade 30 \
-    --manter -2.5 -5 18.8 22 --manter -6 20 13 8 --manter -23 1 5.8 8.6 --manter 14.3 5.5 6 7.5
+    --manter -2.5 -5 17.3 22 --manter -1 19.5 17.5 8 --manter -23 1 5.8 8.6 --manter 14.3 5.5 6 7.5 \
+    --fundir -17.5 2 3.5 9 2.5 --fundir 10.5 6 3.5 8 2.5 --fundir -1 15.5 18 3.5 2.0 --remover 13.6 19 -12 -1.5 -100
