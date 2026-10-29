@@ -1,0 +1,6 @@
+.venv/
+modelos/
+config.json
+__pycache__/
+exemplos/teste/paginas/
+exemplos/teste/conferencia-automatica.json

@@ -1,0 +1,14 @@
+{
+  "codigo": "teste",
+  "titulo": "Página de teste",
+  "idade": "5-8",
+  "variacoes": 1,
+  "semente": 1000,
+  "paginas": [
+    {
+      "n": 1,
+      "cena": "Um dinossauro bebê sorridente saindo do ovo, com folhas grandes em volta",
+      "prompt": "a cute smiling baby dinosaur hatching from a big egg, a few large leaves around, simple composition, centered"
+    }
+  ]
+}

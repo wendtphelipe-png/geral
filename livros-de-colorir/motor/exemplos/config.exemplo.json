@@ -1,0 +1,9 @@
+{
+  "livros": "",
+  "desenho": {
+    "precisao": "float16",
+    "passos": 30,
+    "guia": 7.0,
+    "lora_peso": 1.0
+  }
+}
