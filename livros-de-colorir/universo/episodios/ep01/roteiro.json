@@ -1,0 +1,185 @@
+{
+  "codigo": "rabiscos-ep01",
+  "titulo": "Os Rabiscos: O dia em que as cores sumiram",
+  "autor": "Rabislândia",
+  "idade": "5-8",
+  "idioma": "pt",
+  "variacoes": 6,
+  "semente": 2026,
+  "pagina": {
+    "formato": "A4",
+    "margem_mm": 12
+  },
+  "personagens": {
+    "cacho": {
+      "referencia": "../../fichas/cacho-referencia.png",
+      "forca": 0.6
+    },
+    "zuzu": {
+      "referencia": "../../fichas/zuzu-referencia.png",
+      "forca": 0.6
+    },
+    "pingo": {
+      "referencia": "../../fichas/pingo-referencia.png",
+      "forca": 0.6
+    },
+    "lala": {
+      "referencia": "../../fichas/lala-referencia.png",
+      "forca": 0.6
+    },
+    "compasso": {
+      "referencia": "../../fichas/compasso-referencia.png",
+      "forca": 0.6
+    },
+    "cinzao": {
+      "referencia": "../../fichas/cinzao-referencia.png",
+      "forca": 0.6
+    }
+  },
+  "paginas": [
+    {
+      "n": 1,
+      "cena": "O Cacho acha o Pingo chorando: a flor dele ficou sem cor",
+      "personagem": "cacho",
+      "prompt": "Cacho, a cute bean-shaped round character with one spiral curl on top of his head, big round eyes, tiny round hands and short legs looking surprised at Pingo, a tiny cute water-drop shaped character with a little curled tip, big eyes who is crying next to a big flower, simple hills and sun in the background, big simple shapes, few large areas to color"
+    },
+    {
+      "n": 2,
+      "cena": "A turma corre para a casa do Vô Compasso",
+      "personagem": "cacho",
+      "prompt": "Cacho, a cute bean-shaped round character with one spiral curl on top of his head, big round eyes, tiny round hands and short legs running happily along a path towards a round little house shaped like a circle, a few spiral trees, big simple shapes, few large areas to color"
+    },
+    {
+      "n": 3,
+      "cena": "O Vô Compasso conta que o Cinzão aspirou as cores",
+      "personagem": "compasso",
+      "prompt": "Grandpa Compass, a friendly drawing-compass character with a round head, round glasses, a big moustache and two long thin legs telling a story with one arm raised, standing in front of a big round window, big simple shapes, few large areas to color"
+    },
+    {
+      "n": 4,
+      "cena": "A Zuzu inventa o Detector de Cores",
+      "personagem": "zuzu",
+      "prompt": "Zuzu, a cute character shaped like an upside-down drop with a spiky zigzag crest on top and a lightning bolt on her chest holding a funny invention with a big antenna and round dials, excited, big simple shapes, few large areas to color"
+    },
+    {
+      "n": 5,
+      "cena": "A turma parte para o Bosque das Folhas",
+      "personagem": "cacho",
+      "prompt": "Cacho, a cute bean-shaped round character with one spiral curl on top of his head, big round eyes, tiny round hands and short legs walking into a forest of big spiral-shaped trees, waving, big simple shapes, few large areas to color"
+    },
+    {
+      "n": 6,
+      "cena": "A árvore-espiral sem cor",
+      "personagem": "lala",
+      "prompt": "Lala, a cute round character with a big two-loop bow on her head and a wavy little skirt hugging a big tree with a spiral trunk and large round leaves, big simple shapes, few large areas to color"
+    },
+    {
+      "n": 7,
+      "cena": "Os cogumelos saltitantes",
+      "personagem": "pingo",
+      "prompt": "Pingo, a tiny cute water-drop shaped character with a little curled tip, big eyes jumping on top of big round mushrooms with large spots, big simple shapes, few large areas to color"
+    },
+    {
+      "n": 8,
+      "cena": "As borboletas sem cor",
+      "personagem": "lala",
+      "prompt": "Lala, a cute round character with a big two-loop bow on her head and a wavy little skirt dancing with three big butterflies with large simple wings, big simple shapes, few large areas to color"
+    },
+    {
+      "n": 9,
+      "cena": "Encontre a primeira Manchinha",
+      "personagem": "cacho",
+      "prompt": "Cacho, a cute bean-shaped round character with one spiral curl on top of his head, big round eyes, tiny round hands and short legs looking with a magnifying glass at a small funny blob creature hiding behind a big leaf, big simple shapes, few large areas to color"
+    },
+    {
+      "n": 10,
+      "cena": "O lago parado",
+      "personagem": "pingo",
+      "prompt": "Pingo, a tiny cute water-drop shaped character with a little curled tip, big eyes sitting on a big lily pad in a calm pond with a few big water lilies, big simple shapes, few large areas to color"
+    },
+    {
+      "n": 11,
+      "cena": "A ponte em zigue-zague",
+      "personagem": "zuzu",
+      "prompt": "Zuzu, a cute character shaped like an upside-down drop with a spiky zigzag crest on top and a lightning bolt on her chest crossing a wooden zigzag bridge over a small river, big simple stones below, big simple shapes, few large areas to color"
+    },
+    {
+      "n": 12,
+      "cena": "O Pingo descobre um rastro de manchas",
+      "personagem": "pingo",
+      "prompt": "Pingo, a tiny cute water-drop shaped character with a little curled tip, big eyes following a trail of big round footprints on the ground, curious, big simple shapes, few large areas to color"
+    },
+    {
+      "n": 13,
+      "cena": "Os pássaros dormindo",
+      "personagem": "lala",
+      "prompt": "Lala, a cute round character with a big two-loop bow on her head and a wavy little skirt singing with musical notes around her, two big round sleepy birds on a branch, big simple shapes, few large areas to color"
+    },
+    {
+      "n": 14,
+      "cena": "Os pássaros acordam",
+      "personagem": "cacho",
+      "prompt": "Cacho, a cute bean-shaped round character with one spiral curl on top of his head, big round eyes, tiny round hands and short legs cheering as two big round birds fly happily above him, big simple shapes, few large areas to color"
+    },
+    {
+      "n": 15,
+      "cena": "O caracol devagar",
+      "personagem": "pingo",
+      "prompt": "Pingo, a tiny cute water-drop shaped character with a little curled tip, big eyes talking to a big friendly snail with a spiral shell, big simple shapes, few large areas to color"
+    },
+    {
+      "n": 16,
+      "cena": "O Vô Compasso desenha um círculo mágico",
+      "personagem": "compasso",
+      "prompt": "Grandpa Compass, a friendly drawing-compass character with a round head, round glasses, a big moustache and two long thin legs drawing a huge perfect circle on the ground with one leg, sparkles around, big simple shapes, few large areas to color"
+    },
+    {
+      "n": 17,
+      "cena": "A Zuzu e o detector apitando",
+      "personagem": "zuzu",
+      "prompt": "Zuzu, a cute character shaped like an upside-down drop with a spiky zigzag crest on top and a lightning bolt on her chest holding her antenna invention that shows a big exclamation mark, surprised, big simple shapes, few large areas to color"
+    },
+    {
+      "n": 18,
+      "cena": "Pegadas gigantes do Cinzão",
+      "personagem": "cacho",
+      "prompt": "Cacho, a cute bean-shaped round character with one spiral curl on top of his head, big round eyes, tiny round hands and short legs standing next to giant cloud-shaped footprints, amazed, big simple shapes, few large areas to color"
+    },
+    {
+      "n": 19,
+      "cena": "A turma se esconde atrás de um arbusto",
+      "personagem": "pingo",
+      "prompt": "Pingo, a tiny cute water-drop shaped character with a little curled tip, big eyes peeking out from behind a big round bush, a few big leaves, big simple shapes, few large areas to color"
+    },
+    {
+      "n": 20,
+      "cena": "O Cinzão aparece aspirando cores",
+      "personagem": "cinzao",
+      "prompt": "Grumble Gray, a funny clumsy cloud-shaped villain with a round transparent belly full of little circles sucking colors with a big funny vacuum tube, mischievous face, big simple shapes, few large areas to color"
+    },
+    {
+      "n": 21,
+      "cena": "O Cinzão tropeça numa pedra",
+      "personagem": "cinzao",
+      "prompt": "Grumble Gray, a funny clumsy cloud-shaped villain with a round transparent belly full of little circles tripping over a big round stone, little circles flying out of his belly, big simple shapes, few large areas to color"
+    },
+    {
+      "n": 22,
+      "cena": "A turma pega as cores que caíram",
+      "personagem": "cacho",
+      "prompt": "Cacho, a cute bean-shaped round character with one spiral curl on top of his head, big round eyes, tiny round hands and short legs catching big round color bubbles with both hands, happy, big simple shapes, few large areas to color"
+    },
+    {
+      "n": 23,
+      "cena": "Festa no bosque",
+      "personagem": "lala",
+      "prompt": "Lala, a cute round character with a big two-loop bow on her head and a wavy little skirt dancing at a party in the forest with bunting flags and big balloons, big simple shapes, few large areas to color"
+    },
+    {
+      "n": 24,
+      "cena": "Uma garrafa com um mapa chega boiando",
+      "personagem": "pingo",
+      "prompt": "Pingo, a tiny cute water-drop shaped character with a little curled tip, big eyes finding a big bottle with a rolled map inside at the edge of a pond, surprised, big simple shapes, few large areas to color"
+    }
+  ]
+}

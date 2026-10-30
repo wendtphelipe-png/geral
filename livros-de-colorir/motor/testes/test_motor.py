@@ -105,7 +105,7 @@ class TestConferencia(unittest.TestCase):
 
     def test_desenho_cortado_reprova(self):
         cinza = desenho_falso()
-        cinza[:, :5] = 0.03  # traço encostando na borda da imagem
+        cinza[100:700, :5] = 0.03  # desenho cortado: muito traço na borda
         r = self.conferir(cinza)
         self.assertTrue(any('cortado' in m for m in r['motivos']))
 

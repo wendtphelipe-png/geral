@@ -32,7 +32,7 @@ Para fazer a criança escolher sempre o nosso livro, ele tem de ser **mais que p
 ### Três conceitos para escolher (os nomes são provisórios)
 
 **A. "Os Rabiscos": criaturas que vivem no papel e ganham vida quando pintadas** (recomendado)
-- Os Rabiscos são bichinhos feitos de traço que moram dentro dos livros. Um vilão engraçado, o **Borrão**, roubou as cores do mundo deles. **Cada página pintada devolve as cores** a um pedaço do mundo.
+- Os Rabiscos são bichinhos feitos de traço que moram dentro dos livros. Um vilão engraçado, o **Cinzão**, roubou as cores do mundo deles. **Cada página pintada devolve as cores** a um pedaço do mundo.
 - **A história justifica o ato de pintar.** A criança não está "colorindo um desenho": está salvando os Rabiscos.
 - Casa perfeitamente com o diferencial "Ganha Vida" (seção 3): depois de pintado, o Rabisco **aparece dançando na tela**, com as cores que a criança escolheu.
 - Funciona em qualquer país, porque não depende de cultura local.

@@ -115,6 +115,13 @@ def caixa_do_desenho(tinta, folga):
     return e, a, d, b
 
 
+def cortado_na_borda(tinta, limite=0.03):
+    """Desenho cortado: muita tinta encostada numa das bordas. Uma linha de
+    horizonte ou de chão que atravessa a página encosta em poucos pontos e
+    não conta."""
+    return bool(max(tinta[0].mean(), tinta[-1].mean(), tinta[:, 0].mean(), tinta[:, -1].mean()) > limite)
+
+
 def acabar(entrada, saida, largura_mm=210, altura_mm=297, margem_mm=12,
            traco_mm=1.3, esvaziar=True, sujeira_mm2=0.6):
     """Faz o acabamento de uma página e grava o PNG em 300 dpi.
@@ -163,5 +170,5 @@ def acabar(entrada, saida, largura_mm=210, altura_mm=297, margem_mm=12,
         'traco_original_mm': round(traco_antes / (MM * fator), 2),
         'traco_final_mm': round(largura_do_traco(final < 0.5) / MM, 2),
         'manchas_esvaziadas': manchas,
-        'cortado_na_borda': bool(tinta0[0].any() or tinta0[-1].any() or tinta0[:, 0].any() or tinta0[:, -1].any()),
+        'cortado_na_borda': cortado_na_borda(tinta0),
     }
