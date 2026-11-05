@@ -5,8 +5,8 @@
 R=../relevo3d.py
 python3 $R woody_fig.stl woody --girar -90 0 0 --busto 0.34 --tamanho 60 --profundidade 32 \
     --ombro -20 --largura 34
-python3 $R buzz_fig.stl buzz --girar -90 0 0 --busto 0.28 --tamanho 60 --ajuste altura --profundidade 28 \
-    --ombro -10 --largura 58 --lateral
+python3 $R buzz_fig.stl buzz --girar -90 0 0 --busto 0.28 --tamanho 60 --ajuste altura --profundidade 38 \
+    --ombro -10 --largura 58 --lateral --massa 0 -12 17 3.5 3.5 --minimo 4
 python3 $R jessie_fig.stl jessie --girar -90 0 0 --busto 0.35 --tamanho 60 --profundidade 38 \
     --manter -1 15 30 11 --manter 0 -1 16 14 --manter 2 -17 10 5 --manter 20 -12 12 8 --fundir 14 -16.5 9 3 2.0
 python3 $R rex_fig.stl rex --girar -90 90 0 --busto 0.40 --tamanho 58 --ajuste altura --profundidade 30 \
