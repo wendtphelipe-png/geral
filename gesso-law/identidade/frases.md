@@ -52,5 +52,8 @@ C. Do meu caderno para o seu presente. Cada peça pintada é um passo meu rumo a
 7. Um, dois, três... LAW!
 8. Oi, minha plateia! Hoje o palco é aqui.
 
-Nome para os seguidores: crew da LAW / minha crew (outras: plateia, pincelados, time do palco).
+Abertura escolhida: **5, 6, 7, 8...** (o nome do seguidor ainda será definido; "crew" foi descartado por ser em inglês).
+
+Nomes para os seguidores (opções): minha torcida, artistas, brilhantes, estrelinhas, minha turma,
+minha plateia, pincelados, minha trupe, parceiros de passo, time do palco.
 Fechamento: "Até o próximo passo!" ou "Fecha a cortina, crew!"
