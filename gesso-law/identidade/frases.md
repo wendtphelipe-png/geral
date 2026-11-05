@@ -3,6 +3,7 @@ Voz: a própria Laura, em primeira pessoa. Alegre, determinada, simples.
 
 ## Escolhidos
 - **Slogan:** Eu danço. Você pinta. A gente brilha.
+- **Abertura dos vídeos:** 5, 6, 7, 8... Oi, estrelinhas! Aqui é a LAW!
 - **Bio:** Sou a Laura, a LAW. Danço hip hop pela seleção brasileira e faço presentes para pintar. Cada peça me leva mais longe no palco.
 
 ## Frase principal (slogan): opções
@@ -52,7 +53,9 @@ C. Do meu caderno para o seu presente. Cada peça pintada é um passo meu rumo a
 7. Um, dois, três... LAW!
 8. Oi, minha plateia! Hoje o palco é aqui.
 
-Abertura escolhida: **5, 6, 7, 8...** (o nome do seguidor ainda será definido; "crew" foi descartado por ser em inglês).
+**Abertura escolhida:** "5, 6, 7, 8... Oi, estrelinhas! Aqui é a LAW!"
+**Nome dos seguidores:** estrelinhas (combina com as estrelinhas que ela desenha no caderno).
+**Fechamento sugerido:** "Até o próximo passo, estrelinhas!" ou "Continua brilhando, estrelinha!"
 
 Nomes para os seguidores (opções): minha torcida, artistas, brilhantes, estrelinhas, minha turma,
 minha plateia, pincelados, minha trupe, parceiros de passo, time do palco.
