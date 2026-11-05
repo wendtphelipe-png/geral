@@ -1,6 +1,10 @@
 # Frases de apresentação: Palco & Pincel by LAW
 Voz: a própria Laura, em primeira pessoa. Alegre, determinada, simples.
 
+## Escolhidos
+- **Slogan:** Eu danço. Você pinta. A gente brilha.
+- **Bio:** Sou a Laura, a LAW. Danço hip hop pela seleção brasileira e faço presentes para pintar. Cada peça me leva mais longe no palco.
+
 ## Frase principal (slogan): opções
 1. **Eu danço. Você pinta. A gente brilha.**
 2. **Cada peça, um passo meu.**
@@ -37,3 +41,16 @@ C. Do meu caderno para o seu presente. Cada peça pintada é um passo meu rumo a
    Vem com [o que vem no kit]. Encomendas pelo direct.
 4. **Encomenda:** Aniversário chegando? Eu faço as lembrancinhas: cada convidado leva uma peça para
    pintar e uma memória da festa. Me chama no direct.
+
+## Abertura dos vídeos (bordão): opções
+1. 5, 6, 7, 8... oi, minha crew! Aqui é a LAW!
+2. Luz no palco, pincel na mão: é a LAW!
+3. Holofote ligado! Bora, crew?
+4. Abre a cortina que a LAW chegou!
+5. Toca a música! Oi, oi, crew da LAW!
+6. Pincel pronto, passo certo! Oi, crew!
+7. Um, dois, três... LAW!
+8. Oi, minha plateia! Hoje o palco é aqui.
+
+Nome para os seguidores: crew da LAW / minha crew (outras: plateia, pincelados, time do palco).
+Fechamento: "Até o próximo passo!" ou "Fecha a cortina, crew!"
