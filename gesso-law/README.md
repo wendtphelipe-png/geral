@@ -1,4 +1,18 @@
-# Gesso Law
+# Palco & Pincel by LAW
+
+Nome escolhido (provisório): **Palco & Pincel by LAW**. A pasta continua `gesso-law/` por enquanto.
+
+## A empresa
+- Comandada pela Laura Albuquerque Wendt ("LAW"), 11 anos, dançarina de danças urbanas da seleção
+  brasileira de hip hop (participou do mundial HHI nos Estados Unidos).
+- Objetivo: ela ter o próprio dinheiro e financiar a carreira na dança.
+- Valores dela: determinação, esforço, alegria.
+- Sonhos: disputar pódio no mundial com um grupo, dançar na Disney e no intervalo da NBA, ter patrocinadores
+  que vejam a dança como esporte, e no futuro ter escola, cursos e ser coreógrafa e professora.
+- Posicionamento: presentes afetivos, personalizados e criativos para pintar (não "gesso").
+  Público de todas as idades: lembrancinhas, presentes, decoração de datas, passatempo para adultos.
+- Conteúdo (Instagram, TikTok, site) sempre ligado à jornada dela na dança.
+- Site: palcoepincel.com.br estava livre em 26/10/2026 (conferir de novo antes de registrar).
 
 Ideia de negócio física: lembranças de gesso para aniversários e datas comemorativas.
 
