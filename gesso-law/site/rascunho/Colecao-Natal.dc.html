@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Coleção de Natal — Palco &amp; Pincel</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bowlby+One&amp;family=Permanent+Marker&amp;family=Patrick+Hand&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF8EC}
+a{color:#4A2A9E}a:hover{color:#2A1A5E}
+</style>
+</helmet>
+<div style="background: #FFF8EC; color: #2A1A5E; font-family: 'Patrick Hand', cursive; font-size: 21px; line-height: 1.45">
+
+<header style="border-bottom: 3px solid #2A1A5E">
+<div style="max-width: 1240px; margin: 0 auto; padding: 18px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+<a href="Main.dc.html" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: #2A1A5E">
+<span style="position: relative; padding: 0 4px"><span style="position: absolute; left: 0px; right: 0px; top: 48%; height: 32%; background: #FFD23F; border-radius: 4px"></span><span style="position: relative; font-family: 'Bowlby One', sans-serif; font-size: 22px">PALCO</span></span>
+<span style="font-family: 'Bowlby One', sans-serif; font-size: 18px; color: #C2185B">&amp;</span>
+<span style="position: relative; padding: 0 4px"><span style="position: absolute; left: 0px; right: 0px; top: 48%; height: 32%; background: #FF4F9A; opacity: 0.45; border-radius: 4px"></span><span style="position: relative; font-family: 'Bowlby One', sans-serif; font-size: 22px">PINCEL</span></span>
+<span style="font-family: 'Permanent Marker', cursive; font-size: 16px; color: #C2185B">by LAW</span>
+</a>
+<nav aria-label="Menu principal" style="display: flex; flex-wrap: wrap; gap: 22px; align-items: center">
+<a href="Colecao-Natal.dc.html" style="text-decoration: underline">Coleção de Natal</a>
+<a href="Livros.dc.html" style="text-decoration: none">Livros de colorir</a>
+<a href="Livros.dc.html" style="text-decoration: none">Assinatura</a>
+<a href="Sobre.dc.html" style="text-decoration: none">Sobre a Laura</a>
+</nav>
+</div>
+</header>
+
+<section style="max-width: 1240px; margin: 0 auto; padding: 48px 24px 24px; display: flex; flex-direction: column; gap: 10px">
+<p style="margin: 0"><a href="Main.dc.html">Início</a> / Coleção de Natal</p>
+<h1 style="margin: 0; font-family: 'Bowlby One', sans-serif; font-weight: 400; font-size: 52px; line-height: 1.05">NATAL PARA PENDURAR</h1>
+<p style="margin: 0; max-width: 720px">8 peças de gesso com volume, prontas para pintar. Cada uma tem argola reforçada e vai com cordão para pendurar na árvore. Tamanho de cerca de 6 cm de altura.</p>
+</section>
+
+<section style="max-width: 1240px; margin: 0 auto; padding: 16px 24px 40px">
+<div style="background: #6B3FD6; color: #FFFFFF; border-radius: 28px; padding: 30px; display: flex; flex-wrap: wrap; gap: 30px; align-items: center">
+<div style="flex: 1 1 460px; min-width: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{pecas}}" as="p" hint-placeholder-count="8">
+<img src="{{p.img}}" alt="{{p.alt}}" style="width: 100%; border-radius: 14px; background: #FFF8EC">
+</sc-for>
+</div>
+<div style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+<p style="margin: 0; font-family: 'Permanent Marker', cursive; font-size: 24px; color: #FFD23F">Melhor preço</p>
+<h2 style="margin: 0; font-family: 'Bowlby One', sans-serif; font-weight: 400; font-size: 36px; line-height: 1.1">KIT COMPLETO</h2>
+<p style="margin: 0">As 8 peças, sem repetir, numa caixa só.</p>
+<p style="margin: 0">O kit traz: [O QUE VEM NO KIT: tintas, pincel, cordões]</p>
+<p style="margin: 0; font-family: 'Bowlby One', sans-serif; font-size: 34px; color: #FFD23F">[PREÇO DO KIT]</p>
+<button type="button" style="align-self: flex-start; min-height: 54px; padding: 0 30px; border-radius: 999px; border: none; background: #FFD23F; color: #2A1A5E; font-family: 'Bowlby One', sans-serif; font-size: 19px; cursor: pointer">COMPRAR O KIT</button>
+</div>
+</div>
+</section>
+
+<section style="max-width: 1240px; margin: 0 auto; padding: 8px 24px 40px; display: flex; flex-direction: column; gap: 22px">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px">
+<div>
+<h2 style="margin: 0; font-family: 'Bowlby One', sans-serif; font-weight: 400; font-size: 36px">OU ESCOLHA AS SUAS</h2>
+<p style="margin: 0">Peças avulsas, com embalagem individual.</p>
+</div>
+<p style="margin: 0; font-size: 22px">Escolhidas: <strong>{{escolhidas}}</strong> de 8</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px">
+<sc-for list="{{pecas}}" as="p" hint-placeholder-count="8">
+<div style="background: #FFFFFF; border: 3px solid {{p.borda}}; border-radius: 24px; padding: 14px; display: flex; flex-direction: column; gap: 8px">
+<img src="{{p.img}}" alt="{{p.alt}}" style="width: 100%; border-radius: 16px; background: #FFF8EC">
+<h3 style="margin: 0; font-family: 'Bowlby One', sans-serif; font-weight: 400; font-size: 19px">{{p.nome}}</h3>
+<p style="margin: 0; font-size: 19px; line-height: 1.3">{{p.desc}}</p>
+<p style="margin: 0; font-size: 22px">[PREÇO AVULSO]</p>
+<button type="button" onClick="{{p.alternar}}" style="min-height: 48px; border-radius: 999px; border: 3px solid #2A1A5E; background: {{p.fundo}}; color: {{p.cor}}; font-family: 'Patrick Hand', cursive; font-size: 21px; cursor: pointer">{{p.rotulo}}</button>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section style="max-width: 1240px; margin: 0 auto; padding: 8px 24px 64px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px">
+<div style="background: #FFE8A3; border-radius: 24px; padding: 26px">
+<h3 style="margin: 0 0 8px 0; font-family: 'Bowlby One', sans-serif; font-weight: 400; font-size: 22px">HORA DO SHOW!</h3>
+<p style="margin: 0">1. Escolha suas cores. 2. Pinte em camadas finas. 3. Espere secar e pendure.</p>
+</div>
+<div style="background: #DCE8FF; border-radius: 24px; padding: 26px">
+<h3 style="margin: 0 0 8px 0; font-family: 'Bowlby One', sans-serif; font-weight: 400; font-size: 22px">ENVIO</h3>
+<p style="margin: 0">Para todo o Brasil pelos Correios. Prazo e frete calculados no carrinho.</p>
+</div>
+<div style="background: #FFD6E8; border-radius: 24px; padding: 26px">
+<h3 style="margin: 0 0 8px 0; font-family: 'Bowlby One', sans-serif; font-weight: 400; font-size: 22px">COMBINA COM</h3>
+<p style="margin: 0"><a href="Livros.dc.html">Livro de colorir de Natal</a>: os mesmos personagens para pintar no papel.</p>
+</div>
+</section>
+
+<footer style="background: #2A1A5E; color: #FFFFFF">
+<div style="max-width: 1240px; margin: 0 auto; padding: 36px 24px; display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between">
+<p style="margin: 0; font-family: 'Bowlby One', sans-serif; font-size: 20px">PALCO <span style="color: #FFD23F">&amp;</span> PINCEL <span style="font-family: 'Permanent Marker', cursive; font-size: 17px; color: #FF9CC6">by LAW</span></p>
+<p style="margin: 0">@palcoepincel · [E-MAIL]</p>
+</div>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2500}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { escolhidas: {} };
+  }
+  renderVals() {
+    const base = [
+      { id: 'noel', nome: 'PAPAI NOEL', desc: 'Gorro, barba e cinto: o clássico mais fofo.', img: '/_blob/b5038efe3a10e6c79f9fea3256284d01' },
+      { id: 'boneco', nome: 'BONECO DE NEVE', desc: 'Com gorro e cachecol para pintar de qualquer cor.', img: '/_blob/12fc10610476becff25d3ada79dc356d' },
+      { id: 'rena', nome: 'RENA', desc: 'Sentadinha, com galhada e cachecol.', img: '/_blob/574bf905d6ca9f39a91b9075095aac5f' },
+      { id: 'pinguim', nome: 'PINGUIM', desc: 'De gorro, segurando um presente.', img: '/_blob/0d896762b5fdc25223fd79c191410bbc' },
+      { id: 'biscoito', nome: 'BISCOITO DE GENGIBRE', desc: 'Com laço e gravatinha.', img: '/_blob/f0b53f467d298c4f930aa8ffb18d4fc6' },
+      { id: 'anjo', nome: 'ANJO', desc: 'Asas abertas e uma estrela no vestido.', img: '/_blob/94820ff1751fb062d2097e38e85db669' },
+      { id: 'grinch', nome: 'GRINCH', desc: 'O mais famoso do Natal, de gorro.', img: '/_blob/994425f529916ebb8db05ffd32c1578a' },
+      { id: 'gato', nome: 'GATINHO DE NATAL', desc: 'Gorrinho, cachecol e um sorriso.', img: '/_blob/23277056470086f817801dffe265172e' }
+    ];
+    const esc = this.state.escolhidas;
+    const pecas = base.map((p) => {
+      const on = !!esc[p.id];
+      return {
+        ...p,
+        alt: p.nome.toLowerCase() + ' de gesso para pintar',
+        rotulo: on ? 'Escolhida' : 'Escolher esta',
+        fundo: on ? '#2A1A5E' : '#FFFFFF',
+        cor: on ? '#FFFFFF' : '#2A1A5E',
+        borda: on ? '#6B3FD6' : '#2A1A5E',
+        alternar: () => this.setState({ escolhidas: { ...esc, [p.id]: !on } })
+      };
+    });
+    const escolhidas = Object.keys(esc).filter((k) => esc[k]).length;
+    return { pecas, escolhidas };
+  }
+}
+</script>
+</body>
+</html>

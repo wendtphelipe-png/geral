@@ -1,0 +1,16 @@
+{
+  "v": 3,
+  "createdOnFiles": {"v": 1, "at": "2026-11-09T19:00:00Z"},
+  "title": "Palco & Pincel by LAW — Site (rascunho)",
+  "launch": {"view": "canvas"},
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {"x": 0, "y": 0, "w": 1440, "h": 3300, "title": "Página inicial", "expand": "fill", "is_interactive": true},
+    "Colecao-Natal.dc.html": {"x": 1520, "y": 0, "w": 1440, "h": 2500, "title": "Coleção de Natal", "expand": "fill", "is_interactive": true},
+    "Livros.dc.html": {"x": 3040, "y": 0, "w": 1440, "h": 2000, "title": "Livros de colorir e assinatura", "expand": "fill", "is_interactive": true},
+    "Sobre.dc.html": {"x": 4560, "y": 0, "w": 1440, "h": 1900, "title": "Sobre a Laura", "expand": "fill", "is_interactive": true}
+  },
+  "order": ["Main.dc.html", "Colecao-Natal.dc.html", "Livros.dc.html", "Sobre.dc.html"],
+  "notes": {},
+  "designSystems": []
+}
