@@ -206,10 +206,45 @@ def fundir(d, Xg, Yg, dx, regioes):
     return d
 
 
-def peca_inteira(malha, tamanho, profundidade, recuo, curva, furos, corte_y=-1e9, arco=0.0, minimo=2.0, ombro=None, largura=40.0, lateral=False, fundo_vaos=3.0, placas=(), olhos=(), manter_ovais=(), massa=(), remover=(), fundir_reg=(), dx=0.2):
+def por_argola(d, Xg, Yg, zs, dx, plano, argola, pos=None):
+    """Argola para pendurar, POR FORA do personagem: no ponto mais alto, encostada no fundo,
+    unida à peça com uma curva suave. O furo fica só na argola.
+
+    argola: (raio_externo, raio_do_furo, espessura) em mm.
+    pos: (x, y) do centro do furo; sem ela, fica logo acima do ponto mais alto da peça.
+    """
+    ro, ri, esp = argola
+    dentro = d < 0
+    sil = dentro.any(axis=2)
+    if pos is None:
+        jj, ii = np.nonzero(sil)
+        topo = jj.max()
+        perto = ii[jj >= topo - int(1.0 / dx)]
+        cx = Xg[0, int(np.median(perto))]
+        cy = Yg[topo, 0] + ro - 1.6          # entra 1,6 mm na peça para firmar
+    else:
+        cx, cy = pos
+    rr = np.hypot(Xg - cx, Yg - cy)
+    d_anel = np.maximum(rr - ro, ri - rr)[:, :, None]
+    # a argola fica na profundidade da própria peça onde ela se prende (não solta no fundo)
+    ponto = (rr <= ro) & sil
+    zs_ocup = np.nonzero(dentro[ponto].any(axis=0))[0]
+    if len(zs_ocup):
+        z_meio = max(zs[zs_ocup].mean(), plano + esp / 2)
+    else:
+        z_meio = plano + esp / 2
+    d_z = (np.abs(zs - z_meio) - esp / 2)[None, None, :]
+    d_arg = np.maximum(d_anel, d_z)
+    d_arg = ndimage.gaussian_filter(d_arg, 0.6 / dx)          # bordas arredondadas
+    d = _suave_uniao(d, d_arg, 1.5)                           # emenda suave com a peça
+    d = np.maximum(d, -(rr - ri)[:, :, None])                 # furo sempre aberto
+    return d
+
+
+def peca_inteira(malha, tamanho, profundidade, recuo, curva, furos, corte_y=-1e9, arco=0.0, minimo=2.0, ombro=None, largura=40.0, lateral=False, fundo_vaos=3.0, placas=(), olhos=(), manter_ovais=(), massa=(), remover=(), fundir_reg=(), argola=None, argola_pos=None, dx=0.2):
     from skimage.measure import marching_cubes
     import fast_simplification
-    lado = tamanho + 6
+    lado = tamanho + 6 + (4 * argola[0] + 8 if argola else 0)
     n = int(round(lado / dx))
     x0 = y0 = -lado / 2
     tri = malha.vertices[malha.faces].astype(np.float64)
@@ -293,6 +328,8 @@ def peca_inteira(malha, tamanho, profundidade, recuo, curva, furos, corte_y=-1e9
         d = fundir(d, Xg, Yg, dx, fundir_reg)
     if olhos:
         d = esculpir_olhos(d, Xg, Yg, zs, dx, olhos)
+    if argola:
+        d = por_argola(d, Xg, Yg, zs, dx, plano, argola, argola_pos)
     d = np.maximum(d, d_plano)
     for cx, cy, r in furos:
         dist_xy = np.hypot(X[None, :] - cx, X[:, None] - cy) - r
@@ -370,6 +407,8 @@ def main():
                     help="x y raio_x raio_y raio (mm): preenche reentrâncias dentro do oval")
     ap.add_argument("--fundir", type=float, nargs=5, action="append", default=[],
                     help="x y raio_x raio_y raio (mm): une partes vizinhas com curva arredondada dentro do oval")
+    ap.add_argument("--argola", type=float, nargs=3, help="raio_externo raio_do_furo espessura (mm): argola para pendurar")
+    ap.add_argument("--argola-pos", type=float, nargs=2, help="x y do centro do furo (mm); padrão: acima do ponto mais alto")
     ap.add_argument("--remover", type=float, nargs=5, action="append", default=[],
                     help="x0 x1 y0 y1 z (mm): apaga o que estiver na caixa e à frente de z (ex.: um braço)")
     ap.add_argument("--placa", type=float, nargs=5, action="append", default=[],
@@ -381,7 +420,7 @@ def main():
     malha, corte_y = carregar(a.modelo, a.girar, a.tamanho, a.busto, a.ajuste)
     furos = [(a.furo[0], a.furo[1], 1.8)] if a.furo else []
     if a.modo == "inteiro":
-        tm = peca_inteira(malha, a.tamanho, a.profundidade, a.recuo, a.curva, furos, corte_y, a.arco, a.minimo, a.ombro, a.largura, a.lateral, a.fundo_vaos, a.placa, a.olho, a.manter, a.massa, a.remover, a.fundir)
+        tm = peca_inteira(malha, a.tamanho, a.profundidade, a.recuo, a.curva, furos, corte_y, a.arco, a.minimo, a.ombro, a.largura, a.lateral, a.fundo_vaos, a.placa, a.olho, a.manter, a.massa, a.remover, a.fundir, a.argola, a.argola_pos)
     else:
         p = Peca(os.path.basename(a.saida), largura=a.tamanho + 4, altura=a.tamanho + 4, dx=0.15)
         tri = malha.vertices[malha.faces].astype(np.float64)
