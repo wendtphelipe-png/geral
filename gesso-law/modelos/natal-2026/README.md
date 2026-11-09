@@ -8,7 +8,7 @@
 | Boneco de Neve | `boneco.stl` | 34 x 59 x 16 mm | 15 g |
 | Rena | `rena.stl` | 37 x 60 x 16 mm | 14 g |
 | Pinguim com presente | `pinguim.stl` | 36 x 60 x 26 mm | 34 g |
-| Biscoito de Gengibre | `biscoito.stl` | 33 x 52 x 16 mm | 14 g |
+| Biscoito de Gengibre | `biscoito.stl` | 33 x 56 x 16 mm | 15 g |
 | Anjo | `anjo.stl` | 44 x 60 x 32 mm | 25 g |
 | Grinch | `grinch.stl` | 41 x 53 x 16 mm | 12 g |
 | Gatinho de Natal | `gato.stl` | 39 x 60 x 16 mm | 19 g |

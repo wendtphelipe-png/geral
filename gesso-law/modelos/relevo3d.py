@@ -221,7 +221,10 @@ def por_argola(d, Xg, Yg, zs, dx, plano, argola, pos=None):
         topo = jj.max()
         perto = ii[jj >= topo - int(1.0 / dx)]
         cx = Xg[0, int(np.median(perto))]
-        cy = Yg[topo, 0] + ro - 1.6          # entra 1,6 mm na peça para firmar
+        # altura da peça exatamente na coluna da argola (ex.: o meio de um laço é mais baixo que as pontas)
+        colunas = np.abs(Xg[0] - cx) <= 1.0
+        topo_local = np.nonzero(sil[:, colunas].any(axis=1))[0].max()
+        cy = Yg[topo_local, 0] + ro - 1.6    # entra 1,6 mm na peça para firmar
     else:
         cx, cy = pos
     rr = np.hypot(Xg - cx, Yg - cy)
