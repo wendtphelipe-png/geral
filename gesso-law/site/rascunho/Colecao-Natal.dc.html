@@ -37,7 +37,7 @@ a{color:#4A2A9E}a:hover{color:#2A1A5E}
 <section style="max-width: 1240px; margin: 0 auto; padding: 48px 24px 24px; display: flex; flex-direction: column; gap: 10px">
 <p style="margin: 0"><a href="Main.dc.html">Início</a> / Coleção de Natal</p>
 <h1 style="margin: 0; font-family: 'Bowlby One', sans-serif; font-weight: 400; font-size: 52px; line-height: 1.05">NATAL PARA PENDURAR</h1>
-<p style="margin: 0; max-width: 720px">8 peças de gesso com volume, prontas para pintar. Cada uma tem argola reforçada e vai com cordão para pendurar na árvore. Tamanho de cerca de 6 cm de altura.</p>
+<p style="margin: 0; max-width: 720px">8 peças de gesso com volume, prontas para pintar, com cerca de 8 cm de altura. Escolha como quer cada peça: simples, com cordão para pendurar na árvore (já preso no gesso) ou com ímã para a geladeira.</p>
 </section>
 
 <section style="max-width: 1240px; margin: 0 auto; padding: 16px 24px 40px">
@@ -52,7 +52,15 @@ a{color:#4A2A9E}a:hover{color:#2A1A5E}
 <h2 style="margin: 0; font-family: 'Bowlby One', sans-serif; font-weight: 400; font-size: 36px; line-height: 1.1">KIT COMPLETO</h2>
 <p style="margin: 0">As 8 peças, sem repetir, numa caixa só.</p>
 <p style="margin: 0">O kit traz: [O QUE VEM NO KIT: tintas, pincel, cordões]</p>
-<p style="margin: 0; font-family: 'Bowlby One', sans-serif; font-size: 34px; color: #FFD23F">[PREÇO DO KIT]</p>
+<fieldset style="margin: 0; padding: 0; border: none; display: flex; flex-direction: column; gap: 8px">
+<legend style="padding: 0; margin-bottom: 8px">Modelo das peças do kit:</legend>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{opcoesKit}}" as="o" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{o.ativo}}" onClick="{{o.escolher}}" style="min-height: 46px; padding: 0 16px; border-radius: 999px; border: 2px solid #FFFFFF; background: {{o.fundo}}; color: {{o.cor}}; font-family: 'Patrick Hand', cursive; font-size: 19px; cursor: pointer">{{o.rotulo}}</button>
+</sc-for>
+</div>
+</fieldset>
+<p style="margin: 0; font-family: 'Bowlby One', sans-serif; font-size: 34px; color: #FFD23F">[PREÇO DO KIT] {{extraKit}}</p>
 <button type="button" style="align-self: flex-start; min-height: 54px; padding: 0 30px; border-radius: 999px; border: none; background: #FFD23F; color: #2A1A5E; font-family: 'Bowlby One', sans-serif; font-size: 19px; cursor: pointer">COMPRAR O KIT</button>
 </div>
 </div>
@@ -72,7 +80,15 @@ a{color:#4A2A9E}a:hover{color:#2A1A5E}
 <img src="{{p.img}}" alt="{{p.alt}}" style="width: 100%; border-radius: 16px; background: #FFF8EC">
 <h3 style="margin: 0; font-family: 'Bowlby One', sans-serif; font-weight: 400; font-size: 19px">{{p.nome}}</h3>
 <p style="margin: 0; font-size: 19px; line-height: 1.3">{{p.desc}}</p>
-<p style="margin: 0; font-size: 22px">[PREÇO AVULSO]</p>
+<fieldset style="margin: 0; padding: 0; border: none; display: flex; flex-direction: column; gap: 6px">
+<legend style="padding: 0; margin-bottom: 6px; font-size: 18px">Modelo:</legend>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{p.opcoes}}" as="o" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{o.ativo}}" onClick="{{o.escolher}}" style="min-height: 44px; padding: 0 12px; border-radius: 999px; border: 2px solid #2A1A5E; background: {{o.fundo}}; color: {{o.cor}}; font-family: 'Patrick Hand', cursive; font-size: 17px; cursor: pointer">{{o.rotulo}}</button>
+</sc-for>
+</div>
+</fieldset>
+<p style="margin: 0; font-size: 22px">[PREÇO AVULSO] {{p.extra}}</p>
 <button type="button" onClick="{{p.alternar}}" style="min-height: 48px; border-radius: 999px; border: 3px solid #2A1A5E; background: {{p.fundo}}; color: {{p.cor}}; font-family: 'Patrick Hand', cursive; font-size: 21px; cursor: pointer">{{p.rotulo}}</button>
 </div>
 </sc-for>
@@ -106,19 +122,36 @@ a{color:#4A2A9E}a:hover{color:#2A1A5E}
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { escolhidas: {} };
+    this.state = { escolhidas: {}, modelo: {}, modeloKit: 'simples' };
   }
   renderVals() {
     const base = [
-      { id: 'noel', nome: 'PAPAI NOEL', desc: 'Gorro, barba e cinto: o clássico mais fofo.', img: '/_blob/b5038efe3a10e6c79f9fea3256284d01' },
-      { id: 'boneco', nome: 'BONECO DE NEVE', desc: 'Com gorro e cachecol para pintar de qualquer cor.', img: '/_blob/12fc10610476becff25d3ada79dc356d' },
-      { id: 'rena', nome: 'RENA', desc: 'Sentadinha, com galhada e cachecol.', img: '/_blob/574bf905d6ca9f39a91b9075095aac5f' },
-      { id: 'pinguim', nome: 'PINGUIM', desc: 'De gorro, segurando um presente.', img: '/_blob/0d896762b5fdc25223fd79c191410bbc' },
-      { id: 'biscoito', nome: 'BISCOITO DE GENGIBRE', desc: 'Com laço e gravatinha.', img: '/_blob/f0b53f467d298c4f930aa8ffb18d4fc6' },
-      { id: 'anjo', nome: 'ANJO', desc: 'Asas abertas e uma estrela no vestido.', img: '/_blob/94820ff1751fb062d2097e38e85db669' },
-      { id: 'grinch', nome: 'GRINCH', desc: 'O mais famoso do Natal, de gorro.', img: '/_blob/994425f529916ebb8db05ffd32c1578a' },
-      { id: 'gato', nome: 'GATINHO DE NATAL', desc: 'Gorrinho, cachecol e um sorriso.', img: '/_blob/23277056470086f817801dffe265172e' }
+      { id: 'noel', nome: 'PAPAI NOEL', desc: 'Gorro, barba e cinto: o clássico mais fofo.', img: '/_blob/32a628137a5c85dff4dd697ef39d2ee5' },
+      { id: 'boneco', nome: 'BONECO DE NEVE', desc: 'Com gorro e cachecol para pintar de qualquer cor.', img: '/_blob/9b3455fdbbd2c0a1e2a299d609d9b1bf' },
+      { id: 'rena', nome: 'RENA', desc: 'Sentadinha, com galhada e cachecol.', img: '/_blob/a84bd80be7207678312f34aedb32e8d5' },
+      { id: 'pinguim', nome: 'PINGUIM', desc: 'De gorro, segurando um presente.', img: '/_blob/c00640e85289ef698340ffcd01ecdd5a' },
+      { id: 'arvore', nome: 'ÁRVORE DE NATAL', desc: 'Com bolas, guirlanda e a estrela no topo.', img: '/_blob/0cfc38895002a720bb6cc85dc4255d01' },
+      { id: 'floco', nome: 'FLOCO DE NEVE', desc: 'Seis pontas e um brilho no centro.', img: '/_blob/1edc9ebee394e87043b657ea996bf7d5' },
+      { id: 'meia', nome: 'MEIA DE NATAL', desc: 'Sorridente, esperando os presentes.', img: '/_blob/e800a9a0e202606195e06b497a109f74' },
+      { id: 'chamine', nome: 'NOEL NA CHAMINÉ', desc: 'Só as pernas aparecendo: entrou de cabeça!', img: '/_blob/1eaa5a7dade89bc05d4ccf470e1f6645' }
     ];
+    const MODELOS = [
+      { id: 'simples', rotulo: 'Simples', extra: 0 },
+      { id: 'cordao', rotulo: 'Com cordão (+R$ 0,70)', extra: 0.70 },
+      { id: 'ima', rotulo: 'Com ímã (+R$ 1,90)', extra: 1.90 }
+    ];
+    const fmt = (v) => v ? '+ R$ ' + v.toFixed(2).replace('.', ',') : '';
+    const mod = this.state.modelo;
+    const opc = (atual, escolher) => MODELOS.map((m) => ({
+      ...m,
+      ativo: atual === m.id ? 'true' : 'false',
+      fundo: atual === m.id ? '#2A1A5E' : '#FFFFFF',
+      cor: atual === m.id ? '#FFFFFF' : '#2A1A5E',
+      escolher: () => escolher(m.id)
+    }));
+    const kitM = MODELOS.find((m) => m.id === this.state.modeloKit);
+    const opcoesKit = opc(this.state.modeloKit, (id) => this.setState({ modeloKit: id }));
+    const extraKit = kitM.extra ? '+ R$ ' + (kitM.extra * 8).toFixed(2).replace('.', ',') + ' (8 peças)' : '';
     const esc = this.state.escolhidas;
     const pecas = base.map((p) => {
       const on = !!esc[p.id];
@@ -129,11 +162,13 @@ class Component extends DCLogic {
         fundo: on ? '#2A1A5E' : '#FFFFFF',
         cor: on ? '#FFFFFF' : '#2A1A5E',
         borda: on ? '#6B3FD6' : '#2A1A5E',
+        opcoes: opc(mod[p.id] || 'simples', (id) => this.setState({ modelo: { ...mod, [p.id]: id } })),
+        extra: fmt((MODELOS.find((m) => m.id === (mod[p.id] || 'simples'))).extra),
         alternar: () => this.setState({ escolhidas: { ...esc, [p.id]: !on } })
       };
     });
     const escolhidas = Object.keys(esc).filter((k) => esc[k]).length;
-    return { pecas, escolhidas };
+    return { pecas, escolhidas, opcoesKit, extraKit };
   }
 }
 </script>
