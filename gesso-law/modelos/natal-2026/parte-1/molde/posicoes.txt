@@ -1,6 +1,0 @@
-floco: centro x=-62.5 y=42.3 mm
-presente: centro x=-62.5 y=-42.2 mm
-noel: centro x=8.9 y=42.3 mm
-rena: centro x=8.9 y=-42.2 mm
-arvore: centro x=71.4 y=42.3 mm
-boneco: centro x=71.4 y=-42.2 mm
