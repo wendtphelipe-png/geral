@@ -4,3 +4,4 @@ soundfile
 numpy
 scipy
 matplotlib
+google-genai

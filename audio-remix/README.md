@@ -27,6 +27,15 @@ Estruturas prontas (biblioteca/estruturas.json), inspiradas nas diferenças entr
 
 **Blocos de outro estilo:** a música continua, a bateria original sai e entra a bateria do estilo, tocada no BPM da música (sons sintetizados a partir dos padrões da biblioteca de estilos). Ela aparece como uma camada "Bateria house" (ou outro estilo), que dá para silenciar, mover ou ajustar.
 
+### IA do Google (Lyria)
+Botão com a varinha, no alto à direita (o ponto fica verde quando está conectado):
+- **Conectar:** cole a chave do Google AI Studio (aistudio.google.com, "Get API key") e clique em **Salvar e testar**. A chave fica só no PC, em `audio-remix\dados\chave-google.txt` (fora do GitHub). Também funciona com a variável de ambiente `GEMINI_API_KEY`.
+- **Blocos de estilo com IA:** marque **Lyria** ao lado da lista de estruturas. Nos blocos de outro estilo, o Lyria cria o groove do estilo no BPM e no tom da música, e o programa acerta o andamento e o começo para encaixar exato nos oitos. Se a IA falhar, o mix usa a bateria sintetizada e avisa no roteiro.
+- **Trecho por texto:** selecione oitos e escreva um pedido começando com `ia:`, por exemplo `ia: metais de funk animados`. O trecho é criado no tempo e no tom da música, numa camada nova, do tamanho da seleção.
+- **Música do zero:** em **Nova música**, descreva a música no campo de texto e clique em **Criar com IA**. A música é criada inteira (sem direitos autorais de terceiros), separada em faixas e dividida em oitos, como qualquer outra.
+
+O Lyria é pago por uso. Tudo o que ele gera fica guardado em `audio-remix\dados\ia-cache\`, e um pedido igual não é pago de novo.
+
 ### Estruturas: montar a sua
 Botão **Estruturas**, aba **Montar estrutura**:
 - arraste os modos da esquerda para a sequência, ou clique para pôr no fim, e arraste os passos para mudar a ordem;
@@ -48,6 +57,7 @@ Depois é só salvar a estrutura na biblioteca ou criar na hora um mix com ela, 
 
 ### A tela
 A tela é como a de um editor de áudio:
+- **Barra do mix (segunda linha):** a lista de estruturas, a opção Lyria, o botão Estruturas, **Criar mix automático** e as ferramentas Cortar, Fade in, Fade out e Importar áudio.
 - **Barra de cima:** tocar e pausar, voltar ao início, repetir a seleção sem parar, o relógio, o BPM, a duração do mix e a duração desejada (padrão 2:45), desfazer e refazer, aproximar e afastar, nova música e exportar MP3.
 - **Régua da contagem:** cada oito do mix, com o número grande, as 8 batidas marcadas e a cor da "parte" da música (partes iguais têm a mesma cor e letra).
   - clique para selecionar;

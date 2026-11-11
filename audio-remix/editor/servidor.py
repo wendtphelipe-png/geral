@@ -15,6 +15,7 @@ from pathlib import Path
 import arranjador
 import bateria
 import efeitos
+import ia
 import motor
 import padrao
 
@@ -200,6 +201,20 @@ class Pedido(BaseHTTPRequestHandler):
                 raise KeyError(caminho)
             return self.enviar(arquivo.read_bytes(), TIPOS.get(arquivo.suffix, "application/octet-stream"))
 
+        if partes[:2] == ["api", "ia"]:
+            if metodo == "GET":
+                return self.enviar({"configurada": bool(ia.chave())})
+            if metodo == "POST" and partes[2:] == ["chave"]:
+                valor = (self.corpo_json().get("chave") or "").strip()
+                if len(valor) < 20:
+                    return self.erro(400, "essa chave parece incompleta")
+                ia.salvar_chave(valor)
+            if metodo == "POST" and partes[2:] in (["chave"], ["testar"]):
+                try:
+                    return self.enviar(ia.testar())
+                except Exception as erro:
+                    return self.erro(400, f"o Google recusou: {str(erro)[:300]}")
+
         if partes[:2] == ["api", "estruturas"]:
             if metodo == "GET":
                 return self.enviar(lista_estruturas())
@@ -311,12 +326,42 @@ class Pedido(BaseHTTPRequestHandler):
                 estrutura = next((e for e in todas if e.get("id") == dados.get("estrutura_id")), todas[0])
             timeline, estilos, roteiro = arranjador.criar_mix(analise, alvo=alvo, semente=int(numero(dados.get("semente", 1), 0, 1e9, 1)),
                                                               estrutura=estrutura)
-            camadas = [{"id": f"auto{n}", "nome": c["nome"], "ganho": 0.9, "mudo": False, "solo": False, "auto": True,
+            bpm = analise.get("bpm") or 120
+            if dados.get("usar_ia") and estilos:
+                tom = motor.tom_do_projeto(p)
+                for c in estilos:
+                    try:
+                        arquivo, _, modelo = ia.gerar(ia.prompt_estilo(c["estilo"], bpm, tom), "clip")
+                        info = motor.salvar_importado(p, ia.encaixar(arquivo, bpm, c["batidas"]), f"{c['nome']} (Lyria)")
+                        c["importado"] = info
+                        roteiro.append(f"{c['nome']}: criada pelo Lyria ({modelo}) no BPM {round(bpm)} e tom {tom} da música.")
+                    except Exception as erro:
+                        traceback.print_exc()
+                        roteiro.append(f"{c['nome']}: o Lyria falhou ({str(erro)[:120]}); usei a bateria sintetizada.")
+            camadas = [{"id": f"auto{n}", "nome": c["nome"] + (" (Lyria)" if c.get("importado") else ""), "ganho": 0.9,
+                        "mudo": False, "solo": False, "auto": True,
                         "clipes": [{"id": f"ka{n}", "nome": c["nome"], "pos": c["pos"], "ini": 0, "dur": c["dur"], "ganho": 1,
-                                    "fonte": {"tipo": "estilo", "estilo": c["estilo"], "bpm": analise.get("bpm") or 120,
-                                              "batidas": c["batidas"]}}]}
+                                    "fonte": {"tipo": "importado", "id": c["importado"]["id"]} if c.get("importado") else
+                                    {"tipo": "estilo", "estilo": c["estilo"], "bpm": bpm, "batidas": c["batidas"]}}]}
                        for n, c in enumerate(estilos)]
-            return self.enviar({"timeline": validar_timeline(timeline, abrir(pid)), "camadas": camadas, "roteiro": roteiro})
+            novos = [c["importado"] for c in estilos if c.get("importado")]
+            return self.enviar({"timeline": validar_timeline(timeline, abrir(pid)), "camadas": camadas, "roteiro": roteiro,
+                                "importados": novos})
+
+        if metodo == "POST" and acao == "ia-trecho":
+            dados = self.corpo_json()
+            analise = motor.ler_json(p / "analise.json")
+            bpm = analise.get("bpm") or 120
+            batidas = int(numero(dados.get("batidas"), 1, 256, 8))
+            pedido = str(dados.get("prompt") or "").strip()[:500]
+            if not pedido:
+                return self.erro(400, "escreva o que a IA deve criar")
+            tom = motor.tom_do_projeto(p)
+            texto_ia = (f"{pedido}. {round(bpm)} BPM, steady tempo, key of {tom}, made to layer on top of a song in a "
+                        f"street dance competition mix, loopable" + ("" if "voz" in pedido.lower() or "vocal" in pedido.lower() else ", no vocals"))
+            arquivo, _, modelo = ia.gerar(texto_ia, "clip")
+            info = motor.salvar_importado(p, ia.encaixar(arquivo, bpm, batidas), "IA: " + pedido[:40])
+            return self.enviar({"importado": info, "modelo": modelo})
 
         if metodo == "POST" and acao == "importar":
             nome = urllib.parse.unquote(self.headers.get("X-Nome", "audio"))
@@ -359,7 +404,13 @@ class Pedido(BaseHTTPRequestHandler):
     def criar(self, q):
         tipo = self.headers.get("Content-Type", "")
         if tipo.startswith("application/json"):
-            link = (self.corpo_json().get("link") or "").strip()
+            dados = self.corpo_json()
+            if dados.get("ia"):
+                pid = motor.novo_id("ia")
+                (motor.PASTA_DADOS / pid).mkdir(parents=True)
+                iniciar_trabalho(pid, {"ia": str(dados["ia"]).strip()[:1500]})
+                return self.enviar({"id": pid})
+            link = (dados.get("link") or "").strip()
             if not link.startswith("http"):
                 return self.erro(400, "link inválido")
             pid = motor.novo_id("youtube")

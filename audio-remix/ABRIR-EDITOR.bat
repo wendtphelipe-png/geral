@@ -8,6 +8,8 @@ if not exist "%PY%" (
   echo Rode primeiro PREPARAR-ANALISADOR.bat
   pause & exit /b 1
 )
+rem A biblioteca do Google (para o Lyria) entrou depois: instala se faltar
+"%PY%" -c "import google.genai" >nul 2>nul || "%PY%" -m pip install google-genai
 cd /d "%~dp0editor"
 "%PY%" servidor.py
 pause

@@ -23,7 +23,7 @@ svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-l
 :focus-visible{outline:2px solid var(--sel);outline-offset:2px}
 .num{font-variant-numeric:tabular-nums}
 
-#app{display:grid;grid-template-rows:auto 1fr auto auto;height:100vh}
+#app{display:grid;grid-template-rows:auto auto 1fr auto auto;height:100vh}
 
 /* ---------- barra de cima: transporte */
 .topo{display:flex;align-items:center;gap:14px;padding:10px 16px;background:var(--chao);border-bottom:1px solid var(--borda);min-width:0}
@@ -133,8 +133,6 @@ select.musica{background:var(--pista);border:1px solid var(--borda);border-radiu
 .cel .env{position:absolute;inset:0;pointer-events:none}
 .botao.magico{background:linear-gradient(180deg,#FFE08A,#FFC93C);border-color:#FFC93C;color:#1A1300;font-weight:800}
 .botao.magico:hover{filter:brightness(1.05)}
-@media (min-width:901px){.topo .botao.magico .txt{display:inline}}
-@media (max-width:2150px){.ferramentas .rot{display:none}}
 @media (max-width:1250px){#desfazer,#refazer,.info .bpm,#paraInicio{display:none}}
 .oito .papel{position:absolute;left:7px;right:6px;top:41px;font-size:10px;font-weight:700;color:#FFD25A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .oito .parada{position:absolute;top:0;height:6px;background:#F05A6E;border-radius:0 0 2px 2px}
@@ -182,6 +180,17 @@ select.estrutura{background:var(--pista);border:1px solid #6B5A1E;color:#FFE08A;
 .tab-musicas td,.tab-musicas th{border-bottom:1px solid var(--borda);padding:5px 6px;text-align:left}
 .tab-musicas th{color:var(--fraco);font-weight:600}
 @media (max-width:800px){.montador,.relatorio{grid-template-columns:1fr}.montador{height:auto}.paleta{max-height:40vh}}
+.barra-mix{display:flex;align-items:center;gap:10px;padding:8px 16px;background:#0E1420;border-bottom:1px solid var(--borda);min-width:0;flex-wrap:wrap}
+.barra-mix .rot-mix{font-size:12px;color:var(--fraco);font-weight:600}
+.barra-mix .ferramentas{margin-left:auto;display:flex;gap:6px}
+.barra-mix .ferramentas .rot{display:inline}
+.toggle-ia{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:#FFE08A;white-space:nowrap;cursor:pointer}
+.toggle-ia input{accent-color:#FFC93C}
+.toggle-ia.desligado{opacity:.45;cursor:not-allowed}
+#btIa{position:relative}
+#btIa .ponto{position:absolute;right:5px;top:5px;width:7px;height:7px;border-radius:50%;background:#F05A6E}
+#btIa.ok .ponto{background:#34B886}
+.ia-nova textarea{width:100%;min-height:76px;background:var(--noite);border:1px solid var(--borda2);border-radius:9px;padding:9px 12px;resize:vertical;margin-bottom:8px}
 .cursor{position:absolute;top:0;bottom:0;width:2px;background:var(--play);z-index:6;pointer-events:none;box-shadow:0 0 0 1px rgba(0,0,0,.4)}
 .insercao{position:absolute;top:22px;bottom:0;width:3px;background:var(--sel);z-index:8;pointer-events:none}
 .laco{position:absolute;top:22px;height:58px;border:1px solid #FFD25A;border-radius:3px;pointer-events:none;z-index:8}
@@ -237,15 +246,16 @@ select.estrutura{background:var(--pista);border:1px solid #6B5A1E;color:#FFE08A;
 .boasvindas h1{color:var(--tinta);font-size:26px;margin:0 0 8px}
 .aviso-simples{background:#2A1E10;border:1px solid #5A3E14;color:#FFD9A0;padding:4px 10px;border-radius:7px;font-size:12px;white-space:nowrap;cursor:help}
 
-@media (max-width:1360px){.ferramentas .rot{display:none}}
 @media (max-width:1200px){.barra{display:none!important}.transporte{margin-left:0}}
-@media (max-width:1520px){.marca small,.botao .txt,.aviso-simples,.sep,#zoomMenos,#zoomMais{display:none}.barra{width:60px}.topo{gap:10px}}
+@media (max-width:1520px){.marca small,.aviso-simples{display:none}.barra{width:60px}.topo{gap:10px}}
+@media (max-width:1150px){.botao .txt,.sep,#zoomMenos,#zoomMais{display:none}}
 @media (max-width:900px){
   :root{--cab:120px}
   .info .bpm,.marca small,.botao .txt,.aviso-simples,#zoomMenos,#zoomMais,.sep{display:none}
   .info{display:none}
   select.musica{min-width:0;flex:1}
-  .marca,#desfazer,#refazer,.relogio small,.ferramentas{display:none}
+  .marca,#desfazer,#refazer,.relogio small{display:none}
+  .barra-mix .ferramentas .rot,.barra-mix .rot-mix{display:none}
   .relogio{font-size:16px;min-width:0}
   .transporte{margin-left:0}
   .topo{gap:8px;padding:8px 10px}
@@ -301,15 +311,6 @@ select.estrutura{background:var(--pista);border:1px solid #6B5A1E;color:#FFE08A;
     </div>
     <span class="aviso-simples hidden" id="avisoSimples" title="O separador de faixas não estava disponível quando esta música foi importada. Rode PREPARAR-ANALISADOR.bat e importe de novo.">Voz não separada</span>
     <div class="dir">
-      <select class="estrutura" id="estrutura" title="Estrutura do mix automático"></select>
-      <button class="botao" id="abrirEstruturas" title="Montar a sua estrutura ou analisar um mix pronto"><svg><use href="#i-camadas"/></svg><span class="txt">Estruturas</span></button>
-      <button class="botao magico" id="gerar" title="O programa monta o mix sozinho seguindo os padrões de competição. Clique de novo para outra versão."><svg><use href="#i-varinha"/></svg><span class="txt">Criar mix automático</span></button>
-      <div class="ferramentas">
-        <button class="mini" id="ferCortar" title="Cortar no cursor (C)"><svg><use href="#i-tesoura"/></svg><span class="rot">Cortar</span></button>
-        <button class="mini" id="ferFadeIn" title="Fade de entrada na seleção"><svg><use href="#i-fadein"/></svg><span class="rot">Fade in</span></button>
-        <button class="mini" id="ferFadeOut" title="Fade de saída na seleção"><svg><use href="#i-fadeout"/></svg><span class="rot">Fade out</span></button>
-        <button class="mini" id="ferImportar" title="Importar um áudio (mp3, wav...) para uma camada nova (I)"><svg><use href="#i-musica"/></svg><span class="rot">Importar áudio</span></button>
-      </div>
       <span class="sep"></span>
       <button class="bt" id="desfazer" title="Desfazer (Ctrl+Z)"><svg><use href="#i-undo"/></svg></button>
       <button class="bt" id="refazer" title="Refazer (Ctrl+Y)"><svg><use href="#i-redo"/></svg></button>
@@ -317,9 +318,24 @@ select.estrutura{background:var(--pista);border:1px solid #6B5A1E;color:#FFE08A;
       <button class="bt" id="zoomMenos" title="Afastar (Ctrl + rodinha)"><svg><use href="#i-menos"/></svg></button>
       <button class="bt" id="zoomMais" title="Aproximar (Ctrl + rodinha)"><svg><use href="#i-plus"/></svg></button>
       <span class="sep"></span>
+      <button class="bt" id="btIa" title="IA do Google (Lyria): conectar e testar"><svg><use href="#i-varinha"/></svg><span class="ponto"></span></button>
       <button class="botao" id="nova"><svg><use href="#i-plus"/></svg><span class="txt">Nova música</span></button>
       <button class="botao prim" id="exportar"><svg><use href="#i-download"/></svg><span class="txt">Exportar MP3</span></button>
     </div>
+  </div>
+
+  <div class="barra-mix">
+    <span class="rot-mix">Mix automático</span>
+      <select class="estrutura" id="estrutura" title="Estrutura do mix automático"></select>
+      <label class="toggle-ia desligado" id="toggleIa" title="Blocos de outro estilo criados pelo Lyria (IA do Google), no BPM e no tom da música. Sem isso, usa a bateria sintetizada."><input type="checkbox" id="usarIa" disabled>Lyria</label>
+      <button class="botao" id="abrirEstruturas" title="Montar a sua estrutura ou analisar um mix pronto"><svg><use href="#i-camadas"/></svg><span>Estruturas</span></button>
+      <button class="botao magico" id="gerar" title="O programa monta o mix sozinho seguindo os padrões de competição. Clique de novo para outra versão."><svg><use href="#i-varinha"/></svg><span>Criar mix automático</span></button>
+      <div class="ferramentas">
+        <button class="mini" id="ferCortar" title="Cortar no cursor (C)"><svg><use href="#i-tesoura"/></svg><span class="rot">Cortar</span></button>
+        <button class="mini" id="ferFadeIn" title="Fade de entrada na seleção"><svg><use href="#i-fadein"/></svg><span class="rot">Fade in</span></button>
+        <button class="mini" id="ferFadeOut" title="Fade de saída na seleção"><svg><use href="#i-fadeout"/></svg><span class="rot">Fade out</span></button>
+        <button class="mini" id="ferImportar" title="Importar um áudio (mp3, wav...) para uma camada nova (I)"><svg><use href="#i-musica"/></svg><span class="rot">Importar áudio</span></button>
+      </div>
   </div>
 
   <div class="palco" id="palco">
@@ -392,6 +408,11 @@ select.estrutura{background:var(--pista);border:1px solid #6B5A1E;color:#FFE08A;
     <p>O editor separa voz, bateria, baixo e outros na placa de vídeo e encontra os oitos. Leva de 1 a 3 minutos.</p>
     <div id="formNova">
       <div class="campo"><input id="link" placeholder="Cole o link do YouTube"><button class="botao prim" onclick="enviarLink()">Usar link</button></div>
+      <div class="ia-nova" style="margin-top:14px">
+        <textarea id="promptNova" placeholder="Ou descreva uma música para o Lyria criar do zero (sem direitos autorais de terceiros). Ex.: funk dos anos 70 com metais, 112 BPM, energia alta, refrão marcante, sem voz"></textarea>
+        <button class="botao magico" id="criarIa"><svg><use href="#i-varinha"/></svg>Criar com IA</button>
+        <span style="color:var(--fraco);font-size:12px;margin-left:6px">usa o Lyria (pago por uso)</span>
+      </div>
       <label class="soltar" id="soltar"><svg style="width:24px;height:24px"><use href="#i-upload"/></svg><br>ou arraste um arquivo de áudio aqui
         <input type="file" id="arquivo" accept="audio/*,video/*" class="hidden"></label>
     </div>
@@ -435,6 +456,17 @@ select.estrutura{background:var(--pista);border:1px solid #6B5A1E;color:#FFE08A;
       <button class="botao" id="salvarEstr" style="margin-left:auto">Salvar na biblioteca</button>
       <button class="botao magico" id="usarEstr"><svg><use href="#i-varinha"/></svg>Criar mix com esta estrutura</button>
     </div>
+  </div>
+</div>
+
+<div class="fundo hidden" id="janelaIa">
+  <div class="janela">
+    <h2>IA do Google (Lyria)</h2>
+    <p>O Lyria cria a bateria dos blocos de outro estilo, trechos pedidos por texto (comece o pedido com "ia:") e músicas inteiras do zero. É pago por uso, e o que já foi gerado fica guardado para não pagar de novo.</p>
+    <p id="estadoIa" style="color:var(--tinta)"></p>
+    <div class="campo"><input id="chaveIa" type="password" autocomplete="off" placeholder="Cole aqui a chave do Google AI Studio"><button class="botao prim" id="salvarIa">Salvar e testar</button></div>
+    <p style="font-size:12.5px;margin-top:10px">A chave é criada em aistudio.google.com, em "Get API key". Ela fica só no seu PC, no arquivo audio-remix\dados\chave-google.txt, que não vai para o GitHub.</p>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px"><button class="botao" id="testarIa">Testar conexão</button><button class="botao" onclick="$('#janelaIa').classList.add('hidden')">Fechar</button></div>
   </div>
 </div>
 
@@ -1050,10 +1082,12 @@ function executar(texto) {
   if (achado) return executarNoClipe(texto, achado);
   const l = alvos();
   if (!l.length) { responder("Selecione oitos na régua de contagem, ou clique num clipe de uma camada, primeiro.", true); return; }
+  const pedidoIa = texto.trim().match(/^(?:ia|lyria)\s*[:,-]\s*(.+)$/i) || texto.trim().match(/^(?:gera|gere|gerar|cria|crie|criar)\s+com\s+(?:a\s+)?(?:ia|lyria)\s*[:,-]?\s*(.+)$/i);
+  if (pedidoIa) return trechoIa(pedidoIa[1].trim(), l);
   const r = Comandos.entender(texto);
   if (!r.acoes.length) {
     const falta = r.faltando.length ? `Ainda não sei fazer <b>${r.faltando.join(", ")}</b>. ` : "Não entendi. ";
-    responder(falta + "Hoje eu entendo: tirar ou deixar só uma faixa, volume (com %), eco, reverb, distante, rádio, abafado, paradas (\"parada no 5\"), trazer a voz de outro oito, fade in e out, dividir ao meio, meio tempo, tempo dobrado, repetir e apagar.", true);
+    responder(falta + "Para a IA criar algo, comece com \"ia:\" (ex.: ia: metais de funk animados). Hoje eu entendo: tirar ou deixar só uma faixa, volume (com %), eco, reverb, distante, rádio, abafado, paradas (\"parada no 5\"), trazer a voz de outro oito, fade in e out, dividir ao meio, meio tempo, tempo dobrado, repetir e apagar.", true);
     return;
   }
   const trazer = r.acoes.find(a => a.tipo === "trazer");
@@ -1341,8 +1375,11 @@ async function gerarMix(estrutura, perguntar = true) {
   responder("Montando o mix...");
   try {
     const alvo = lerMmss($("#alvo").value) || proj.alvo;
-    const corpo = estrutura.id && !estrutura.temporaria ? {alvo, semente, estrutura_id: estrutura.id} : {alvo, semente, estrutura};
+    const usar_ia = $("#usarIa").checked && estrutura.passos.some(p => ["estilo", "final_estilo"].includes(p.modo));
+    if (usar_ia) responder("Montando o mix e criando os blocos de estilo com o Lyria... pode levar 1 a 2 minutos.");
+    const corpo = Object.assign(estrutura.id && !estrutura.temporaria ? {alvo, semente, estrutura_id: estrutura.id} : {alvo, semente, estrutura}, {usar_ia});
     const d = await (await api(`projetos/${proj.id}/gerar`, json("POST", corpo))).json();
+    for (const a of d.importados || []) importados[a.id] = a;
     mudar(() => { tl = d.timeline; camadas = camadas.filter(c => !c.auto).concat(d.camadas); sel.clear(); selClipe = null; });
     $("#palco").scrollLeft = 0; audio.currentTime = 0;
     responder(`<b>Mix criado.</b> Clique de novo para outra versão, troque a estrutura na lista ao lado, ou selecione oitos e peça mudanças.<ul>${d.roteiro.map(r => `<li>${r}</li>`).join("")}</ul>`);
@@ -1531,6 +1568,58 @@ function mostrarRelatorio(r) {
   $("#msgEstr").textContent = "Salve o padrão na biblioteca ou crie um mix com ele na música aberta.";
   desenharSeq();
 }
+
+// ---------------------------------------------------------------- IA do Google (Lyria)
+let iaPronta = false;
+async function estadoIa() {
+  try { iaPronta = (await (await api("ia")).json()).configurada; } catch (e) { iaPronta = false; }
+  $("#btIa").classList.toggle("ok", iaPronta);
+  $("#toggleIa").classList.toggle("desligado", !iaPronta);
+  $("#usarIa").disabled = !iaPronta;
+  if (!iaPronta) $("#usarIa").checked = false;
+  $("#estadoIa").textContent = iaPronta ? "Chave colada. Use \"Testar conexão\" para confirmar." : "Ainda sem chave.";
+}
+$("#btIa").onclick = () => { $("#janelaIa").classList.remove("hidden"); estadoIa(); };
+async function testarIa(chave) {
+  $("#estadoIa").textContent = "Testando...";
+  let msg;
+  try {
+    const r = chave ? await api("ia/chave", json("POST", {chave})) : await api("ia/testar", {method: "POST"});
+    const d = await r.json();
+    msg = d.ok ? `Conectado. Modelos de música disponíveis: ${d.modelos.join(", ")}.` : "A chave funciona, mas não tem acesso a nenhum modelo Lyria.";
+    $("#chaveIa").value = "";
+  } catch (e) { msg = "Não conectou: " + e.message; }
+  await estadoIa().catch(() => {});
+  $("#estadoIa").textContent = msg;
+}
+$("#salvarIa").onclick = () => { const k = $("#chaveIa").value.trim(); if (k) testarIa(k); };
+$("#testarIa").onclick = () => testarIa();
+
+$("#criarIa").onclick = async () => {
+  const pedido = $("#promptNova").value.trim();
+  if (!pedido) return;
+  if (!iaPronta) { etapa("Conecte a IA primeiro (botão com a varinha, no alto).", true); return; }
+  try { acompanhar((await (await api("projetos", json("POST", {ia: pedido}))).json()).id); }
+  catch (e) { etapa("Não deu certo: " + e.message, true); }
+};
+
+// pedido "ia: ..." nos oitos selecionados -> trecho criado pelo Lyria numa camada nova
+async function trechoIa(pedido, l) {
+  if (!iaPronta) { responder("Conecte a IA primeiro (botão com a varinha, no alto).", true); return; }
+  const ini = posicoes[l[0]][0], dur = l.reduce((t, i) => t + posicoes[i][1], 0);
+  const batidas = Math.max(1, Math.round(dur / tempo()));
+  responder(`Criando com o Lyria: <b>${pedido}</b> (${batidas} batidas)... pode levar até 1 minuto.`);
+  try {
+    const d = await (await api(`projetos/${proj.id}/ia-trecho`, json("POST", {prompt: pedido, batidas}))).json();
+    const info = d.importado; importados[info.id] = info;
+    mudar(() => {
+      const c = novaCamada("IA: " + pedido.slice(0, 24));
+      c.clipes.push({id: novoId("k"), fonte: {tipo: "importado", id: info.id}, pos: ini, ini: 0, dur: info.dur, ganho: 0.9, nome: info.nome});
+    });
+    responder(`<b>Feito:</b> o Lyria (${d.modelo}) criou "${pedido}" no tempo e no tom da música, numa camada nova.`);
+  } catch (e) { responder("O Lyria não conseguiu: " + e.message, true); }
+}
+estadoIa();
 
 ligarRegua();
 carregarEstruturas().catch(e => responder("Não consegui ler as estruturas: " + e.message, true));

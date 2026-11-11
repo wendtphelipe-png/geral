@@ -87,6 +87,15 @@ def preparar(projeto_id, origem, avisar):
             raise RuntimeError(f"não consegui baixar: {ultimo}")
         converter(pasta / "baixado.wav", fonte)
         (pasta / "baixado.wav").unlink(missing_ok=True)
+    elif "ia" in origem:
+        avisar("criando a música com o Lyria (pode levar 1 a 2 minutos)")
+        import ia
+        arquivo, texto, modelo = ia.gerar(origem["ia"], "musica")
+        titulo = "IA: " + origem["ia"][:50]
+        converter(arquivo, fonte)
+        meta = ler_json(pasta / "projeto.json", {})
+        meta.update({"prompt_ia": origem["ia"], "modelo_ia": modelo, "letra_ia": texto[:2000]})
+        gravar_json(pasta / "projeto.json", meta)
     else:
         avisar("convertendo o arquivo")
         titulo = Path(origem["nome"]).stem
@@ -321,6 +330,36 @@ def importar_audio(pasta, arquivo_enviado, nome):
             "onda": [round(v / maximo, 3) for v in onda]}
     gravar_json(destino / f"{aid}.json", info)
     return info
+
+
+def salvar_importado(pasta, audio, nome):
+    """Guarda um áudio (2, n) já pronto (por exemplo, gerado pela IA) como arquivo importado do projeto."""
+    destino = Path(pasta) / "importados"
+    destino.mkdir(exist_ok=True)
+    aid = "a" + hashlib.md5(f"{nome}-{time.time()}".encode()).hexdigest()[:10]
+    sf.write(destino / f"{aid}.wav", audio.T, SR)
+    mono = audio.mean(axis=0)
+    passo = max(1, int(SR / 20))
+    onda = [round(float(np.abs(mono[i:i + passo]).max()), 3) for i in range(0, len(mono), passo)]
+    maximo = max(onda) or 1
+    info = {"id": aid, "nome": nome, "dur": round(audio.shape[1] / SR, 3), "onda": [round(v / maximo, 3) for v in onda]}
+    gravar_json(destino / f"{aid}.json", info)
+    return info
+
+
+def tom_do_projeto(pasta):
+    """Tom da música (para pedir à IA trechos no mesmo tom). Guardado na análise."""
+    analise = ler_json(Path(pasta) / "analise.json")
+    if analise.get("tom"):
+        return analise["tom"]
+    from analisar import tom
+    y, sr = librosa.load(str(Path(pasta) / "faixas" / "outros.wav"), sr=SR_ANALISE, mono=True, duration=150)
+    voz, _ = librosa.load(str(Path(pasta) / "faixas" / "voz.wav"), sr=SR_ANALISE, mono=True, duration=150)
+    n = min(len(y), len(voz))
+    chroma = librosa.feature.chroma_cqt(y=y[:n] + voz[:n], sr=SR_ANALISE)
+    analise["tom"] = tom(chroma.mean(axis=1))
+    gravar_json(Path(pasta) / "analise.json", analise)
+    return analise["tom"]
 
 
 def listar_importados(pasta):
