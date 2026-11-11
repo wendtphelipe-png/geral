@@ -146,12 +146,12 @@ def db(x):
 
 # ---------- análise de um áudio ----------
 
-def analisar(caminho, pasta_stems, separar_faixas=True, identificar=True):
+def analisar(caminho, pasta_stems, separar_faixas=True, identificar=True, pasta_modelos=None):
     log(f"\n== {caminho.name}")
     y = carregar(caminho)
     duracao = len(y) / SR
 
-    stems = separar(caminho, pasta_stems) if separar_faixas else None
+    stems = separar(caminho, pasta_stems, pasta_modelos) if separar_faixas else None
     faixas = {}
     if stems:
         for nome, arq in stems.items():

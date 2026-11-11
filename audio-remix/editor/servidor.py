@@ -13,8 +13,10 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 import arranjador
+import bateria
 import efeitos
 import motor
+import padrao
 
 PUBLICO = motor.AQUI / "public"
 EXPORTADOS = motor.PASTA_DADOS.parent / "exportados"
@@ -24,6 +26,59 @@ TIPOS = {".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=u
 abertos = {}          # id -> motor.Projeto
 trabalhos = {}        # id -> {"etapa": str, "erro": str|None, "pronto": bool}
 trava_abertos = threading.Lock()
+PASTA_ESTRUTURAS = motor.PASTA_DADOS.parent / "estruturas"
+PASTA_PADROES = motor.PASTA_DADOS.parent / "padroes"
+analises = {}         # id -> {"etapa", "erro", "resultado"}
+
+
+def lista_estruturas():
+    cat = arranjador.catalogo()
+    salvas = []
+    if PASTA_ESTRUTURAS.is_dir():
+        for f in sorted(PASTA_ESTRUTURAS.glob("*.json")):
+            e = motor.ler_json(f)
+            if e:
+                e["id"], e["salva"] = f.stem, True
+                salvas.append(e)
+    return {"modos": cat["modos"], "estruturas": cat["estruturas"] + salvas,
+            "estilos": [{"id": i, "nome": e["nome"], "bpm": e["bpm"], "padrao": e["padrao"]} for i, e in bateria.estilos().items()]}
+
+
+def validar_estrutura(e):
+    if not isinstance(e, dict) or not isinstance(e.get("passos"), list) or not e["passos"]:
+        raise ValueError("estrutura sem passos")
+    modos = {m["id"] for m in arranjador.catalogo()["modos"]}
+    passos = []
+    for p in e["passos"][:60]:
+        if p.get("modo") not in modos:
+            raise ValueError(f"modo desconhecido: {p.get('modo')}")
+        passo = {"modo": p["modo"], "oitos": "auto" if p.get("oitos") == "auto" else int(numero(p.get("oitos", 1), 1, 32, 1))}
+        if p.get("estilo") in bateria.estilos():
+            passo["estilo"] = p["estilo"]
+        if p.get("peso"):
+            passo["peso"] = round(numero(p["peso"], 0.1, 200, 1), 2)
+        passos.append(passo)
+    return {"nome": str(e.get("nome") or "Minha estrutura")[:60], "desc": str(e.get("desc") or "")[:400],
+            "paradas": e.get("paradas") if e.get("paradas") in arranjador.PARADAS_POR_MINUTO else "normal",
+            "passos": passos, **({"origem": str(e["origem"])[:80]} if e.get("origem") else {})}
+
+
+def iniciar_analise(aid, origem):
+    analises[aid] = {"etapa": "começando", "erro": None, "resultado": None}
+
+    def avisar(etapa):
+        analises[aid]["etapa"] = etapa
+        print(f"[análise {aid}] {etapa}", flush=True)
+
+    def rodar():
+        try:
+            analises[aid]["resultado"] = padrao.rodar(PASTA_PADROES / aid, origem, avisar)
+            avisar("pronto")
+        except Exception as erro:
+            traceback.print_exc()
+            analises[aid]["erro"] = str(erro)
+
+    threading.Thread(target=rodar, daemon=True).start()
 
 
 def pasta(pid):
@@ -130,6 +185,9 @@ class Pedido(BaseHTTPRequestHandler):
     def do_PUT(self):
         self.atender("PUT")
 
+    def do_DELETE(self):
+        self.atender("DELETE")
+
     def rotear(self, metodo):
         url = urllib.parse.urlparse(self.path)
         caminho = url.path
@@ -141,6 +199,45 @@ class Pedido(BaseHTTPRequestHandler):
             if PUBLICO not in arquivo.parents or not arquivo.is_file():
                 raise KeyError(caminho)
             return self.enviar(arquivo.read_bytes(), TIPOS.get(arquivo.suffix, "application/octet-stream"))
+
+        if partes[:2] == ["api", "estruturas"]:
+            if metodo == "GET":
+                return self.enviar(lista_estruturas())
+            if metodo == "POST":
+                e = validar_estrutura(self.corpo_json())
+                PASTA_ESTRUTURAS.mkdir(parents=True, exist_ok=True)
+                eid = re.sub(r"[^\w\-]+", "-", e["nome"].lower()).strip("-")[:40] or "estrutura"
+                eid = f"{eid}-{motor.time.strftime('%m%d%H%M%S')}"
+                motor.gravar_json(PASTA_ESTRUTURAS / f"{eid}.json", e)
+                return self.enviar({"ok": True, "id": eid})
+            if metodo == "DELETE" and len(partes) == 3 and re.fullmatch(r"[\w\-]+", partes[2]):
+                (PASTA_ESTRUTURAS / f"{partes[2]}.json").unlink(missing_ok=True)
+                return self.enviar({"ok": True})
+
+        if partes[:2] == ["api", "padroes"]:
+            if metodo == "POST" and len(partes) == 2:
+                aid = motor.novo_id("analise")
+                destino = PASTA_PADROES / aid
+                destino.mkdir(parents=True)
+                if self.headers.get("Content-Type", "").startswith("application/json"):
+                    link = (self.corpo_json().get("link") or "").strip()
+                    if not link.startswith("http"):
+                        return self.erro(400, "link inválido")
+                    iniciar_analise(aid, {"link": link})
+                else:
+                    nome = urllib.parse.unquote(self.headers.get("X-Nome", "mix"))
+                    arquivo = destino / ("enviado" + Path(nome).suffix.lower())
+                    self.receber_arquivo(arquivo, int(self.headers.get("Content-Length") or 0))
+                    iniciar_analise(aid, {"arquivo": str(arquivo), "nome": nome})
+                return self.enviar({"id": aid})
+            if metodo == "GET" and len(partes) == 3:
+                a = analises.get(partes[2])
+                if not a:
+                    salvo = motor.ler_json(PASTA_PADROES / partes[2] / "resultado.json") if re.fullmatch(r"[\w\-]+", partes[2]) else None
+                    if not salvo:
+                        raise KeyError(partes[2])
+                    a = {"etapa": "pronto", "erro": None, "resultado": salvo}
+                return self.enviar(a)
 
         if partes[:2] == ["api", "projetos"] and len(partes) == 2:
             if metodo == "GET":
@@ -207,9 +304,19 @@ class Pedido(BaseHTTPRequestHandler):
             analise = motor.ler_json(p / "analise.json")
             meta = motor.ler_json(p / "projeto.json")
             alvo = numero(dados.get("alvo", meta.get("alvo", 165)), 20, 900, 165)
-            timeline, roteiro = arranjador.criar_mix(analise, alvo=alvo, semente=int(numero(dados.get("semente", 1), 0, 1e9, 1)),
-                                                     meio_tempo=bool(dados.get("meio_tempo", True)))
-            return self.enviar({"timeline": validar_timeline(timeline, abrir(pid)), "roteiro": roteiro})
+            if dados.get("estrutura"):
+                estrutura = validar_estrutura(dados["estrutura"])
+            else:
+                todas = lista_estruturas()["estruturas"]
+                estrutura = next((e for e in todas if e.get("id") == dados.get("estrutura_id")), todas[0])
+            timeline, estilos, roteiro = arranjador.criar_mix(analise, alvo=alvo, semente=int(numero(dados.get("semente", 1), 0, 1e9, 1)),
+                                                              estrutura=estrutura)
+            camadas = [{"id": f"auto{n}", "nome": c["nome"], "ganho": 0.9, "mudo": False, "solo": False, "auto": True,
+                        "clipes": [{"id": f"ka{n}", "nome": c["nome"], "pos": c["pos"], "ini": 0, "dur": c["dur"], "ganho": 1,
+                                    "fonte": {"tipo": "estilo", "estilo": c["estilo"], "bpm": analise.get("bpm") or 120,
+                                              "batidas": c["batidas"]}}]}
+                       for n, c in enumerate(estilos)]
+            return self.enviar({"timeline": validar_timeline(timeline, abrir(pid)), "camadas": camadas, "roteiro": roteiro})
 
         if metodo == "POST" and acao == "importar":
             nome = urllib.parse.unquote(self.headers.get("X-Nome", "audio"))
@@ -357,6 +464,11 @@ def validar_camadas(camadas, proj, efetivo=True):
                         not (proj.pasta / "importados" / f"{fonte['id']}.wav").exists():
                     raise ValueError("arquivo importado não encontrado")
                 f = {"tipo": "importado", "id": fonte["id"]}
+            elif fonte.get("tipo") == "estilo":
+                if fonte.get("estilo") not in bateria.estilos():
+                    raise ValueError("estilo desconhecido")
+                f = {"tipo": "estilo", "estilo": fonte["estilo"], "bpm": numero(fonte.get("bpm"), 40, 220, 120),
+                     "batidas": int(numero(fonte.get("batidas"), 1, 1024, 8))}
             elif fonte.get("tipo") == "faixa":
                 if fonte.get("u") not in proj.unidades or fonte.get("faixa") not in motor.FAIXAS:
                     raise ValueError("trecho de faixa inválido")
@@ -376,6 +488,8 @@ def validar_camadas(camadas, proj, efetivo=True):
             clipes.append(clipe)
         item = {"id": str(cam.get("id", ""))[:20], "nome": str(cam.get("nome", "Camada"))[:40],
                 "ganho": numero(cam.get("ganho", 1), 0, 2, 1), "clipes": clipes}
+        if cam.get("auto"):
+            item["auto"] = True
         if not efetivo:
             item.update(mudo=bool(cam.get("mudo")), solo=bool(cam.get("solo")))
         saida.append(item)

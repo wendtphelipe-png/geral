@@ -141,9 +141,47 @@ select.musica{background:var(--pista);border:1px solid var(--borda);border-radiu
 .cel .fxs{position:absolute;left:5px;bottom:4px;display:flex;gap:3px;pointer-events:none}
 .cel .fxs span,.clipe .fxs span{font-size:9.5px;font-weight:800;color:var(--noite);background:#E9EEF5;border-radius:3px;padding:0 4px;line-height:14px}
 .clipe .fxs{position:absolute;right:6px;bottom:4px;display:flex;gap:3px;pointer-events:none;z-index:2}
-.resposta ul{margin:4px 0 0;padding-left:18px;max-height:96px;overflow:auto}
+.resposta{flex-basis:100%}
+.resposta ul{margin:4px 0 0;padding-left:18px;max-height:64px;overflow:auto}
 .resposta li{margin:1px 0}
 .rapidos .grupo-rot{font-size:11px;color:var(--fraco);margin-left:6px}
+select.estrutura{background:var(--pista);border:1px solid #6B5A1E;color:#FFE08A;border-radius:8px;padding:6px 8px;max-width:190px;font-weight:600}
+.janela.larga{width:min(1060px,100%);max-height:calc(100vh - 40px);display:flex;flex-direction:column;padding:0;overflow:hidden}
+.janela.larga .topo-jan{display:flex;align-items:center;gap:6px;padding:16px 20px 0}
+.janela.larga .topo-jan h2{margin:0 16px 0 0}
+.aba{border:0;background:none;padding:8px 12px;border-bottom:2px solid transparent;color:var(--apagado);font-weight:600}
+.aba.on{color:var(--tinta);border-bottom-color:#FFC93C}
+.janela.larga .corpo-jan{padding:16px 20px;overflow:auto;flex:1;border-top:1px solid var(--borda)}
+.janela.larga .rodape{display:flex;gap:8px;align-items:center;padding:12px 20px;border-top:1px solid var(--borda);flex-wrap:wrap}
+.montador{display:grid;grid-template-columns:260px 1fr;gap:18px;height:calc(100vh - 250px);min-height:320px}
+.paleta{overflow:auto;padding-right:4px}
+.paleta h4{margin:12px 0 6px;font-size:11.5px;color:var(--fraco);font-weight:600}
+.paleta h4:first-child{margin-top:0}
+.modo{display:block;width:100%;text-align:left;border:1px solid var(--borda2);background:var(--pista);border-radius:8px;padding:7px 10px;margin-bottom:5px;cursor:grab;font-size:13px}
+.modo:hover{border-color:var(--fraco)}
+.modo small{display:block;color:var(--fraco);font-size:11px;margin-top:2px;line-height:1.3}
+.sequencia{border:1.5px dashed var(--borda2);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:6px;overflow:auto}
+.sequencia.sobre{border-color:#FFC93C}
+.sequencia .vazio-seq{color:var(--fraco);text-align:center;margin:auto;font-size:13px}
+.passo{display:grid;grid-template-columns:22px 1fr auto auto auto;align-items:center;gap:10px;background:var(--pista2);border:1px solid var(--borda2);border-left:4px solid var(--cor);border-radius:9px;padding:7px 10px;cursor:grab}
+.passo.arrastando{opacity:.4}
+.passo .num{color:var(--fraco);font-size:12px}
+.passo b{font-size:13.5px}
+.passo small{display:block;color:var(--fraco);font-size:11px}
+.passo select,.passo input{background:var(--noite);border:1px solid var(--borda2);border-radius:6px;padding:3px 6px;font-size:12px}
+.passo input{width:48px}
+.passo .auto{font-size:12px;color:var(--apagado);display:flex;align-items:center;gap:4px}
+.linha-ins{height:3px;background:#FFC93C;border-radius:2px}
+.campo-nome{background:var(--noite);border:1px solid var(--borda2);border-radius:8px;padding:7px 10px;min-width:220px}
+.relatorio{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.relatorio ul{margin:0;padding-left:18px;line-height:1.55;font-size:13px}
+.relatorio h4{margin:0 0 8px;font-size:13px}
+.chips-estr{display:flex;flex-wrap:wrap;gap:5px}
+.chip-estr{font-size:12px;border-radius:6px;padding:3px 8px;background:var(--pista2);border:1px solid var(--borda2);border-left:3px solid var(--cor)}
+.tab-musicas{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:6px}
+.tab-musicas td,.tab-musicas th{border-bottom:1px solid var(--borda);padding:5px 6px;text-align:left}
+.tab-musicas th{color:var(--fraco);font-weight:600}
+@media (max-width:800px){.montador,.relatorio{grid-template-columns:1fr}.montador{height:auto}.paleta{max-height:40vh}}
 .cursor{position:absolute;top:0;bottom:0;width:2px;background:var(--play);z-index:6;pointer-events:none;box-shadow:0 0 0 1px rgba(0,0,0,.4)}
 .insercao{position:absolute;top:22px;bottom:0;width:3px;background:var(--sel);z-index:8;pointer-events:none}
 .laco{position:absolute;top:22px;height:58px;border:1px solid #FFD25A;border-radius:3px;pointer-events:none;z-index:8}
@@ -239,6 +277,8 @@ select.musica{background:var(--pista);border:1px solid var(--borda);border-radiu
   <symbol id="i-musica" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
   <symbol id="i-varinha" viewBox="0 0 24 24"><path d="m15 4 1 2 2 1-2 1-1 2-1-2-2-1 2-1zM5 19 17 7M19 13l.7 1.3L21 15l-1.3.7L19 17l-.7-1.3L17 15l1.3-.7z"/></symbol>
+  <symbol id="i-camadas" viewBox="0 0 24 24"><path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></symbol>
+  <symbol id="i-busca" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
   <symbol id="i-enviar" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
 </svg>
 
@@ -261,6 +301,8 @@ select.musica{background:var(--pista);border:1px solid var(--borda);border-radiu
     </div>
     <span class="aviso-simples hidden" id="avisoSimples" title="O separador de faixas não estava disponível quando esta música foi importada. Rode PREPARAR-ANALISADOR.bat e importe de novo.">Voz não separada</span>
     <div class="dir">
+      <select class="estrutura" id="estrutura" title="Estrutura do mix automático"></select>
+      <button class="botao" id="abrirEstruturas" title="Montar a sua estrutura ou analisar um mix pronto"><svg><use href="#i-camadas"/></svg><span class="txt">Estruturas</span></button>
       <button class="botao magico" id="gerar" title="O programa monta o mix sozinho seguindo os padrões de competição. Clique de novo para outra versão."><svg><use href="#i-varinha"/></svg><span class="txt">Criar mix automático</span></button>
       <div class="ferramentas">
         <button class="mini" id="ferCortar" title="Cortar no cursor (C)"><svg><use href="#i-tesoura"/></svg><span class="rot">Cortar</span></button>
@@ -358,6 +400,44 @@ select.musica{background:var(--pista);border:1px solid var(--borda);border-radiu
   </div>
 </div>
 
+<div class="fundo hidden" id="janelaEstr">
+  <div class="janela larga">
+    <div class="topo-jan">
+      <h2>Estruturas de mix</h2>
+      <button class="aba on" data-aba="montar">Montar estrutura</button>
+      <button class="aba" data-aba="analisar">Analisar um mix</button>
+      <button class="bt" style="margin-left:auto" onclick="fecharEstr()" aria-label="Fechar"><svg><use href="#i-x"/></svg></button>
+    </div>
+    <div class="corpo-jan" id="abaMontar">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+        <span style="color:var(--apagado);font-size:13px">Começar de</span>
+        <select class="campo-nome" id="baseEstr" style="min-width:0"></select>
+        <span style="color:var(--fraco);font-size:12px">Arraste os modos da esquerda para a sequência (ou clique para pôr no fim). Arraste os passos para mudar a ordem.</span>
+      </div>
+      <div class="montador">
+        <div class="paleta" id="paleta"></div>
+        <div class="sequencia" id="sequencia"></div>
+      </div>
+    </div>
+    <div class="corpo-jan hidden" id="abaAnalisar">
+      <p style="color:var(--apagado);margin:0 0 12px;font-size:13.5px">Cole o link de um mix (YouTube) ou solte um arquivo. O programa separa as faixas, descobre as músicas usadas, compara com as originais e transforma o mix numa estrutura que você pode usar com outras músicas. Leva alguns minutos.</p>
+      <div class="campo"><input id="linkMix" placeholder="Link do mix (YouTube)"><button class="botao prim" id="analisarLink"><svg><use href="#i-busca"/></svg>Analisar</button></div>
+      <label class="soltar" id="soltarMix">ou arraste o arquivo do mix aqui<input type="file" id="arquivoMix" accept="audio/*,video/*" class="hidden"></label>
+      <div class="andamento hidden" id="andamentoMix"><div class="girando"></div><span id="etapaMix"></span></div>
+      <div id="relatorioMix" class="hidden" style="margin-top:16px"></div>
+    </div>
+    <div class="rodape" id="rodapeEstr">
+      <input class="campo-nome" id="nomeEstr" placeholder="Nome da estrutura">
+      <select class="campo-nome" id="paradasEstr" style="min-width:0" title="Quantidade de paradas (hits)">
+        <option value="poucas">Poucas paradas</option><option value="normal" selected>Paradas normais</option><option value="densas">Muitas paradas</option>
+      </select>
+      <span id="msgEstr" style="color:var(--apagado);font-size:12.5px"></span>
+      <button class="botao" id="salvarEstr" style="margin-left:auto">Salvar na biblioteca</button>
+      <button class="botao magico" id="usarEstr"><svg><use href="#i-varinha"/></svg>Criar mix com esta estrutura</button>
+    </div>
+  </div>
+</div>
+
 <input type="file" id="arquivoCamada" accept="audio/*,video/*" class="hidden">
 <audio id="audio" preload="auto"></audio>
 <audio id="previa"></audio>
@@ -410,6 +490,7 @@ function acharClipe(ref = selClipe) {
 }
 function durFonte(fonte) {
   if (fonte.tipo === "importado") return importados[fonte.id]?.dur || 0;
+  if (fonte.tipo === "estilo") return fonte.batidas * 60 / fonte.bpm;
   return durUnid(unid[fonte.u]) * ((fonte.ate ?? 1) - (fonte.de ?? 0));
 }
 
@@ -665,6 +746,15 @@ function desenharCamadas() {
 }
 function ondaDaFonte(f) {
   if (f.tipo === "importado") return {v: importados[f.id]?.onda || [], dur: importados[f.id]?.dur || 1};
+  if (f.tipo === "estilo") {  // desenho das batidas do padrão do estilo (bumbo mais alto)
+    const padrao = estrInfo?.estilos.find(e => e.id === f.estilo)?.padrao || {};
+    const v = [];
+    for (let k = 0; k < f.batidas * 4; k++) {
+      const passo = k % 16;
+      v.push(padrao.bumbo?.[passo] === "x" ? 1 : (padrao.caixa || padrao.palma || "")[passo] === "x" ? 0.7 : Object.values(padrao).some(x => x[passo] === "x") ? 0.35 : 0.04);
+    }
+    return {v, dur: durFonte(f)};
+  }
   const u = unid[f.u];
   return {v: fatiar(u.onda[f.faixa], f.de ?? 0, f.ate ?? 1), dur: durFonte(f)};
 }
@@ -951,21 +1041,6 @@ function cortar(livre) {
   });
   responder(`<b>Cortado</b> o bloco ${i + 1} na batida mais próxima do cursor. Segure Alt para cortar no ponto exato.`);
 }
-let semente = Math.floor(Math.random() * 1000);
-$("#gerar").onclick = async () => {
-  if (!proj) return;
-  const editado = historico.length > 0;
-  if (editado && !confirm("Criar um mix automático no lugar da trilha principal atual? (dá para desfazer com Ctrl+Z)")) return;
-  semente += 1;
-  responder("Montando o mix...");
-  try {
-    const alvo = lerMmss($("#alvo").value) || proj.alvo;
-    const d = await (await api(`projetos/${proj.id}/gerar`, json("POST", {alvo, semente}))).json();
-    mudar(() => { tl = d.timeline; sel.clear(); selClipe = null; });
-    $("#palco").scrollLeft = 0; audio.currentTime = 0;
-    responder(`<b>Mix criado.</b> Clique de novo em "Criar mix automático" para outra versão, ou selecione oitos e peça mudanças.<ul>${d.roteiro.map(r => `<li>${r}</li>`).join("")}</ul>`);
-  } catch (e) { responder("Não consegui criar o mix: " + e.message, true); }
-};
 $("#ferCortar").onclick = e => cortar(e.altKey);
 $("#ferFadeIn").onclick = () => executar("fade in");
 $("#ferFadeOut").onclick = () => executar("fade out");
@@ -1230,7 +1305,235 @@ async function acompanhar(id) {
   }
 }
 
+// ---------------------------------------------------------------- estruturas de mix
+const COR_GRUPO = {Abertura: "#5CC8FF", Corpo: "#3DD6B5", Respiro: "#A08BFF", Tempo: "#FF7A59", Estilo: "#FFD25A", Final: "#F05A9E"};
+let estrInfo = null, estrPersonalizada = null, seq = [];
+const modoDe = id => estrInfo.modos.find(m => m.id === id) || {nome: id, grupo: "Corpo"};
+const nomeEstilo = id => (estrInfo.estilos.find(e => e.id === id) || {nome: id}).nome;
+
+async function carregarEstruturas(escolher) {
+  estrInfo = await (await api("estruturas")).json();
+  const s = $("#estrutura"), anterior = escolher || s.value || (() => { try { return localStorage.getItem("remix.estrutura"); } catch (e) { return null; } })();
+  const prontas = estrInfo.estruturas.filter(e => !e.salva), minhas = estrInfo.estruturas.filter(e => e.salva);
+  s.innerHTML = `<optgroup label="Prontas">${prontas.map(e => `<option value="${e.id}">${e.nome}</option>`).join("")}</optgroup>` +
+    (minhas.length ? `<optgroup label="Minha biblioteca">${minhas.map(e => `<option value="${e.id}">${e.nome}</option>`).join("")}</optgroup>` : "") +
+    (estrPersonalizada ? `<optgroup label="Agora"><option value="__personalizada">${estrPersonalizada.nome || "Personalizada"} (não salva)</option></optgroup>` : "");
+  s.value = [...s.options].some(o => o.value === anterior) ? anterior : prontas[0].id;
+  atualizarTituloEstr();
+  $("#baseEstr").innerHTML = `<option value="">(vazia)</option>` + estrInfo.estruturas.map(e => `<option value="${e.id}">${e.nome}</option>`).join("");
+}
+function estruturaEscolhida() {
+  const v = $("#estrutura").value;
+  return v === "__personalizada" ? estrPersonalizada : estrInfo.estruturas.find(e => e.id === v);
+}
+function atualizarTituloEstr() {
+  const e = estruturaEscolhida(); if (!e) return;
+  $("#estrutura").title = `${e.nome}: ${e.desc || ""}\n\n` + e.passos.map((p, i) => `${i + 1}. ${modoDe(p.modo).nome}${p.estilo ? " (" + nomeEstilo(p.estilo) + ")" : ""} · ${p.oitos === "auto" ? "auto" : p.oitos + " oito(s)"}`).join("\n");
+  try { localStorage.setItem("remix.estrutura", $("#estrutura").value); } catch (e) {}
+}
+$("#estrutura").onchange = atualizarTituloEstr;
+
+let semente = Math.floor(Math.random() * 1000);
+async function gerarMix(estrutura, perguntar = true) {
+  if (!proj) { responder("Abra uma música primeiro (Nova música).", true); return false; }
+  if (perguntar && historico.length > 0 && !confirm("Criar um mix automático no lugar da trilha principal atual? (dá para desfazer com Ctrl+Z)")) return false;
+  semente += 1;
+  responder("Montando o mix...");
+  try {
+    const alvo = lerMmss($("#alvo").value) || proj.alvo;
+    const corpo = estrutura.id && !estrutura.temporaria ? {alvo, semente, estrutura_id: estrutura.id} : {alvo, semente, estrutura};
+    const d = await (await api(`projetos/${proj.id}/gerar`, json("POST", corpo))).json();
+    mudar(() => { tl = d.timeline; camadas = camadas.filter(c => !c.auto).concat(d.camadas); sel.clear(); selClipe = null; });
+    $("#palco").scrollLeft = 0; audio.currentTime = 0;
+    responder(`<b>Mix criado.</b> Clique de novo para outra versão, troque a estrutura na lista ao lado, ou selecione oitos e peça mudanças.<ul>${d.roteiro.map(r => `<li>${r}</li>`).join("")}</ul>`);
+    return true;
+  } catch (e) { responder("Não consegui criar o mix: " + e.message, true); return false; }
+}
+$("#gerar").onclick = () => gerarMix(estruturaEscolhida());
+
+// ---- janela: montar estrutura / analisar mix
+function abrirEstr(aba = "montar") {
+  $("#janelaEstr").classList.remove("hidden");
+  trocarAba(aba);
+  if (!seq.length) carregarBase($("#estrutura").value === "__personalizada" ? null : $("#estrutura").value);
+  desenharPaleta(); desenharSeq();
+}
+function fecharEstr() { $("#janelaEstr").classList.add("hidden"); }
+$("#abrirEstruturas").onclick = () => abrirEstr();
+document.querySelectorAll(".aba").forEach(b => b.onclick = () => trocarAba(b.dataset.aba));
+function trocarAba(aba) {
+  document.querySelectorAll(".aba").forEach(b => b.classList.toggle("on", b.dataset.aba === aba));
+  $("#abaMontar").classList.toggle("hidden", aba !== "montar");
+  $("#abaAnalisar").classList.toggle("hidden", aba !== "analisar");
+}
+function carregarBase(id) {
+  const e = id ? estrInfo.estruturas.find(x => x.id === id) : estrPersonalizada;
+  seq = e ? copia(e.passos) : [];
+  $("#nomeEstr").value = e ? (e.salva || e === estrPersonalizada ? e.nome : e.nome + " (minha versão)") : "";
+  $("#paradasEstr").value = e?.paradas || "normal";
+  if (id) $("#baseEstr").value = id;
+  desenharSeq();
+}
+$("#baseEstr").onchange = e => carregarBase(e.target.value);
+
+function desenharPaleta() {
+  const grupos = {};
+  estrInfo.modos.forEach(m => (grupos[m.grupo] = grupos[m.grupo] || []).push(m));
+  $("#paleta").innerHTML = Object.entries(grupos).map(([g, ms]) => `<h4>${g}</h4>` + ms.map(m =>
+    `<button class="modo" draggable="true" data-modo="${m.id}" style="border-left:4px solid ${COR_GRUPO[g]}" title="${m.desc}">${m.nome}<small>${m.desc.split(".")[0]}.</small></button>`).join("")).join("");
+  $("#paleta").querySelectorAll(".modo").forEach(b => {
+    b.onclick = () => { seq.push(novoPasso(b.dataset.modo)); desenharSeq(); };
+    b.ondragstart = e => { e.dataTransfer.setData("text/remix-modo", b.dataset.modo); e.dataTransfer.effectAllowed = "copy"; };
+  });
+}
+function novoPasso(id) {
+  const m = modoDe(id), p = {modo: id, oitos: m.oitos};
+  if (m.estilo) p.estilo = m.estilo;
+  return p;
+}
+let arrastePasso = null;
+function desenharSeq() {
+  const el = $("#sequencia");
+  if (!seq.length) { el.innerHTML = `<div class="vazio-seq">Arraste os modos para cá, na ordem do mix.<br>Comece por uma abertura e termine com um final.</div>`; return; }
+  el.innerHTML = seq.map((p, i) => {
+    const m = modoDe(p.modo), auto = p.oitos === "auto";
+    const podeAuto = ["corpo", "picotado"].includes(p.modo);
+    return `<div class="passo" draggable="true" data-i="${i}" style="--cor:${COR_GRUPO[m.grupo]}">
+      <span class="num">${i + 1}</span>
+      <div><b>${m.nome}</b><small>${m.grupo}${p.peso ? " · tamanho relativo " + p.peso : ""}</small></div>
+      ${m.estilo || p.estilo ? `<select data-campo="estilo">${estrInfo.estilos.map(e => `<option value="${e.id}" ${e.id === p.estilo ? "selected" : ""}>${e.nome}</option>`).join("")}</select>` : "<span></span>"}
+      <span class="auto">${podeAuto ? `<label><input type="checkbox" data-campo="auto" ${auto ? "checked" : ""} style="width:auto"> auto</label>` : ""}
+        ${auto ? "" : `<input type="number" min="1" max="32" value="${p.oitos}" data-campo="oitos" title="Quantos oitos"> oitos`}</span>
+      <button class="ms tirar" data-campo="tirar" title="Tirar este passo"><svg style="width:12px;height:12px"><use href="#i-x"/></svg></button>
+    </div>`;
+  }).join("");
+  el.querySelectorAll(".passo").forEach(d => {
+    const i = +d.dataset.i;
+    d.querySelectorAll("[data-campo]").forEach(c => {
+      const campo = c.dataset.campo;
+      if (campo === "tirar") c.onclick = () => { seq.splice(i, 1); desenharSeq(); };
+      else c.onchange = () => {
+        if (campo === "estilo") seq[i].estilo = c.value;
+        if (campo === "oitos") seq[i].oitos = Math.max(1, Math.min(32, +c.value || 1));
+        if (campo === "auto") seq[i].oitos = c.checked ? "auto" : 4;
+        desenharSeq();
+      };
+    });
+    d.ondragstart = e => { arrastePasso = i; d.classList.add("arrastando"); e.dataTransfer.setData("text/remix-passo", String(i)); };
+    d.ondragend = () => { arrastePasso = null; d.classList.remove("arrastando"); };
+  });
+}
+function posicaoNaSeq(y) {
+  const itens = [...$("#sequencia").querySelectorAll(".passo")];
+  for (let k = 0; k < itens.length; k++) { const r = itens[k].getBoundingClientRect(); if (y < r.top + r.height / 2) return k; }
+  return itens.length;
+}
+const seqEl = $("#sequencia");
+seqEl.addEventListener("dragover", e => {
+  if (!e.dataTransfer.types.includes("text/remix-modo") && !e.dataTransfer.types.includes("text/remix-passo")) return;
+  e.preventDefault(); seqEl.classList.add("sobre");
+  seqEl.querySelector(".linha-ins")?.remove();
+  const k = posicaoNaSeq(e.clientY), itens = seqEl.querySelectorAll(".passo"), linha = document.createElement("div");
+  linha.className = "linha-ins";
+  if (k < itens.length) seqEl.insertBefore(linha, itens[k]); else seqEl.appendChild(linha);
+});
+seqEl.addEventListener("dragleave", e => { if (!seqEl.contains(e.relatedTarget)) { seqEl.classList.remove("sobre"); seqEl.querySelector(".linha-ins")?.remove(); } });
+seqEl.addEventListener("drop", e => {
+  e.preventDefault(); seqEl.classList.remove("sobre");
+  let k = posicaoNaSeq(e.clientY); seqEl.querySelector(".linha-ins")?.remove();
+  const modo = e.dataTransfer.getData("text/remix-modo");
+  if (modo) seq.splice(k, 0, novoPasso(modo));
+  else if (arrastePasso !== null) {
+    const [p] = seq.splice(arrastePasso, 1);
+    if (arrastePasso < k) k--;
+    seq.splice(k, 0, p);
+  }
+  desenharSeq();
+});
+function estruturaDoMontador() {
+  return {nome: $("#nomeEstr").value.trim() || "Minha estrutura", paradas: $("#paradasEstr").value, passos: copia(seq),
+          desc: ultimaAnalise?.estrutura?.desc && $("#abaAnalisar").classList.contains("hidden") === false ? ultimaAnalise.estrutura.desc : "Montada à mão.",
+          ...(ultimaAnalise && !$("#abaAnalisar").classList.contains("hidden") ? {origem: ultimaAnalise.estrutura.origem} : {})};
+}
+function validarSeq() {
+  if (!seq.length) { $("#msgEstr").textContent = "A sequência está vazia."; return false; }
+  return true;
+}
+$("#salvarEstr").onclick = async () => {
+  if (!validarSeq()) return;
+  try {
+    const d = await (await api("estruturas", json("POST", estruturaDoMontador()))).json();
+    await carregarEstruturas(d.id);
+    $("#msgEstr").textContent = "Salva na sua biblioteca. Ela já está escolhida na lista de estruturas.";
+  } catch (e) { $("#msgEstr").textContent = "Não consegui salvar: " + e.message; }
+};
+$("#usarEstr").onclick = async () => {
+  if (!validarSeq()) return;
+  if (!proj) { $("#msgEstr").textContent = "Abra uma música primeiro (Nova música) para criar o mix."; return; }
+  estrPersonalizada = Object.assign(estruturaDoMontador(), {temporaria: true});
+  await carregarEstruturas("__personalizada");
+  fecharEstr();
+  await gerarMix(estrPersonalizada);
+};
+
+// ---- analisar um mix pronto
+let ultimaAnalise = null;
+async function iniciarAnaliseMix(corpo, cabecalhos) {
+  $("#relatorioMix").classList.add("hidden");
+  etapaMix("Enviando...");
+  try {
+    const d = await (await api("padroes", Object.assign({method: "POST", body: corpo}, {headers: cabecalhos}))).json();
+    for (;;) {
+      const st = await (await api("padroes/" + d.id)).json();
+      if (st.erro) { etapaMix("Não deu certo: " + st.erro, true); return; }
+      if (st.resultado) { $("#andamentoMix").classList.add("hidden"); mostrarRelatorio(st.resultado); return; }
+      etapaMix(st.etapa ? st.etapa.charAt(0).toUpperCase() + st.etapa.slice(1) + "..." : "Analisando...");
+      await new Promise(r => setTimeout(r, 2500));
+    }
+  } catch (e) { etapaMix("Não deu certo: " + e.message, true); }
+}
+function etapaMix(t, erro) {
+  $("#andamentoMix").classList.remove("hidden");
+  $("#andamentoMix .girando").classList.toggle("hidden", !!erro);
+  $("#etapaMix").textContent = t; $("#etapaMix").classList.toggle("erro", !!erro);
+}
+$("#analisarLink").onclick = () => {
+  const link = $("#linkMix").value.trim(); if (!link) return;
+  iniciarAnaliseMix(JSON.stringify({link}), {"Content-Type": "application/json"});
+};
+$("#linkMix").addEventListener("keydown", e => { if (e.key === "Enter") $("#analisarLink").click(); });
+const enviarMix = f => iniciarAnaliseMix(f, {"X-Nome": encodeURIComponent(f.name), "Content-Type": "application/octet-stream"});
+$("#arquivoMix").onchange = e => e.target.files[0] && enviarMix(e.target.files[0]);
+const soltarMix = $("#soltarMix");
+soltarMix.ondragover = e => { e.preventDefault(); soltarMix.classList.add("sobre"); };
+soltarMix.ondragleave = () => soltarMix.classList.remove("sobre");
+soltarMix.ondrop = e => { e.preventDefault(); soltarMix.classList.remove("sobre"); if (e.dataTransfer.files[0]) enviarMix(e.dataTransfer.files[0]); };
+
+function mostrarRelatorio(r) {
+  ultimaAnalise = r;
+  seq = copia(r.estrutura.passos);
+  $("#nomeEstr").value = r.estrutura.nome; $("#paradasEstr").value = r.estrutura.paradas || "normal";
+  const fmt = s => mmss(s);
+  $("#relatorioMix").innerHTML = `
+    <div class="relatorio">
+      <div><h4>O que descobri</h4><ul>${r.relatorio.map(x => `<li>${x}</li>`).join("")}</ul></div>
+      <div>
+        <h4>Músicas no mix</h4>
+        <table class="tab-musicas"><tr><th>De</th><th>Até</th><th>Música</th><th>BPM</th><th>Original</th></tr>
+        ${r.musicas.map(m => { const o = r.originais[m.nome]; return `<tr><td>${fmt(m.inicio)}</td><td>${fmt(m.fim)}</td><td>${m.nome}</td><td>${Math.round(m.bpm)}</td>
+          <td>${o && !o.erro ? `${Math.round(o.bpm)} BPM, ${o.tom}` : o?.erro ? "não baixou" : "-"}</td></tr>`; }).join("")}</table>
+        <h4 style="margin-top:14px">Estrutura aprendida</h4>
+        <div class="chips-estr">${r.estrutura.passos.map(p => { const m = modoDe(p.modo); return `<span class="chip-estr" style="--cor:${COR_GRUPO[m.grupo]}">${m.nome}${p.estilo ? " · " + nomeEstilo(p.estilo) : ""}${p.oitos === "auto" ? "" : " · " + p.oitos}</span>`; }).join("")}</div>
+        <p style="color:var(--fraco);font-size:12px;margin:10px 0 0">Para ajustar antes de salvar, use a aba "Montar estrutura": a sequência aprendida já está lá.</p>
+      </div>
+    </div>`;
+  $("#relatorioMix").classList.remove("hidden");
+  $("#msgEstr").textContent = "Salve o padrão na biblioteca ou crie um mix com ele na música aberta.";
+  desenharSeq();
+}
+
 ligarRegua();
+carregarEstruturas().catch(e => responder("Não consegui ler as estruturas: " + e.message, true));
 window.addEventListener("resize", () => proj && desenhar());
 listarProjetos().catch(e => responder("Não consegui falar com o editor: " + e.message, true));
 </script>

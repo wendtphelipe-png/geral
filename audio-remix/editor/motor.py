@@ -431,6 +431,12 @@ class Projeto:
             if aid not in self.importados:
                 self.importados[aid] = self._ler(self.pasta / "importados" / f"{aid}.wav")
             return self.importados[aid]
+        if fonte["tipo"] == "estilo":  # bateria de outro estilo, gerada no BPM da música
+            chave = ("estilo", fonte["estilo"], float(fonte["bpm"]), int(fonte["batidas"]))
+            if chave not in self.importados:
+                import bateria
+                self.importados[chave] = bateria.tocar(fonte["estilo"], fonte["bpm"], fonte["batidas"])
+            return self.importados[chave]
         a, b = self.trecho_unidade(fonte["u"], fonte.get("de", 0), fonte.get("ate", 1))
         return self.faixas[fonte["faixa"]][:, a:b]
 

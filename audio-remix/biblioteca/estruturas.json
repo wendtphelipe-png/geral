@@ -1,0 +1,369 @@
+{
+ "versao": 1,
+ "modos": [
+  {
+   "id": "abertura_sem_grave",
+   "nome": "Abertura sem grave",
+   "grupo": "Abertura",
+   "oitos": 1,
+   "desc": "Um oito do refrão só com voz e melodia, com reverb e uma parada no 8. Cria expectativa para a queda."
+  },
+  {
+   "id": "abertura_so_voz",
+   "nome": "Abertura só na voz",
+   "grupo": "Abertura",
+   "oitos": 1,
+   "desc": "Começa com a voz sozinha (acapella), com reverb."
+  },
+  {
+   "id": "abertura_original",
+   "nome": "Começo original",
+   "grupo": "Abertura",
+   "oitos": 1,
+   "desc": "Começa como a música começa (a introdução original)."
+  },
+  {
+   "id": "queda",
+   "nome": "Queda (drop)",
+   "grupo": "Corpo",
+   "oitos": 1,
+   "desc": "O refrão entra com tudo, logo depois da abertura."
+  },
+  {
+   "id": "corpo",
+   "nome": "Música em ordem",
+   "grupo": "Corpo",
+   "oitos": "auto",
+   "desc": "Segue a música na ordem original, em trechos de 2 a 4 oitos cortados na batida. 'Auto' completa a duração."
+  },
+  {
+   "id": "picotado",
+   "nome": "Picotado (hits)",
+   "grupo": "Corpo",
+   "oitos": "auto",
+   "desc": "Cortes curtos de 1 a 2 oitos, saltos entre partes e muitas paradas. Bom para coreografia cheia de acentos."
+  },
+  {
+   "id": "refrao",
+   "nome": "Refrão",
+   "grupo": "Corpo",
+   "oitos": 2,
+   "desc": "Volta ao refrão (a parte mais forte e repetida)."
+  },
+  {
+   "id": "respiro_sem_grave",
+   "nome": "Respiro sem grave",
+   "grupo": "Respiro",
+   "oitos": 1,
+   "desc": "Tira o baixo por um oito. O eco da voz é 'jogado' antes."
+  },
+  {
+   "id": "respiro_sem_bateria",
+   "nome": "Respiro sem bateria",
+   "grupo": "Respiro",
+   "oitos": 1,
+   "desc": "Tira a bateria (e quase todo o baixo) por um oito."
+  },
+  {
+   "id": "so_voz",
+   "nome": "Só a voz",
+   "grupo": "Respiro",
+   "oitos": 1,
+   "desc": "Acapella no meio do mix, com reverb."
+  },
+  {
+   "id": "meio_tempo",
+   "nome": "Meio tempo",
+   "grupo": "Tempo",
+   "oitos": 1,
+   "desc": "Um oito em câmera lenta (dura o dobro)."
+  },
+  {
+   "id": "tempo_dobrado",
+   "nome": "Tempo dobrado",
+   "grupo": "Tempo",
+   "oitos": 2,
+   "desc": "Oitos acelerados (cada um dura a metade)."
+  },
+  {
+   "id": "estilo",
+   "nome": "Bloco de outro estilo",
+   "grupo": "Estilo",
+   "oitos": 4,
+   "estilo": "house",
+   "desc": "A música continua, mas a bateria original sai e entra a bateria do estilo escolhido (house, breaking, krump...)."
+  },
+  {
+   "id": "final_voz",
+   "nome": "Final na voz",
+   "grupo": "Final",
+   "oitos": 1,
+   "desc": "O refrão quase só na voz, com reverb e fade, para a pose final."
+  },
+  {
+   "id": "final_hit",
+   "nome": "Final seco (hit)",
+   "grupo": "Final",
+   "oitos": 1,
+   "desc": "O refrão com tudo e um corte seco no tempo 8, deixando só a cauda do reverb."
+  },
+  {
+   "id": "final_fade",
+   "nome": "Final com fade",
+   "grupo": "Final",
+   "oitos": 2,
+   "desc": "Dois oitos que vão sumindo aos poucos."
+  },
+  {
+   "id": "final_estilo",
+   "nome": "Final em outro estilo",
+   "grupo": "Final",
+   "oitos": 4,
+   "estilo": "house",
+   "desc": "Termina com a bateria de outro estilo e um corte seco no fim."
+  }
+ ],
+ "estruturas": [
+  {
+   "id": "classico_idl",
+   "nome": "Clássico IDL",
+   "desc": "A fórmula mais comum nas apresentações campeãs: abertura sem grave, queda, música picotada em ordem, dois respiros, meio tempo e final na voz.",
+   "paradas": "normal",
+   "passos": [
+    {
+     "modo": "abertura_sem_grave"
+    },
+    {
+     "modo": "queda"
+    },
+    {
+     "modo": "corpo",
+     "oitos": "auto"
+    },
+    {
+     "modo": "respiro_sem_grave"
+    },
+    {
+     "modo": "corpo",
+     "oitos": "auto"
+    },
+    {
+     "modo": "meio_tempo"
+    },
+    {
+     "modo": "corpo",
+     "oitos": "auto"
+    },
+    {
+     "modo": "respiro_sem_bateria"
+    },
+    {
+     "modo": "corpo",
+     "oitos": "auto"
+    },
+    {
+     "modo": "final_voz"
+    }
+   ]
+  },
+  {
+   "id": "muda_no_inicio",
+   "nome": "Muda no começo",
+   "desc": "Abre com a música em outro estilo e depois revela a versão original na queda.",
+   "paradas": "normal",
+   "passos": [
+    {
+     "modo": "estilo",
+     "oitos": 4,
+     "estilo": "house"
+    },
+    {
+     "modo": "queda"
+    },
+    {
+     "modo": "corpo",
+     "oitos": "auto"
+    },
+    {
+     "modo": "respiro_sem_grave"
+    },
+    {
+     "modo": "corpo",
+     "oitos": "auto"
+    },
+    {
+     "modo": "final_hit"
+    }
+   ]
+  },
+  {
+   "id": "muda_no_meio",
+   "nome": "Muda no meio",
+   "desc": "Começa original e, no meio, um bloco de outro estilo (como o bloco de funk/popping de Vancouver R2); depois volta ao refrão.",
+   "paradas": "normal",
+   "passos": [
+    {
+     "modo": "abertura_original"
+    },
+    {
+     "modo": "corpo",
+     "oitos": "auto"
+    },
+    {
+     "modo": "estilo",
+     "oitos": 6,
+     "estilo": "popping"
+    },
+    {
+     "modo": "refrao",
+     "oitos": 2
+    },
+    {
+     "modo": "corpo",
+     "oitos": "auto"
+    },
+    {
+     "modo": "final_voz"
+    }
+   ]
+  },
+  {
+   "id": "muda_no_final",
+   "nome": "Muda no final",
+   "desc": "A música original até perto do fim e um final em outro estilo, como o remix de clube de Vancouver R1.",
+   "paradas": "normal",
+   "passos": [
+    {
+     "modo": "abertura_sem_grave"
+    },
+    {
+     "modo": "queda"
+    },
+    {
+     "modo": "corpo",
+     "oitos": "auto"
+    },
+    {
+     "modo": "respiro_sem_bateria"
+    },
+    {
+     "modo": "corpo",
+     "oitos": "auto"
+    },
+    {
+     "modo": "final_estilo",
+     "oitos": 4,
+     "estilo": "house"
+    }
+   ]
+  },
+  {
+   "id": "picotado_hits",
+   "nome": "Picotado com muitos hits",
+   "desc": "Cortes curtos e muitas paradas, alternando meio tempo e tempo dobrado (como Sydney R1, com Toxic).",
+   "paradas": "densas",
+   "passos": [
+    {
+     "modo": "abertura_so_voz"
+    },
+    {
+     "modo": "queda"
+    },
+    {
+     "modo": "picotado",
+     "oitos": "auto"
+    },
+    {
+     "modo": "meio_tempo"
+    },
+    {
+     "modo": "picotado",
+     "oitos": "auto"
+    },
+    {
+     "modo": "tempo_dobrado",
+     "oitos": 2
+    },
+    {
+     "modo": "final_hit"
+    }
+   ]
+  },
+  {
+   "id": "acapella_dramatica",
+   "nome": "Acapella dramática",
+   "desc": "A voz sozinha abre e volta em dois momentos do mix; bom para coreografias com narrativa.",
+   "paradas": "poucas",
+   "passos": [
+    {
+     "modo": "abertura_so_voz",
+     "oitos": 2
+    },
+    {
+     "modo": "queda"
+    },
+    {
+     "modo": "corpo",
+     "oitos": "auto"
+    },
+    {
+     "modo": "so_voz"
+    },
+    {
+     "modo": "corpo",
+     "oitos": "auto"
+    },
+    {
+     "modo": "so_voz"
+    },
+    {
+     "modo": "refrao",
+     "oitos": 2
+    },
+    {
+     "modo": "final_voz"
+    }
+   ]
+  },
+  {
+   "id": "viagem_de_estilos",
+   "nome": "Viagem de estilos",
+   "desc": "A mesma música passa por vários estilos: house, breaking e krump, voltando ao original entre eles.",
+   "paradas": "normal",
+   "passos": [
+    {
+     "modo": "abertura_sem_grave"
+    },
+    {
+     "modo": "queda"
+    },
+    {
+     "modo": "estilo",
+     "oitos": 4,
+     "estilo": "house"
+    },
+    {
+     "modo": "corpo",
+     "oitos": "auto"
+    },
+    {
+     "modo": "estilo",
+     "oitos": 4,
+     "estilo": "breaking"
+    },
+    {
+     "modo": "corpo",
+     "oitos": "auto"
+    },
+    {
+     "modo": "estilo",
+     "oitos": 2,
+     "estilo": "krump"
+    },
+    {
+     "modo": "final_hit"
+    }
+   ]
+  }
+ ]
+}

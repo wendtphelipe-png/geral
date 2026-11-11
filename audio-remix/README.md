@@ -14,15 +14,37 @@ App para criar mixes profissionais e personalizados para coreografias de danças
 Dois cliques em `ABRIR-EDITOR.bat`. O navegador abre em http://127.0.0.1:3060. Para desligar, feche a janela preta.
 
 ### Criar mix automático (o principal)
-O botão amarelo **Criar mix automático** monta o mix sozinho, com a duração que estiver no campo de duração desejada (padrão 2:45), seguindo os padrões das apresentações campeãs da IDL (veja DESCOBERTAS.md):
-- abertura com 1 oito do refrão sem grave e sem bateria, com reverb, e uma parada antes da "queda";
-- o corpo picota a música em trechos de 2 a 4 oitos na ordem original, cortando sempre na batida, e o refrão volta várias vezes;
-- 2 respiros (1 oito sem grave e 1 sem bateria), com eco "jogado" na voz logo antes;
-- 1 oito em meio tempo;
-- paradas curtas (cerca de 2,6 por minuto), a maioria no tempo 8 antes de um corte;
-- final com o refrão quase só na voz, com reverb e fade.
+Escolha uma **estrutura** na lista amarela ao lado do botão e clique em **Criar mix automático**. O mix sai na duração do campo de duração desejada (padrão 2:45). Cada oito mostra na régua o papel dele, e a explicação aparece na barra de comando. Clicar de novo cria outra versão; Ctrl+Z volta à anterior. Depois, selecione oitos e peça ajustes por texto.
 
-Cada oito mostra na régua o papel dele (em amarelo). A explicação do mix aparece na barra de comando. Clicar de novo cria outra versão; Ctrl+Z volta à anterior. Depois, selecione oitos e peça ajustes por texto.
+Estruturas prontas (biblioteca/estruturas.json), inspiradas nas diferenças entre as apresentações campeãs da IDL:
+- **Clássico IDL:** abertura sem grave, queda, música picotada em ordem, dois respiros, meio tempo e final na voz.
+- **Muda no começo:** abre com a música em outro estilo e revela a original na queda.
+- **Muda no meio:** música original e, no meio, um bloco de outro estilo (como o bloco de funk/popping de Vancouver R2).
+- **Muda no final:** termina em outro estilo (como o remix de clube de Vancouver R1).
+- **Picotado com muitos hits:** cortes curtos, muitas paradas, meio tempo e tempo dobrado (como Sydney R1, com Toxic).
+- **Acapella dramática:** a voz sozinha abre e volta em dois momentos.
+- **Viagem de estilos:** a mesma música passa por house, breaking e krump.
+
+**Blocos de outro estilo:** a música continua, a bateria original sai e entra a bateria do estilo, tocada no BPM da música (sons sintetizados a partir dos padrões da biblioteca de estilos). Ela aparece como uma camada "Bateria house" (ou outro estilo), que dá para silenciar, mover ou ajustar.
+
+### Estruturas: montar a sua
+Botão **Estruturas**, aba **Montar estrutura**:
+- arraste os modos da esquerda para a sequência, ou clique para pôr no fim, e arraste os passos para mudar a ordem;
+- os modos são: abertura sem grave, só voz ou original; queda; música em ordem; picotado; refrão; respiros; só a voz; meio tempo; tempo dobrado; bloco de outro estilo (escolha o estilo); e finais (voz, seco, fade, outro estilo);
+- em cada passo, escolha quantos oitos ou "auto" (o "auto" completa a duração);
+- dê um nome e escolha quantas paradas o mix deve ter;
+- **Salvar na biblioteca** guarda em `audio-remix\dados\estruturas\`, e ela aparece na lista;
+- **Criar mix com esta estrutura** usa a sequência na hora.
+
+### Estruturas: analisar um mix pronto
+Botão **Estruturas**, aba **Analisar um mix**: cole o link (YouTube) ou solte o arquivo. Em alguns minutos aparece um relatório:
+- as músicas usadas e em que trechos (Shazam);
+- a comparação com as originais, que o programa baixa sozinho: se a música foi acelerada, desacelerada, posta em meio tempo ou mudou de tom (o tom é uma medida aproximada);
+- os trechos sem grave, sem bateria, só voz, meio tempo e tempo dobrado;
+- quantos cortes e paradas o mix tem;
+- a **estrutura aprendida**.
+
+Depois é só salvar a estrutura na biblioteca ou criar na hora um mix com ela, na música aberta. Os trechos em que entra outra música viram "blocos de outro estilo", com o estilo sugerido pelo BPM; dá para trocar no montador.
 
 ### A tela
 A tela é como a de um editor de áudio:
