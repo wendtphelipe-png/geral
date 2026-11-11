@@ -13,6 +13,18 @@ App para criar mixes profissionais e personalizados para coreografias de danças
 
 Dois cliques em `ABRIR-EDITOR.bat`. O navegador abre em http://127.0.0.1:3060. Para desligar, feche a janela preta.
 
+### Criar mix automático (o principal)
+O botão amarelo **Criar mix automático** monta o mix sozinho, com a duração que estiver no campo de duração desejada (padrão 2:45), seguindo os padrões das apresentações campeãs da IDL (veja DESCOBERTAS.md):
+- abertura com 1 oito do refrão sem grave e sem bateria, com reverb, e uma parada antes da "queda";
+- o corpo picota a música em trechos de 2 a 4 oitos na ordem original, cortando sempre na batida, e o refrão volta várias vezes;
+- 2 respiros (1 oito sem grave e 1 sem bateria), com eco "jogado" na voz logo antes;
+- 1 oito em meio tempo;
+- paradas curtas (cerca de 2,6 por minuto), a maioria no tempo 8 antes de um corte;
+- final com o refrão quase só na voz, com reverb e fade.
+
+Cada oito mostra na régua o papel dele (em amarelo). A explicação do mix aparece na barra de comando. Clicar de novo cria outra versão; Ctrl+Z volta à anterior. Depois, selecione oitos e peça ajustes por texto.
+
+### A tela
 A tela é como a de um editor de áudio:
 - **Barra de cima:** tocar e pausar, voltar ao início, repetir a seleção sem parar, o relógio, o BPM, a duração do mix e a duração desejada (padrão 2:45), desfazer e refazer, aproximar e afastar, nova música e exportar MP3.
 - **Régua da contagem:** cada oito do mix, com o número grande, as 8 batidas marcadas e a cor da "parte" da música (partes iguais têm a mesma cor e letra).
@@ -31,9 +43,12 @@ A tela é como a de um editor de áudio:
   - "voz 30% mais baixa";
   - "meio tempo";
   - "repete 2 vezes";
-  - "apaga esses oitos".
+  - "apaga esses oitos";
+  - "eco na voz", "muito reverb", "deixa distante", "som de rádio", "abafado", "tira os efeitos";
+  - "parada no 5 e no 7", "freeze no 1 de 2 tempos", "tira as paradas";
+  - "coloca a voz do oito 5 aqui como eco distante, 30% mais baixa" (cria uma camada com aquele trecho, já com o efeito; o número é o do oito na música original).
 
-  Pedidos que ainda não existem (eco, filtros, paradas, mudar o tom, trazer a voz de outro trecho, injetar estilo) são avisados, e nada é mudado.
+  Pedidos que ainda não existem (mudar o tom, injetar estilo) são avisados, e nada é mudado.
 - **Ferramentas de edição (barra de cima):**
   - **Cortar** (tecla C): corta no cursor, a linha branca. Para pôr o cursor no lugar, clique na régua do tempo. Se um clipe estiver selecionado, corta o clipe; se não, corta o oito da trilha principal na batida mais próxima (com Alt, no ponto exato).
   - **Fade in / Fade out:** aplicam na seleção. Em vários oitos, o fade atravessa a seleção inteira. Também dá para escrever: "fade out de 2 oitos", "fade in 3 segundos". A curva do volume aparece desenhada sobre as faixas.

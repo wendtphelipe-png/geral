@@ -131,6 +131,19 @@ select.musica{background:var(--pista);border:1px solid var(--borda);border-radiu
 .mini:hover{color:var(--tinta)}
 .ferramentas{display:flex;gap:6px}
 .cel .env{position:absolute;inset:0;pointer-events:none}
+.botao.magico{background:linear-gradient(180deg,#FFE08A,#FFC93C);border-color:#FFC93C;color:#1A1300;font-weight:800}
+.botao.magico:hover{filter:brightness(1.05)}
+@media (min-width:901px){.topo .botao.magico .txt{display:inline}}
+@media (max-width:2150px){.ferramentas .rot{display:none}}
+@media (max-width:1250px){#desfazer,#refazer,.info .bpm,#paraInicio{display:none}}
+.oito .papel{position:absolute;left:7px;right:6px;top:41px;font-size:10px;font-weight:700;color:#FFD25A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.oito .parada{position:absolute;top:0;height:6px;background:#F05A6E;border-radius:0 0 2px 2px}
+.cel .fxs{position:absolute;left:5px;bottom:4px;display:flex;gap:3px;pointer-events:none}
+.cel .fxs span,.clipe .fxs span{font-size:9.5px;font-weight:800;color:var(--noite);background:#E9EEF5;border-radius:3px;padding:0 4px;line-height:14px}
+.clipe .fxs{position:absolute;right:6px;bottom:4px;display:flex;gap:3px;pointer-events:none;z-index:2}
+.resposta ul{margin:4px 0 0;padding-left:18px;max-height:96px;overflow:auto}
+.resposta li{margin:1px 0}
+.rapidos .grupo-rot{font-size:11px;color:var(--fraco);margin-left:6px}
 .cursor{position:absolute;top:0;bottom:0;width:2px;background:var(--play);z-index:6;pointer-events:none;box-shadow:0 0 0 1px rgba(0,0,0,.4)}
 .insercao{position:absolute;top:22px;bottom:0;width:3px;background:var(--sel);z-index:8;pointer-events:none}
 .laco{position:absolute;top:22px;height:58px;border:1px solid #FFD25A;border-radius:3px;pointer-events:none;z-index:8}
@@ -225,6 +238,7 @@ select.musica{background:var(--pista);border:1px solid var(--borda);border-radiu
   <symbol id="i-fadeout" viewBox="0 0 24 24"><path d="M3 4c8 0 11 16 18 16"/><path d="M3 20h18"/></symbol>
   <symbol id="i-musica" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-varinha" viewBox="0 0 24 24"><path d="m15 4 1 2 2 1-2 1-1 2-1-2-2-1 2-1zM5 19 17 7M19 13l.7 1.3L21 15l-1.3.7L19 17l-.7-1.3L17 15l1.3-.7z"/></symbol>
   <symbol id="i-enviar" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
 </svg>
 
@@ -247,6 +261,7 @@ select.musica{background:var(--pista);border:1px solid var(--borda);border-radiu
     </div>
     <span class="aviso-simples hidden" id="avisoSimples" title="O separador de faixas não estava disponível quando esta música foi importada. Rode PREPARAR-ANALISADOR.bat e importe de novo.">Voz não separada</span>
     <div class="dir">
+      <button class="botao magico" id="gerar" title="O programa monta o mix sozinho seguindo os padrões de competição. Clique de novo para outra versão."><svg><use href="#i-varinha"/></svg><span class="txt">Criar mix automático</span></button>
       <div class="ferramentas">
         <button class="mini" id="ferCortar" title="Cortar no cursor (C)"><svg><use href="#i-tesoura"/></svg><span class="rot">Cortar</span></button>
         <button class="mini" id="ferFadeIn" title="Fade de entrada na seleção"><svg><use href="#i-fadein"/></svg><span class="rot">Fade in</span></button>
@@ -288,7 +303,7 @@ select.musica{background:var(--pista);border:1px solid var(--borda);border-radiu
     <div class="qual" id="qual"><b>Nada selecionado</b>clique nos oitos acima</div>
     <div class="corpo">
       <div class="pedido">
-        <input id="pedido" placeholder="Selecione oitos e escreva o que fazer. Ex.: tira a voz e deixa o grave mais forte" disabled>
+        <input id="pedido" placeholder="Selecione oitos e escreva o que fazer. Ex.: parada no 5 e no 7, eco na voz  |  coloca a voz do oito 5 aqui como eco distante, 30% mais baixa" disabled>
         <button class="botao prim" id="aplicar" disabled><svg><use href="#i-enviar"/></svg>Aplicar</button>
       </div>
       <div class="rapidos" id="rapidos">
@@ -298,11 +313,17 @@ select.musica{background:var(--pista);border:1px solid var(--borda);border-radiu
         <button class="rapido" data-t="tira a bateria">Tirar a bateria</button>
         <button class="rapido" data-t="mais graves">Mais grave</button>
         <button class="rapido" data-t="meio tempo">Meio tempo</button>
-        <button class="rapido" data-t="tempo dobrado">Tempo dobrado</button>
         <button class="rapido" data-t="repete">Repetir</button>
         <button class="rapido" data-t="fade in">Fade in</button>
         <button class="rapido" data-t="fade out">Fade out</button>
         <button class="rapido" data-t="corta ao meio">Dividir ao meio</button>
+        <span class="grupo-rot">efeitos</span>
+        <button class="rapido" data-t="eco na voz">Eco na voz</button>
+        <button class="rapido" data-t="reverb">Reverb</button>
+        <button class="rapido" data-t="deixa distante">Distante</button>
+        <button class="rapido" data-t="som de rádio">Rádio</button>
+        <button class="rapido" data-t="parada no 8">Parada no 8</button>
+        <button class="rapido" data-t="tira os efeitos">Sem efeitos</button>
         <button class="rapido" data-t="volta ao original">Original</button>
         <button class="rapido" data-t="apaga esses oitos">Apagar</button>
         <span class="resposta" id="resposta"></span>
@@ -515,9 +536,11 @@ function desenhar() {
     const vel = b.vel === 0.5 ? "½" : b.vel === 2 ? "2×" : "";
     const parcial = de(b) > 0 || ate(b) < 1 ? ` (${primeiro + 1}–${primeiro + nb})` : "";
     h += `<div class="oito ${esp ? "especial" : ""}" data-i="${i}" style="left:${ini * pxs}px;width:${d * pxs}px"
-      title="${nomeUnid(u)}${parcial} da original${u.parte ? ", parte " + u.parte : ""}">
+      title="${b.papel ? b.papel + ": " : ""}${nomeUnid(u)}${parcial} da original${u.parte ? ", parte " + u.parte : ""}">
       ${!esp || d * pxs > 52 ? `<span class="n num">${esp ? u.rotulo : i + 1}</span>` : ""}
       ${d * pxs > 70 && !esp ? `<span class="orig">${nomeUnid(u)}${parcial}${u.parte ? " · " + u.parte : ""}</span>` : ""}
+      ${b.papel && d * pxs > 60 ? `<span class="papel">${b.papel}</span>` : ""}
+      ${(b.paradas || []).map(([x, dd]) => `<i class="parada" style="left:${x / nb * 100}%;width:${Math.max(3, dd / nb * d * pxs)}px" title="Parada no tempo ${primeiro + x + 1}"></i>`).join("")}
       ${vel ? `<span class="vel">${vel}</span>` : ""}
       <div class="batidas">${bat}</div>
       ${u.parte ? `<div class="faixa-parte" style="background:${corParte(u.parte)}"></div>` : ""}
@@ -533,6 +556,7 @@ function desenhar() {
       return `<div class="cel" data-i="${i}" data-f="${f}" draggable="true" style="left:${ini * pxs}px;width:${d * pxs}px">
         <canvas></canvas>
         ${g !== 1 && g > 0 ? `<span class="pct num">${Math.round(g * 100)}%</span>` : ""}
+        ${g > 0 && d * pxs > 40 ? etiquetasFx(Object.assign({}, b.fx?.tudo || {}, b.fx?.[f] || {})) : ""}
         <button class="liga" title="${g > 0 ? "Silenciar" : "Ligar"} ${NOME[f].toLowerCase()} neste oito"><svg><use href="#i-${g > 0 ? "mudo" : "som"}"/></svg></button>
       </div>`;
     }).join("");
@@ -549,6 +573,13 @@ function desenhar() {
   desenharSelecao();
 }
 
+function etiquetasFx(fx) {
+  const nomes = [];
+  if (fx.distante) nomes.push("dist");
+  else { if (fx.eco) nomes.push("eco"); if (fx.reverb) nomes.push("rev"); if (fx.filtro === "abafado") nomes.push("abaf"); }
+  if (fx.filtro === "radio") nomes.push("rádio");
+  return nomes.length ? `<div class="fxs">${nomes.map(n => `<span>${n}</span>`).join("")}</div>` : "";
+}
 function fatiar(v, a, b) {  // pedaço [a, b) (frações) de uma lista de amplitudes
   const n = v.length, i = Math.floor(a * n), j = Math.max(i + 1, Math.ceil(b * n));
   return v.slice(i, j);
@@ -578,6 +609,11 @@ function ondaFaixa(canvas, b, f) {
   for (let i = 0; i < n; i++) c.lineTo((i + .5) / n * w, meio - amp(i));
   for (let i = n - 1; i >= 0; i--) c.lineTo((i + .5) / n * w, meio + amp(i));
   c.closePath(); c.fill();
+  if (b.paradas) {  // paradas: faixas escuras
+    const nb = 8 * (ate(b) - de(b));
+    c.globalAlpha = 1; c.fillStyle = "rgba(8,12,19,.88)";
+    for (const [x, dd] of b.paradas) c.fillRect(x / nb * w, 0, Math.max(2, dd / nb * w), h);
+  }
   if (b.env) {  // linha do volume (fade)
     c.globalAlpha = 1; c.strokeStyle = "#fff"; c.lineWidth = 1.5; c.beginPath();
     b.env.forEach(([x, gg], k) => { const y = 3 + (1 - Math.min(gg, 1)) * (h - 6); k ? c.lineTo(x * w, y) : c.moveTo(x * w, y); });
@@ -617,6 +653,7 @@ function desenharCamadas() {
       el.style.left = k.pos * pxs + "px"; el.style.width = Math.max(4, k.dur * pxs) + "px";
       el.title = `${k.nome} · ${k.dur.toFixed(2)} s${k.ganho !== 1 ? " · " + Math.round(k.ganho * 100) + "%" : ""}`;
       el.innerHTML = `<span class="titulo">${k.nome}${k.ganho !== 1 ? " · " + Math.round(k.ganho * 100) + "%" : ""}</span><canvas></canvas>
+        ${k.fx ? etiquetasFx(k.fx).replace('class="fxs"', 'class="fxs"') : ""}
         <div class="borda e" data-acao="esq"></div><div class="borda d" data-acao="dir"></div>
         <div class="fade" data-acao="fi" style="left:${Math.max(2, (k.fi || 0) * pxs - 5)}px"></div>
         <div class="fade" data-acao="fo" style="right:${Math.max(2, (k.fo || 0) * pxs - 5)}px"></div>`;
@@ -914,6 +951,21 @@ function cortar(livre) {
   });
   responder(`<b>Cortado</b> o bloco ${i + 1} na batida mais próxima do cursor. Segure Alt para cortar no ponto exato.`);
 }
+let semente = Math.floor(Math.random() * 1000);
+$("#gerar").onclick = async () => {
+  if (!proj) return;
+  const editado = historico.length > 0;
+  if (editado && !confirm("Criar um mix automático no lugar da trilha principal atual? (dá para desfazer com Ctrl+Z)")) return;
+  semente += 1;
+  responder("Montando o mix...");
+  try {
+    const alvo = lerMmss($("#alvo").value) || proj.alvo;
+    const d = await (await api(`projetos/${proj.id}/gerar`, json("POST", {alvo, semente}))).json();
+    mudar(() => { tl = d.timeline; sel.clear(); selClipe = null; });
+    $("#palco").scrollLeft = 0; audio.currentTime = 0;
+    responder(`<b>Mix criado.</b> Clique de novo em "Criar mix automático" para outra versão, ou selecione oitos e peça mudanças.<ul>${d.roteiro.map(r => `<li>${r}</li>`).join("")}</ul>`);
+  } catch (e) { responder("Não consegui criar o mix: " + e.message, true); }
+};
 $("#ferCortar").onclick = e => cortar(e.altKey);
 $("#ferFadeIn").onclick = () => executar("fade in");
 $("#ferFadeOut").onclick = () => executar("fade out");
@@ -926,7 +978,25 @@ function executar(texto) {
   const r = Comandos.entender(texto);
   if (!r.acoes.length) {
     const falta = r.faltando.length ? `Ainda não sei fazer <b>${r.faltando.join(", ")}</b>. ` : "Não entendi. ";
-    responder(falta + "Hoje eu entendo: tirar ou deixar só uma faixa, volume (com %), fade in e fade out, dividir ao meio, meio tempo, tempo dobrado, repetir e apagar.", true);
+    responder(falta + "Hoje eu entendo: tirar ou deixar só uma faixa, volume (com %), eco, reverb, distante, rádio, abafado, paradas (\"parada no 5\"), trazer a voz de outro oito, fade in e out, dividir ao meio, meio tempo, tempo dobrado, repetir e apagar.", true);
+    return;
+  }
+  const trazer = r.acoes.find(a => a.tipo === "trazer");
+  if (trazer) {
+    const u = proj.analise.unidades.find(x => x.tipo === "oito" && x.rotulo === String(trazer.oito));
+    if (!u) { responder(`A música original não tem o oito ${trazer.oito}. Ela vai do 1 ao ${proj.analise.unidades.filter(x => x.tipo === "oito").length}.`, true); return; }
+    const ini = posicoes[l[0]][0], durSel = l.reduce((t, i) => t + posicoes[i][1], 0);
+    const faixas = trazer.faixa === "tudo" ? FAIXAS : [trazer.faixa];
+    mudar(() => {
+      const c = novaCamada(`${trazer.faixa === "tudo" ? "Oito" : NOME[trazer.faixa]} do oito ${trazer.oito}`);
+      for (const f of faixas) {
+        const fonte = {tipo: "faixa", u: u.id, faixa: f, de: 0, ate: 1};
+        const clipe = {id: novoId("k"), fonte, pos: ini, ini: 0, dur: Math.min(durFonte(fonte), durSel), ganho: trazer.ganho, nome: `${NOME[f]} · oito ${trazer.oito}`};
+        if (Object.keys(trazer.fx).length) clipe.fx = trazer.fx;
+        c.clipes.push(clipe);
+      }
+    });
+    responder(`<b>Feito:</b> ${r.frases[0]}. A camada nova está embaixo das faixas; arraste o clipe se quiser mudar o ponto.`);
     return;
   }
   mudar(() => { sel = new Set(Comandos.aplicar(tl, l, r.acoes, {dur: durBloco, tempo: tempo()})); });
@@ -950,9 +1020,12 @@ function executarNoClipe(texto, {cam, clipe}) {
       feitos.push("repetido");
     } else if (a.tipo === "apagar") {
       cam.clipes = cam.clipes.filter(k => k !== clipe); selClipe = null; feitos.push("clipe apagado");
-    } else if (a.tipo === "semFade") { delete clipe.fi; delete clipe.fo; clipe.ganho = 1; feitos.push("clipe como era"); }
+    } else if (a.tipo === "fx") {
+      clipe.fx = Object.assign({}, clipe.fx || {}, a.fx); feitos.push("efeito no clipe");
+    } else if (a.tipo === "semFx") { delete clipe.fx; feitos.push("efeitos tirados do clipe"); }
+    else if (a.tipo === "semFade") { delete clipe.fi; delete clipe.fo; delete clipe.fx; clipe.ganho = 1; feitos.push("clipe como era"); }
   }
-  if (!feitos.length) { responder("Num clipe eu sei fazer: volume, fade in, fade out, repetir e apagar.", true); return; }
+  if (!feitos.length) { responder("Num clipe eu sei fazer: volume, eco, reverb, distante, rádio, fade in, fade out, repetir e apagar.", true); return; }
   registrar(antes);
   responder(`<b>Feito:</b> ${feitos.join(", ")}.`);
 }

@@ -28,9 +28,40 @@
   const DIVISOR = new RegExp(`\\s*(?:,|;|\\.|\\be\\b(?=\\s+(?:a |o |os |as )?${VERBO})|\\bdepois\\b|\\btambem\\b)\\s*`);
 
   // Junta o entendimento de cada parte do pedido ("tira a voz e deixa o grave mais alto" = 2 partes)
+  // Efeitos citados num trecho do pedido: eco, reverb, distante, abafado, rádio.
+  function efeitosCitados(t) {
+    const fx = {};
+    const forca = /\b(muito|bastante|forte|pesad\w*|cheio)\b/.test(t) ? 0.75 : /\b(pouco|leve|sutil|suave|discreto)\b/.test(t) ? 0.3 : 0.5;
+    if (/\b(eco|ecos|delay)\b/.test(t)) fx.eco = forca;
+    if (/\b(reverb\w*|reverbera\w*|salao|catedral|igreja|ambiencia)\b/.test(t)) fx.reverb = forca;
+    if (/\b(distante|longe|ao fundo|la no fundo|lembranca|memoria)\b/.test(t)) Object.assign(fx, {eco: fx.eco || 0.4, reverb: fx.reverb || 0.5, filtro: "abafado", distante: true});
+    if (/\b(abafad\w*|outra sala|debaixo d.?agua|filtrad\w*)\b/.test(t)) fx.filtro = "abafado";
+    if (/\b(radio|telefone|megafone|walkie)\b/.test(t)) fx.filtro = "radio";
+    if (/\b(meio tempo de eco|eco curto)\b/.test(t)) fx.batidas_eco = 0.5;
+    return fx;
+  }
+  const NOMES_FX = fx => [fx.distante ? "distante" : null, fx.eco && !fx.distante ? "eco" : null, fx.reverb && !fx.distante ? "reverb" : null,
+    fx.filtro === "abafado" && !fx.distante ? "abafado" : null, fx.filtro === "radio" ? "rádio" : null].filter(Boolean).join(" + ");
+
   function entender(texto) {
     const t = semAcento(texto).replace(/\s+/g, " ").trim();
     if (!t) return {acoes: [], frases: [], faltando: [], vazio: true};
+
+    // "coloca a voz do oito 5 aqui como eco distante, 30% mais baixa"
+    const tr = t.match(/\b(voz|vocal|bateria|batida|baixo|grave|outros|instrumentos?|musica inteira|tudo)\b[^.;]{0,40}?\b(?:d[oa]|n[oa]|que (?:ele |ela )?usa no) (?:oito|trecho|bloco|parte) (\d+)\b/);
+    const trazer = tr && /\b(coloc\w*|adicion\w*|traz\w*|trag\w*|bot\w*|poe|ponha|usa|use|insir\w*|insere|copi\w*|lev\w*|repet\w*)\b/.test(t)
+      && !/\b(tir\w*|remov\w*|sem|apag\w*)\b/.test(t.slice(0, tr.index));
+    if (trazer) {
+      const faixa = {voz: "voz", vocal: "voz", bateria: "bateria", batida: "bateria", baixo: "baixo", grave: "baixo", outros: "outros"}[tr[1]] || "tudo";
+      const pct = porcentagem(t);
+      let ganho = 1;
+      if (/mais baix[ao]|abaix|menos|mais fraco|mais suave/.test(t)) ganho = pct !== null ? Math.max(0, 1 - pct) : 0.6;
+      else if (/mais alt[ao]|aument|mais forte/.test(t)) ganho = pct !== null ? 1 + pct : 1.4;
+      const fx = efeitosCitados(t);
+      const frase = `trazer ${faixa === "tudo" ? "o som inteiro" : NOME[faixa]} do oito ${tr[2]} da música original para uma camada` +
+        (Object.keys(fx).length ? `, com ${NOMES_FX(fx)}` : "") + (ganho !== 1 ? `, volume ${Math.round(ganho * 100)}%` : "");
+      return {acoes: [{tipo: "trazer", faixa, oito: tr[2], fx, ganho}], frases: [frase], faltando: [], vazio: false};
+    }
     const partes = t.split(DIVISOR).map(x => x && x.trim()).filter(Boolean);
     const total = {acoes: [], frases: [], faltando: [], vazio: false};
     for (const parte of partes) {
@@ -46,11 +77,8 @@
 
     // Pedidos que ainda não existem no editor (ficam registrados para as próximas etapas)
     const futuros = [
-      [/\b(eco|reverb|delay|distante)\b/, "eco e reverb"],
-      [/\b(filtro|abafad|radio|telefone)\w*/, "filtros"],
-      [/\b(parada|stop|hit|freeze|silencio no tempo|corte seco no)\b/, "paradas (hits)"],
       [/\b(tom|afina|pitch|mais aguda|mais grave a voz)\b/, "mudar o tom"],
-      [/\b(do oito|do trecho|daquele trecho|de outro trecho|que ele usa)\b/, "trazer uma faixa de outro trecho (camadas)"],
+      [/\b(daquele trecho|de outro trecho|que ele usa)\b/, "trazer uma faixa de outro trecho sem dizer qual (diga \"a voz do oito 5\")"],
       [/\b(house|breaking|locking|popping|krump|waacking|vogue|passinho|funk|dancehall|amapiano|trap|boom ?bap)\b/, "injetar estilo"],
     ];
     for (const [re, nome] of futuros) if (re.test(t)) faltando.push(nome);
@@ -59,6 +87,43 @@
 
     const citadas = faixasCitadas(t);
     const pct = porcentagem(t);
+
+    const citadasAqui = faixasCitadas(t);
+
+    // tirar efeitos / paradas
+    if (/\b(tir\w*|sem|remov\w*|limp\w*|desliga\w*)\b.*\b(efeitos?|eco|reverb|filtro|abafado|radio)\b/.test(t)) {
+      acoes.push({tipo: "semFx", alvo: citadasAqui.length ? citadasAqui : null}); frases.push("tirar os efeitos" + (citadasAqui.length ? " de " + citadasAqui.map(f => NOME[f]).join(" e ") : ""));
+      return {acoes, frases, faltando};
+    }
+    if (/\b(tir\w*|sem|remov\w*|limp\w*)\b.*\b(paradas?|stops?|hits?|freezes?)\b/.test(t)) {
+      acoes.push({tipo: "semParadas"}); frases.push("tirar as paradas");
+      return {acoes, frases, faltando};
+    }
+
+    // paradas: "parada no 5 e no 7", "stop no tempo 8", "freeze no 1 de 2 tempos"
+    if (/\b(parad\w*|stops?|hits?|freez\w*|pausa\w*|corte seco|silencio)\b/.test(t)) {
+      const semDuracao = t.replace(/\d+(?:[.,]\d+)?\s*(tempos?|batidas?|segundos?)/g, " ").replace(/\d{1,3}\s*%/g, " ");
+      const tempos = [...new Set((semDuracao.match(/\b[1-8]\b/g) || []).map(Number))].sort((a, b) => a - b);
+      const q = t.match(/(\d+(?:[.,]\d+)?)\s*(tempos?|batidas?)/);
+      const dur = q ? parseFloat(q[1].replace(",", ".")) : /meio tempo|meia batida|rapid/.test(t) ? 0.5 : /freez|pausa/.test(t) ? 1 : 0.5;
+      const lista = tempos.length ? tempos : [8];
+      acoes.push({tipo: "paradas", tempos: lista, dur});
+      frases.push(`parada${lista.length > 1 ? "s" : ""} no${lista.length > 1 ? "s tempos" : " tempo"} ${lista.join(", ")} (${dur === 0.5 ? "meio tempo" : dur + (dur === 1 ? " tempo" : " tempos")})`);
+      return {acoes, frases, faltando};
+    }
+
+    // efeitos: "eco na voz", "reverb", "som de rádio", "deixa distante"
+    const fxAqui = efeitosCitados(t);
+    if (Object.keys(fxAqui).length) {
+      const alvo = citadasAqui.length && citadasAqui.length < 4 ? citadasAqui : ["tudo"];
+      acoes.push({tipo: "fx", alvo, fx: fxAqui});
+      frases.push(`${NOMES_FX(fxAqui)} ${alvo[0] === "tudo" ? "no trecho inteiro" : "em " + alvo.map(f => NOME[f]).join(" e ")}`);
+      // "distante" também abaixa um pouco o volume, se nada for dito sobre volume
+      if (fxAqui.distante && !/%|mais alt|mais baix/.test(t)) {
+        acoes.push({tipo: "faixas", mudancas: Object.fromEntries((alvo[0] === "tudo" ? FAIXAS : alvo).map(f => [f, {mult: 0.8}]))});
+      }
+      if (!/%|mais alt|mais baix|aument|diminu|abaix/.test(t)) return {acoes, frases, faltando};
+    }
 
     // fades: "fade out de 2 oitos", "fade in 3 segundos", "entra suave", "some aos poucos"
     const fadeIn = /\bfade ?in\b|\bentra\w* (suave|aos poucos|devagar)|\bsurg\w* aos poucos|\baparec\w* aos poucos/.test(t);
@@ -97,7 +162,7 @@
     if (/\b(volta\w* ao (normal|original)|como era|desfaz tudo|original de novo|restaura)\b/.test(t)) {
       acoes.push({tipo: "faixas", mudancas: Object.fromEntries(FAIXAS.map(f => [f, {set: 1}]))});
       acoes.push({tipo: "vel", valor: 1});
-      acoes.push({tipo: "semFade"});
+      acoes.push({tipo: "semFade"}); acoes.push({tipo: "semFx", alvo: null}); acoes.push({tipo: "semParadas"});
       frases.push("tudo como na música original");
     }
 
@@ -213,6 +278,26 @@
           const atual = tl[i].faixas[f];
           tl[i].faixas[f] = m.set !== undefined ? m.set : Math.max(0, Math.min(2, (atual || 0) * m.mult));
         }
+      } else if (a.tipo === "fx") {
+        for (const i of sel) {
+          tl[i].fx = tl[i].fx || {};
+          for (const alvo of a.alvo) tl[i].fx[alvo] = Object.assign({}, tl[i].fx[alvo] || {}, a.fx);
+        }
+      } else if (a.tipo === "semFx") {
+        for (const i of sel) {
+          if (!a.alvo) delete tl[i].fx;
+          else if (tl[i].fx) { for (const f of a.alvo) delete tl[i].fx[f]; if (!Object.keys(tl[i].fx).length) delete tl[i].fx; }
+        }
+      } else if (a.tipo === "paradas") {
+        for (const i of sel) {
+          // tempo N da contagem -> batida N-1 do bloco (blocos cortados começam no meio da contagem)
+          const primeiro = Math.round(8 * (tl[i].de ?? 0)), total = Math.round(8 * ((tl[i].ate ?? 1) - (tl[i].de ?? 0)));
+          const novas = a.tempos.map(n => n - 1 - primeiro).filter(x => x >= 0 && x < total).map(x => [x, a.dur]);
+          const todas = [...(tl[i].paradas || []).filter(p => !novas.some(n => n[0] === p[0])), ...novas].sort((x, y) => x[0] - y[0]);
+          if (todas.length) tl[i].paradas = todas;
+        }
+      } else if (a.tipo === "semParadas") {
+        for (const i of sel) delete tl[i].paradas;
       } else if (a.tipo === "semFade") {
         for (const i of sel) delete tl[i].env;
       } else if (a.tipo === "vel") {

@@ -12,6 +12,8 @@ import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
+import arranjador
+import efeitos
 import motor
 
 PUBLICO = motor.AQUI / "public"
@@ -200,6 +202,15 @@ class Pedido(BaseHTTPRequestHandler):
             audio, inicios = proj.montar(timeline, validar_camadas(dados.get("camadas") or [], proj))
             return self.enviar(motor.para_wav(audio), "audio/wav", extra={"X-Inicios": json.dumps(inicios)})
 
+        if metodo == "POST" and acao == "gerar":
+            dados = self.corpo_json()
+            analise = motor.ler_json(p / "analise.json")
+            meta = motor.ler_json(p / "projeto.json")
+            alvo = numero(dados.get("alvo", meta.get("alvo", 165)), 20, 900, 165)
+            timeline, roteiro = arranjador.criar_mix(analise, alvo=alvo, semente=int(numero(dados.get("semente", 1), 0, 1e9, 1)),
+                                                     meio_tempo=bool(dados.get("meio_tempo", True)))
+            return self.enviar({"timeline": validar_timeline(timeline, abrir(pid)), "roteiro": roteiro})
+
         if metodo == "POST" and acao == "importar":
             nome = urllib.parse.unquote(self.headers.get("X-Nome", "audio"))
             n = int(self.headers.get("Content-Length") or 0)
@@ -279,6 +290,23 @@ def numero(v, minimo, maximo, padrao):
         return padrao
 
 
+def validar_fx(fx):
+    """Efeitos: {"eco": 0..1, "reverb": 0..1, "tamanho": 0..1, "filtro": nome, "batidas_eco": n, "distante": bool}."""
+    if not isinstance(fx, dict):
+        return None
+    saida = {}
+    for k in ("eco", "reverb", "tamanho"):
+        if fx.get(k):
+            saida[k] = round(numero(fx[k], 0, 1, 0), 3)
+    if fx.get("batidas_eco"):
+        saida["batidas_eco"] = round(numero(fx["batidas_eco"], 0.125, 4, 0.75), 3)
+    if fx.get("filtro") in efeitos.FILTROS:
+        saida["filtro"] = fx["filtro"]
+    if fx.get("distante"):
+        saida["distante"] = True
+    return saida or None
+
+
 def validar_timeline(timeline, proj):
     if not isinstance(timeline, list):
         raise ValueError("linha do tempo inválida")
@@ -297,6 +325,18 @@ def validar_timeline(timeline, proj):
         for k in ("fi", "fo"):
             if b.get(k):
                 bloco[k] = round(numero(b[k], 0, 60, 0), 3)
+        if isinstance(b.get("fx"), dict):
+            fx = {k: validar_fx(v) for k, v in b["fx"].items() if k in motor.FAIXAS + ["tudo"]}
+            fx = {k: v for k, v in fx.items() if v}
+            if fx:
+                bloco["fx"] = fx
+        if isinstance(b.get("paradas"), list):
+            paradas = [[round(numero(p[0], 0, 64, 0), 3), round(numero(p[1], 0.05, 16, 0.5), 3)]
+                       for p in b["paradas"][:32] if isinstance(p, (list, tuple)) and len(p) == 2]
+            if paradas:
+                bloco["paradas"] = sorted(paradas)
+        if b.get("papel"):
+            bloco["papel"] = str(b["papel"])[:40]
         env = b.get("env")
         if isinstance(env, list) and 2 <= len(env) <= 64:
             pontos = sorted((numero(x, 0, 1, 0), numero(g, 0, 2, 1)) for x, g in env)
@@ -330,6 +370,9 @@ def validar_camadas(camadas, proj, efetivo=True):
             for k in ("fi", "fo"):
                 if c.get(k):
                     clipe[k] = round(numero(c[k], 0, 60, 0), 3)
+            fx = validar_fx(c.get("fx"))
+            if fx:
+                clipe["fx"] = fx
             clipes.append(clipe)
         item = {"id": str(cam.get("id", ""))[:20], "nome": str(cam.get("nome", "Camada"))[:40],
                 "ganho": numero(cam.get("ganho", 1), 0, 2, 1), "clipes": clipes}

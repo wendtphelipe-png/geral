@@ -23,6 +23,8 @@ import soundfile as sf
 
 AQUI = Path(__file__).resolve().parent
 sys.path.insert(0, str(AQUI.parent / "analisador"))
+sys.path.insert(0, str(AQUI))
+import efeitos  # noqa: E402
 
 SR = 44100
 SR_ANALISE = 22050
@@ -295,6 +297,14 @@ def aplicar_fades(audio, fi, fo):
     return audio
 
 
+def somar(a, b):
+    """Soma dois áudios (2, n) de tamanhos diferentes."""
+    if b.shape[1] > a.shape[1]:
+        a = np.pad(a, ((0, 0), (0, b.shape[1] - a.shape[1])))
+    a[:, : b.shape[1]] += b
+    return a
+
+
 def importar_audio(pasta, arquivo_enviado, nome):
     """Converte qualquer áudio (mp3, wav, m4a...) para a pasta de importados do projeto."""
     destino = Path(pasta) / "importados"
@@ -352,36 +362,67 @@ class Projeto:
         tam = u["fim"] - u["ini"]
         return u["ini"] + int(round(tam * de)), u["ini"] + int(round(tam * ate))
 
+    def tempo_batida(self, vel=1.0):
+        return 60.0 / float(self.analise.get("bpm") or 120) / float(vel or 1)
+
     def bloco_audio(self, bloco):
-        """Áudio de um bloco da trilha principal + EMENDA amostras extras no fim (cruzamento)."""
+        """Áudio de um bloco da trilha principal. Devolve (seco, núcleo, molhado):
+        seco tem EMENDA amostras extras no fim (cruzamento com o próximo bloco);
+        molhado é a cauda dos efeitos (eco, reverb), que continua depois do bloco."""
         chave = hashlib.md5(json.dumps([self.analise["versao"], bloco], sort_keys=True).encode()).hexdigest()
         if chave in self.cache:
             return self.cache[chave]
         a, b = self.trecho_unidade(bloco["u"], bloco.get("de", 0), bloco.get("ate", 1))
         n_total = next(iter(self.faixas.values())).shape[1]
         b_ext = min(b + EMENDA * 4, n_total)
-        mistura = np.zeros((2, max(b_ext - a, 1)), dtype=np.float32)
-        for nome, ganho in bloco["faixas"].items():
-            if ganho:
-                mistura += self.faixas[nome][:, a:b_ext] * float(ganho)
         nucleo = b - a
         vel = float(bloco.get("vel", 1))
-        if vel != 1:
-            mistura = librosa.effects.time_stretch(mistura, rate=vel)
-            nucleo = int(round(nucleo / vel))
-        if mistura.shape[1] < nucleo + EMENDA:
-            mistura = np.pad(mistura, ((0, 0), (0, nucleo + EMENDA - mistura.shape[1])))
-        mistura = mistura[:, : nucleo + EMENDA].astype(np.float32)
+        tempo = self.tempo_batida(vel)
+        fx = bloco.get("fx") or {}
+
+        def esticar(audio):
+            if vel != 1:
+                audio = librosa.effects.time_stretch(audio, rate=vel)
+            alvo = int(round(nucleo / vel)) + EMENDA
+            if audio.shape[1] < alvo:
+                audio = np.pad(audio, ((0, 0), (0, alvo - audio.shape[1])))
+            return audio[:, :alvo].astype(np.float32)
+
+        # faixas sem efeito próprio vão juntas; cada faixa com efeito é processada à parte
+        grupos = [("tudo", [n for n, g in bloco["faixas"].items() if g and not fx.get(n)])]
+        grupos += [(n, [n]) for n, g in bloco["faixas"].items() if g and fx.get(n)]
+        seco = np.zeros((2, int(round(nucleo / vel)) + EMENDA), np.float32)
+        molhado = np.zeros((2, 0), np.float32)
+        for nome, membros in grupos:
+            if not membros:
+                continue
+            mistura = np.zeros((2, max(b_ext - a, 1)), dtype=np.float32)
+            for f in membros:
+                mistura += self.faixas[f][:, a:b_ext] * float(bloco["faixas"][f])
+            mistura = esticar(mistura)
+            if nome != "tudo":
+                mistura, cauda = efeitos.aplicar(mistura, fx[nome], tempo)
+                molhado = somar(molhado, cauda)
+            seco += mistura
+        if fx.get("tudo"):
+            seco, cauda = efeitos.aplicar(seco, fx["tudo"], tempo)
+            molhado = somar(molhado, cauda)
+        nucleo = int(round(nucleo / vel))
         if bloco.get("env"):  # curva de volume (fades que atravessam vários blocos)
             xs, gs = zip(*bloco["env"])
-            mistura[:, :nucleo] *= np.interp(np.linspace(0, 1, nucleo), xs, gs).astype(np.float32)
-            mistura[:, nucleo:] *= float(gs[-1])
+            curva = np.interp(np.linspace(0, 1, nucleo), xs, gs).astype(np.float32)
+            seco[:, :nucleo] *= curva
+            seco[:, nucleo:] *= float(gs[-1])
+            if molhado.shape[1]:
+                molhado[:, :nucleo] *= curva[: molhado.shape[1]]
+                molhado[:, nucleo:] *= float(gs[-1])
         if bloco.get("fi") or bloco.get("fo"):
-            corpo = aplicar_fades(mistura[:, :nucleo].copy(), bloco.get("fi"), bloco.get("fo"))
-            mistura[:, :nucleo] = corpo
+            seco[:, :nucleo] = aplicar_fades(seco[:, :nucleo].copy(), bloco.get("fi"), bloco.get("fo"))
             if bloco.get("fo"):
-                mistura[:, nucleo:] = 0  # depois de um fade de saída não sobra som
-        return self._guardar(chave, (mistura, nucleo))
+                seco[:, nucleo:] = 0  # depois de um fade de saída não sobra som
+        if bloco.get("paradas"):  # o som seco para; o eco e o reverb continuam (efeito clássico)
+            seco = efeitos.silenciar(seco, bloco["paradas"], tempo)
+        return self._guardar(chave, (seco, nucleo, molhado))
 
     def fonte_clipe(self, fonte):
         """Áudio completo de onde o clipe é recortado."""
@@ -402,6 +443,9 @@ class Projeto:
         b = a + int(float(clipe["dur"]) * SR)
         audio = fonte[:, a:min(b, fonte.shape[1])].astype(np.float32) * float(clipe.get("ganho", 1))
         audio = aplicar_fades(audio.copy(), clipe.get("fi"), clipe.get("fo"))
+        if clipe.get("fx"):
+            seco, cauda = efeitos.aplicar(audio, clipe["fx"], self.tempo_batida())
+            audio = somar(seco.copy(), cauda)
         return self._guardar(chave, audio)
 
     def montar(self, timeline, camadas=None):
@@ -411,25 +455,30 @@ class Projeto:
             pedacos = [self.bloco_audio(b) for b in timeline]
             clipes = [(c, self.clipe_audio(c)) for cam in (camadas or []) for c in cam.get("clipes", [])
                       if float(cam.get("ganho", 1)) > 0]
-        total = sum(n for _, n in pedacos)
+        total = sum(p[1] for p in pedacos)
         fim_camadas = max((int(float(c["pos"]) * SR) + a.shape[1] for c, a in clipes), default=0)
-        saida = np.zeros((2, max(total, fim_camadas) + EMENDA), dtype=np.float32)
+        caudas, pos = 0, 0
+        for _, nucleo, molhado in pedacos:
+            caudas = max(caudas, pos + molhado.shape[1]); pos += nucleo
+        saida = np.zeros((2, max(total, fim_camadas, caudas) + EMENDA), dtype=np.float32)
         sobe = np.linspace(0, 1, EMENDA, dtype=np.float32)
         desce = sobe[::-1]
         pos, inicios = 0, []
-        for i, (audio, nucleo) in enumerate(pedacos):
+        for i, (audio, nucleo, molhado) in enumerate(pedacos):
             inicios.append(round(pos / SR, 4))
             pedaco = audio.copy()
             if i > 0:
                 pedaco[:, :EMENDA] *= sobe
             pedaco[:, nucleo:nucleo + EMENDA] *= desce
             saida[:, pos:pos + nucleo + EMENDA] += pedaco
+            if molhado.shape[1]:
+                saida[:, pos:pos + molhado.shape[1]] += molhado
             pos += nucleo
         ganho_camada = {id(c): float(cam.get("ganho", 1)) for cam in (camadas or []) for c in cam.get("clipes", [])}
         for c, audio in clipes:
             ini = int(float(c["pos"]) * SR)
             saida[:, ini:ini + audio.shape[1]] += audio * ganho_camada[id(c)]
-        saida = saida[:, :max(total, fim_camadas, 1)]
+        saida = saida[:, :max(total, fim_camadas, caudas, 1)]
         pico = float(np.abs(saida).max()) if saida.size else 0
         if pico > 0.98:  # protege contra distorção
             saida *= 0.98 / pico
