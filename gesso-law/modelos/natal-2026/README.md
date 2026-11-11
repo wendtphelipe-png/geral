@@ -1,33 +1,14 @@
-# Kit de Natal 2026 (versão 2): 8 peças
+# Natal 2026: 12 peças em 2 moldes
 
 ![Coleção](colecao.png)
 
-| Peça | Arquivo | Medida (L x A x espessura) | Gesso aprox. |
-|---|---|---|---|
-| Papai Noel | `noel.stl` | 59 x 79 x 25 mm | 60 g |
-| Boneco de Neve | `boneco.stl` | 51 x 78 x 25 mm | 55 g |
-| Rena | `rena.stl` | 55 x 79 x 25 mm | 54 g |
-| Pinguim com presente | `pinguim.stl` | 63 x 79 x 37 mm | 106 g |
-| Árvore de Natal | `arvore.stl` | 51 x 79 x 25 mm | 36 g |
-| Floco de Neve (desenho próprio) | `floco.stl` | 71 x 79 x 12 mm | 33 g |
-| Meia de Natal | `meia.stl` | 63 x 79 x 25 mm | 83 g |
-| Papai Noel na Chaminé | `chamine.stl` | 66 x 79 x 28 mm | 67 g |
+- **Parte 1** (`parte-1/`): Papai Noel, Boneco de Neve, Rena, Árvore, Presente, Floco de Neve.
+- **Parte 2** (`parte-2/`): Meia, Papai Noel na Chaminé, Bengala, Guirlanda, Sino, Pinguim.
 
-(+ pino de encaixe de 4 mm nas costas)
+Todas com a mesma escala (~72 mm de altura), pino de encaixe em D nas costas, sem alça.
+`mesas-resina/`: arquivos com 2 peças lado a lado para a Elegoo Mars 5 (143 x 90 mm).
 
-## Regras desta versão
-- **Sem alça e sem furo.** Cordão vai dentro do molde antes do gesso; ímã é enviado à parte.
-- **Fundo orgânico**: placa de bordas arredondadas atrás do personagem que preenche os vãos de
-  partes finas (galhada e orelhas da rena, braços do floco); o personagem fica em relevo sobre ela.
-- **Pino de encaixe em D** nas costas (10 mm, 4 mm de altura, lado reto virado para o topo da peça),
-  para plugar na base do molde.
-- **Tamanho máximo para a Elegoo Mars 5** (mesa 143 x 90 mm): mesma escala para o lote todo, ~79 mm de
-  altura. Pasta `mesas-resina/`: arquivos com 2 peças lado a lado, prontos para a mesa.
-
-## Gerar de novo
-Peças: `../relevo3d.py` com `--fundo` (ver `gerar.sh` da versão anterior). Floco: `floco_desenho.py`.
-Finalização (escala, pino e mesas): `python ../finalizar_lote.py entrada saida noel boneco rena pinguim arvore floco meia chamine`.
-
-## Origem dos modelos (Printables)
-Papai Noel 1496792 · Boneco 1486887 · Rena 1487047 · Pinguim 1545550 · Árvore 1492523 ·
-Meia 1445843 · Chaminé 1481334. Floco de neve: desenho próprio.
+Origem: modelos do Printables (Noel 1496792, Boneco 1486887, Rena 1487047, Pinguim 1545550,
+Árvore 1492523, Chaminé 1481334, Meia 1454287, Guirlanda 1905264, Sino 701222);
+Presente, Bengala e Floco são desenhos próprios (`desenhos_proprios.py`, `floco_desenho.py`).
+Finalização: `python ../finalizar_lote.py entrada saida <12 peças na ordem acima>`.
