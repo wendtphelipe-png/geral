@@ -21,7 +21,7 @@ import sys
 
 import numpy as np
 import trimesh
-from manifold3d import CrossSection, Manifold
+from manifold3d import CrossSection, FillRule, Manifold
 from scipy import ndimage
 from skimage.measure import marching_cubes
 
@@ -85,8 +85,35 @@ def furo_d(m):
     return cs
 
 
+def texto(t, altura, espelhar=False):
+    """Texto -> CrossSection (mm), centralizado na origem."""
+    from matplotlib.font_manager import FontProperties
+    from matplotlib.textpath import TextPath
+    tp = TextPath((0, 0), t, size=altura, prop=FontProperties(family="DejaVu Sans", weight="bold"))
+    polis = [np.asarray(p) for p in tp.to_polygons() if len(p) > 2]
+    cs = CrossSection([p.tolist() for p in polis], fillrule=FillRule.EvenOdd)
+    b = cs.bounds()
+    cs = cs.translate((-(b[0] + b[2]) / 2, -(b[1] + b[3]) / 2))
+    if espelhar:
+        cs = cs.mirror((0, 1))
+    return cs
+
+
+def caixa_texto(cs):
+    b = cs.bounds()
+    return b[2] - b[0], b[3] - b[1]
+
+
 def main():
-    ent, sai, nomes = sys.argv[1], sys.argv[2], sys.argv[3:]
+    ent, sai = sys.argv[1], sys.argv[2]
+    args = sys.argv[3:]
+    colecao, parte = "", ""
+    if "--colecao" in args:
+        i = args.index("--colecao"); colecao = args[i + 1]; del args[i:i + 2]
+    if "--parte" in args:
+        i = args.index("--parte"); parte = args[i + 1]; del args[i:i + 2]
+    nomes = [a.split(":")[0] for a in args]
+    rotulos = {a.split(":")[0]: (a.split(":")[1] if ":" in a else a.split(":")[0]).upper() for a in args}
     os.makedirs(sai, exist_ok=True)
     pecas, W, H = arranjar(carregar(ent, nomes))
     iw, ih = W + 2 * BORDA, H + 2 * BORDA                       # área interna (= tamanho da base)
@@ -139,6 +166,22 @@ def main():
         r = 3.8 - (Zg - 0) * (1.5 / 5.5)
         contra &= ~((((Xg - cx) ** 2 + (Yg - cy) ** 2)[:, :, None] <= r ** 2) & (Zg >= 0) & (Zg <= 5.6))
 
+    # nome da coleção gravado (1 mm) na lateral da frente do contramolde
+    if colecao or parte:
+        from matplotlib.path import Path as MPath
+        rot = f"{colecao}  {parte}".strip()
+        cs = texto(rot, 7.0)
+        w, h = caixa_texto(cs)
+        esc = min(1.0, (ow - 30) / w)
+        zc = (ztopo - PAREDE_DESCE) / 2
+        Xz = np.stack(np.meshgrid(X, zs, indexing="ij"), -1).reshape(-1, 2)
+        mask = np.zeros(len(Xz), bool)
+        for poly in cs.scale((esc, esc)).to_polygons():
+            mask ^= MPath(np.asarray(poly) + [0, zc]).contains_points(Xz)
+        mask = mask.reshape(len(X), len(zs))
+        face = Y < -oh / 2 + 1.0
+        contra &= ~(face[:, None, None] & mask[None, :, :])
+
     def malha(vol, nome):
         f = ndimage.gaussian_filter(np.pad(vol, 2).astype(np.float32), 0.6)
         v, fa, _, _ = marching_cubes(f, 0.5, spacing=(DX, DX, DX))
@@ -162,6 +205,41 @@ def main():
         base = base - Manifold.extrude(furo_d(m), 4.6 + 0.01).translate((0, 0, -4.6))
     for cx, cy in cantos:
         base = base + Manifold.cylinder(5.0, 3.5, 2.1, 64).translate((cx, cy, 0))
+    # nome de cada peça gravado ao lado do encaixe, escondido atrás da peça
+    for n, m in pecas:
+        sec = m.section(plane_origin=[0, 0, 0.3], plane_normal=[0, 0, 1])
+        poli, para3d = sec.to_2D()
+        costas = max(poli.polygons_full, key=lambda q: q.area)
+        off = trimesh.transform_points([[0, 0, 0]], para3d)[0][:2]
+        from shapely.affinity import translate as sh_translate
+        from shapely.geometry import box as sh_box
+        costas = sh_translate(costas, off[0], off[1]).buffer(-2.0)
+        d = m.section(plane_origin=[0, 0, -2.0], plane_normal=[0, 0, 1]).to_2D()
+        dp = max(d[0].polygons_full, key=lambda q: q.area)
+        dc = trimesh.transform_points([[dp.centroid.x, dp.centroid.y, 0]], d[1])[0][:2]
+        colocado = False
+        for alt in (4.5, 3.8, 3.2, 2.6):
+            cs = texto(rotulos[n], alt)
+            w, h = caixa_texto(cs)
+            for dy in (-(7 + h / 2), (7 + h / 2), -(10 + h / 2), (10 + h / 2)):
+                cx, cy = dc[0], dc[1] + dy
+                if costas.contains(sh_box(cx - w / 2 - 0.5, cy - h / 2 - 0.5, cx + w / 2 + 0.5, cy + h / 2 + 0.5)):
+                    base = base - Manifold.extrude(cs, 0.81).translate((cx, cy, -0.8))
+                    colocado = True
+                    break
+            if colocado:
+                break
+        if not colocado:
+            print(f"aviso: sem espaço para o nome de {n}")
+    # coleção e parte gravados nas costas da base (espelhado para ler olhando por trás)
+    if colecao or parte:
+        for t, alt, dy in ((colecao, 12.0, 9.0), (parte, 9.0, -9.0)):
+            if not t:
+                continue
+            cs = texto(t, alt, espelhar=True)
+            w, h = caixa_texto(cs)
+            esc = min(1.0, (iw - 40) / w)
+            base = base - Manifold.extrude(cs.scale((esc, esc)), 1.01).translate((0, dy, -BASE_ESP - 0.01))
     respiros = 0
     for gx in np.arange(-iw / 2 + 8, iw / 2 - 7, 12.5):
         for gy in np.arange(-ih / 2 + 8, ih / 2 - 7, 12.5):
@@ -169,6 +247,8 @@ def main():
             if dist[j, i, np.searchsorted(zs, 0.5)] < SILICONE + 2.5:
                 continue
             if any(abs(gx - cx) < CANTO / 2 + 2 and abs(gy - cy) < CANTO / 2 + 2 for cx, cy in cantos):
+                continue
+            if (colecao or parte) and abs(gy) < 18 and abs(gx) < (iw - 30) / 2:
                 continue
             base = base - Manifold.cylinder(BASE_ESP + 1, 1.6, 1.6, 32).translate((gx, gy, -BASE_ESP - 0.5))
             respiros += 1
