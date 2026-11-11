@@ -206,13 +206,57 @@ def fundir(d, Xg, Yg, dx, regioes):
     return d
 
 
+def alisar(d, Xg, Yg, zs, dx, regioes):
+    """Apaga detalhes em relevo (olhos, boca) dentro de regiões ovais: a superfície dentro do oval
+    é refeita a partir da borda em volta (preenchimento suave), como se o detalhe não existisse.
+
+    regioes: (x, y, raio_x, raio_y, _) em mm (o último valor é ignorado; fica por compatibilidade).
+    """
+    dentro = d < 0
+    tem = dentro.any(axis=2)
+    h = np.where(tem, zs[len(zs) - 1 - np.argmax(dentro[:, :, ::-1], axis=2)], zs[0])
+    for cx, cy, rx, ry, _ in regioes:
+        oval = (np.hypot((Xg - cx) / rx, (Yg - cy) / ry) <= 1) & tem
+        if not oval.any():
+            continue
+        jj, ii = np.nonzero(oval)
+        j0, j1 = max(jj.min() - 2, 0), min(jj.max() + 3, h.shape[0])
+        i0, i1 = max(ii.min() - 2, 0), min(ii.max() + 3, h.shape[1])
+        # superfície curva (polinômio de 2º grau) ajustada no anel em volta do oval, ignorando
+        # pontos que fogem da curva (outros detalhes, bordas de fita)
+        anel = (np.hypot((Xg - cx) / (rx + 2.5), (Yg - cy) / (ry + 2.5)) <= 1) & ~oval & tem
+        u, v, w = (Xg[anel] - cx), (Yg[anel] - cy), h[anel]
+        A = np.column_stack([np.ones_like(u), u, v, u * u, u * v, v * v])
+        usar = np.ones(len(w), bool)
+        for _ in range(4):
+            coef = np.linalg.lstsq(A[usar], w[usar], rcond=None)[0]
+            res = np.abs(A @ coef - w)
+            usar = res < max(0.25, np.percentile(res, 60))
+        j0, j1 = max(jj.min() - 2, 0), min(jj.max() + 3, h.shape[0])
+        i0, i1 = max(ii.min() - 2, 0), min(ii.max() + 3, h.shape[1])
+        ms = oval[j0:j1, i0:i1]
+        U, V = Xg[j0:j1, i0:i1] - cx, Yg[j0:j1, i0:i1] - cy
+        hs = coef[0] + coef[1] * U + coef[2] * V + coef[3] * U * U + coef[4] * U * V + coef[5] * V * V
+        # corrige a curva para encostar exatamente na superfície original na borda (sem sulco)
+        r = np.where(ms, 0.0, h[j0:j1, i0:i1] - hs)
+        for _ in range(1200):
+            viz = 0.25 * (np.roll(r, 1, 0) + np.roll(r, -1, 0) + np.roll(r, 1, 1) + np.roll(r, -1, 1))
+            r[ms] = viz[ms]
+        hs = hs + r
+        alvo = h.copy()
+        alvo[j0:j1, i0:i1] = np.where(ms, np.minimum(hs, h[j0:j1, i0:i1]), h[j0:j1, i0:i1])
+        d = np.where(oval[:, :, None], np.maximum(d, zs[None, None, :] - alvo[:, :, None]), d)
+    return d
+
+
 def por_fundo(d, Xg, Yg, zs, dx, plano, fundo):
     """Fundo orgânico atrás do personagem: preenche os vãos entre partes finas (galhada, orelhas,
     braços) com uma placa de bordas arredondadas, e o personagem fica em relevo sobre ela.
 
     fundo: (raio, espessura) em mm. Vãos mais estreitos que 2 x raio são preenchidos.
     """
-    raio, esp = fundo
+    raio, esp = fundo[0], fundo[1]
+    emenda = fundo[2] if len(fundo) > 2 else 1.2  # raio da curva que cola o personagem no fundo
     sil = (d < 0).any(axis=2)
     k = int(round(raio / dx))
     pad = k + 4
@@ -225,7 +269,7 @@ def por_fundo(d, Xg, Yg, zs, dx, plano, fundo):
     d2 = d2 + 0.3                                             # fica um pouco para dentro do contorno
     d_z = (zs - (plano + esp))[None, None, :]
     d_placa = -_suave_uniao(-d2[:, :, None], -d_z, 1.2)      # interseção arredondada (borda boleada)
-    return _suave_uniao(d, d_placa, 1.2)
+    return _suave_uniao(d, d_placa, emenda)
 
 
 def por_argola(d, Xg, Yg, zs, dx, plano, argola, pos=None):
@@ -266,7 +310,7 @@ def por_argola(d, Xg, Yg, zs, dx, plano, argola, pos=None):
     return d
 
 
-def peca_inteira(malha, tamanho, profundidade, recuo, curva, furos, corte_y=-1e9, arco=0.0, minimo=2.0, ombro=None, largura=40.0, lateral=False, fundo_vaos=3.0, placas=(), olhos=(), manter_ovais=(), massa=(), remover=(), fundir_reg=(), argola=None, argola_pos=None, fundo_placa=None, dx=0.2):
+def peca_inteira(malha, tamanho, profundidade, recuo, curva, furos, corte_y=-1e9, arco=0.0, minimo=2.0, ombro=None, largura=40.0, lateral=False, fundo_vaos=3.0, placas=(), olhos=(), manter_ovais=(), massa=(), remover=(), fundir_reg=(), argola=None, argola_pos=None, fundo_placa=None, alisar_reg=(), dx=0.2):
     from skimage.measure import marching_cubes
     import fast_simplification
     lado = tamanho + 6 + (4 * argola[0] + 8 if argola else 0)
@@ -353,6 +397,8 @@ def peca_inteira(malha, tamanho, profundidade, recuo, curva, furos, corte_y=-1e9
         d = fundir(d, Xg, Yg, dx, fundir_reg)
     if olhos:
         d = esculpir_olhos(d, Xg, Yg, zs, dx, olhos)
+    if alisar_reg:
+        d = alisar(d, Xg, Yg, zs, dx, alisar_reg)
     if fundo_placa:
         d = por_fundo(d, Xg, Yg, zs, dx, plano, fundo_placa)
     if argola:
@@ -434,7 +480,9 @@ def main():
                     help="x y raio_x raio_y raio (mm): preenche reentrâncias dentro do oval")
     ap.add_argument("--fundir", type=float, nargs=5, action="append", default=[],
                     help="x y raio_x raio_y raio (mm): une partes vizinhas com curva arredondada dentro do oval")
-    ap.add_argument("--fundo", type=float, nargs=2, help="raio espessura (mm): fundo orgânico que preenche vãos de partes finas")
+    ap.add_argument("--fundo", type=float, nargs="+", help="raio espessura [emenda] (mm): fundo orgânico que preenche vãos de partes finas; emenda = curva que cola o personagem no fundo")
+    ap.add_argument("--alisar", type=float, nargs=5, action="append", default=[],
+                    help="x y raio_x raio_y largura (mm): raspa detalhes em relevo mais estreitos que a largura (ex.: carinha)")
     ap.add_argument("--argola", type=float, nargs=3, help="raio_externo raio_do_furo espessura (mm): argola para pendurar")
     ap.add_argument("--argola-pos", type=float, nargs=2, help="x y do centro do furo (mm); padrão: acima do ponto mais alto")
     ap.add_argument("--remover", type=float, nargs=5, action="append", default=[],
@@ -448,7 +496,7 @@ def main():
     malha, corte_y = carregar(a.modelo, a.girar, a.tamanho, a.busto, a.ajuste)
     furos = [(a.furo[0], a.furo[1], 1.8)] if a.furo else []
     if a.modo == "inteiro":
-        tm = peca_inteira(malha, a.tamanho, a.profundidade, a.recuo, a.curva, furos, corte_y, a.arco, a.minimo, a.ombro, a.largura, a.lateral, a.fundo_vaos, a.placa, a.olho, a.manter, a.massa, a.remover, a.fundir, a.argola, a.argola_pos, a.fundo)
+        tm = peca_inteira(malha, a.tamanho, a.profundidade, a.recuo, a.curva, furos, corte_y, a.arco, a.minimo, a.ombro, a.largura, a.lateral, a.fundo_vaos, a.placa, a.olho, a.manter, a.massa, a.remover, a.fundir, a.argola, a.argola_pos, a.fundo, a.alisar)
     else:
         p = Peca(os.path.basename(a.saida), largura=a.tamanho + 4, altura=a.tamanho + 4, dx=0.15)
         tri = malha.vertices[malha.faces].astype(np.float64)
