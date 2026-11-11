@@ -12,6 +12,8 @@ import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
+import numpy as np
+
 import arranjador
 import bateria
 import efeitos
@@ -311,7 +313,8 @@ class Pedido(BaseHTTPRequestHandler):
             proj = abrir(pid)
             dados = self.corpo_json()
             timeline = validar_timeline(dados.get("timeline"), proj)
-            audio, inicios = proj.montar(timeline, validar_camadas(dados.get("camadas") or [], proj))
+            audio, inicios = proj.montar(timeline, validar_camadas(dados.get("camadas") or [], proj),
+                                         clique=bool(dados.get("clique")))
             return self.enviar(motor.para_wav(audio), "audio/wav", extra={"X-Inicios": json.dumps(inicios)})
 
         if metodo == "POST" and acao == "gerar":
@@ -344,6 +347,18 @@ class Pedido(BaseHTTPRequestHandler):
                                     "fonte": {"tipo": "importado", "id": c["importado"]["id"]} if c.get("importado") else
                                     {"tipo": "estilo", "estilo": c["estilo"], "bpm": bpm, "batidas": c["batidas"]}}]}
                        for n, c in enumerate(estilos)]
+            # volume da bateria de estilo igual ao da bateria original naqueles oitos
+            proj = abrir(pid)
+            for c, cam in zip(estilos, camadas):
+                try:
+                    ref = [proj.faixas["bateria"][:, proj.unidades[u]["ini"]:proj.unidades[u]["fim"]] for u in c["unidades"]]
+                    alvo_rms = float(np.sqrt(np.mean(np.concatenate(ref, axis=1) ** 2))) if ref else 0.1
+                    camada_audio = proj.fonte_clipe(cam["clipes"][0]["fonte"])
+                    rms = float(np.sqrt(np.mean(camada_audio ** 2))) or 1.0
+                    cam["clipes"][0]["ganho"] = round(max(0.15, min(2.0, alvo_rms / rms)), 3)
+                    cam["ganho"] = 1.0
+                except Exception:
+                    traceback.print_exc()
             novos = [c["importado"] for c in estilos if c.get("importado")]
             return self.enviar({"timeline": validar_timeline(timeline, abrir(pid)), "camadas": camadas, "roteiro": roteiro,
                                 "importados": novos})

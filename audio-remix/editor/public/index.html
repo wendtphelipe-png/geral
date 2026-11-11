@@ -289,6 +289,7 @@ select.estrutura{background:var(--pista);border:1px solid #6B5A1E;color:#FFE08A;
   <symbol id="i-varinha" viewBox="0 0 24 24"><path d="m15 4 1 2 2 1-2 1-1 2-1-2-2-1 2-1zM5 19 17 7M19 13l.7 1.3L21 15l-1.3.7L19 17l-.7-1.3L17 15l1.3-.7z"/></symbol>
   <symbol id="i-camadas" viewBox="0 0 24 24"><path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></symbol>
   <symbol id="i-busca" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-metronomo" viewBox="0 0 24 24"><path d="M9 3h6l4 18H5z"/><path d="m12 15 6-9"/><path d="M8 17h8"/></symbol>
   <symbol id="i-enviar" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
 </svg>
 
@@ -300,6 +301,7 @@ select.estrutura{background:var(--pista);border:1px solid #6B5A1E;color:#FFE08A;
       <button class="bt" id="paraInicio" title="Voltar ao início (Home)"><svg><use href="#i-inicio"/></svg></button>
       <button class="bt grande" id="play" title="Tocar ou pausar (Espaço)"><svg><use href="#i-play"/></svg></button>
       <button class="bt" id="laco" title="Repetir a seleção sem parar (L)"><svg><use href="#i-laco"/></svg></button>
+      <button class="bt" id="contagem" title="Ouvir a contagem: um clique em cada tempo, mais forte no 1 de cada oito. Use para conferir se os oitos estão no lugar certo (K)"><svg><use href="#i-metronomo"/></svg></button>
     </div>
     <div class="relogio num" id="relogio">0:00.0 <small>/ 0:00</small></div>
     <div class="info">
@@ -491,7 +493,7 @@ let historico = [], futuro = [];
 let pxs = 40;
 let posicoes = [], grade = [];   // posição de cada bloco [ini, dur]; grade de batidas do mix (s)
 let inicios = [];
-let laco = false;
+let laco = false, contagem = false;
 let versaoAudio = 0, urlAudio = null, timerAudio = null, timerSalvar = null;
 
 // ---------------------------------------------------------------- utilidades
@@ -1187,7 +1189,7 @@ async function montarAudio() {
   if (!proj) return;
   const minha = ++versaoAudio;
   try {
-    const r = await api(`projetos/${proj.id}/audio`, json("POST", {timeline: timelineEfetiva(), camadas: camadasEfetivas()}));
+    const r = await api(`projetos/${proj.id}/audio`, json("POST", {timeline: timelineEfetiva(), camadas: camadasEfetivas(), clique: contagem}));
     const blob = await r.blob();
     if (minha !== versaoAudio) return;
     inicios = JSON.parse(r.headers.get("X-Inicios") || "[]");
@@ -1209,6 +1211,10 @@ $("#play").onclick = () => {
   } else audio.pause();
 };
 $("#paraInicio").onclick = () => { audio.currentTime = laco && sel.size ? inicios[alvos()[0]] : 0; $("#palco").scrollLeft = 0; };
+$("#contagem").onclick = () => {
+  contagem = !contagem; $("#contagem").classList.toggle("on", contagem); atualizarAudio(true);
+  if (contagem) responder("Contagem ligada: o clique forte é o <b>1</b> de cada oito. Se ele não cair no 1 da música, use as setas <b>o \"1\" na batida</b>, embaixo à esquerda.");
+};
 $("#laco").onclick = () => { laco = !laco; $("#laco").classList.toggle("on", laco); desenharLaco(); };
 audio.onplay = audio.onpause = () => $("#play use").setAttribute("href", audio.paused ? "#i-play" : "#i-pause");
 $("#reguaTempo").addEventListener("click", e => {
@@ -1292,6 +1298,7 @@ document.addEventListener("keydown", e => {
   else if (k === "c" && !ctrl) cortar(e.altKey);
   else if (k === "i" && !ctrl) $("#ferImportar").click();
   else if (k === "l") $("#laco").click();
+  else if (k === "k") $("#contagem").click();
   else if (k === "home") $("#paraInicio").click();
   else if (k === "/" || k === "enter") { if (sel.size || selClipe) { e.preventDefault(); $("#pedido").focus(); } }
   else if (k === "escape") { sel.clear(); selClipe = null; desenharSelecao(); }
@@ -1332,7 +1339,11 @@ function etapa(t, erro) {
 async function acompanhar(id) {
   for (;;) {
     const d = await (await api("projetos/" + id)).json();
-    if (d.estado === "pronto") { fecharJanela(); await listarProjetos(id); return; }
+    if (d.estado === "pronto") {
+      fecharJanela(); await listarProjetos(id);
+      responder("Música pronta. Antes de criar o mix, confira a contagem: aperte o botão <b>Contagem</b> (o metrônomo, ao lado do tocar) e ouça se o clique forte cai no 1. Se não cair, use as setas <b>o \"1\" na batida</b>, embaixo à esquerda.");
+      return;
+    }
     if (d.estado === "erro" || d.estado === "incompleto") { etapa("Não deu certo: " + (d.erro || "a preparação foi interrompida. Importe de novo."), true); return; }
     etapa(d.etapa ? d.etapa.charAt(0).toUpperCase() + d.etapa.slice(1) + "..." : "Preparando...");
     await new Promise(r => setTimeout(r, 2000));

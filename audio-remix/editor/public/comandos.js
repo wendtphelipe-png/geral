@@ -24,7 +24,7 @@
     return m ? +m[1] / 100 : null;
   }
 
-  const VERBO = "(tir|deix|coloc|aument|abaix|diminu|sem |so |somente|apenas|mais |menos|repet|duplic|apag|remov|volt|lig|deslig|silenc|mut|meio|tempo|sobe|reforc|traz|bot|corta|faz|quero|põe|poe)";
+  const VERBO = "(?:tir|deix|coloc|aument|abaix|diminu|sem |so |somente|apenas|mais |menos|repet|duplic|apag|remov|volt|lig|deslig|silenc|mut|meio|tempo|sobe|reforc|traz|bot|corta|faz|quero|põe|poe|eco |reverb|parad|stop|freez|fade|distante|radio|abafad)";
   const DIVISOR = new RegExp(`\\s*(?:,|;|\\.|\\be\\b(?=\\s+(?:a |o |os |as )?${VERBO})|\\bdepois\\b|\\btambem\\b)\\s*`);
 
   // Junta o entendimento de cada parte do pedido ("tira a voz e deixa o grave mais alto" = 2 partes)
@@ -91,11 +91,11 @@
     const citadasAqui = faixasCitadas(t);
 
     // tirar efeitos / paradas
-    if (/\b(tir\w*|sem|remov\w*|limp\w*|desliga\w*)\b.*\b(efeitos?|eco|reverb|filtro|abafado|radio)\b/.test(t)) {
+    if (/\b(tir\w*|sem|remov\w*|limp\w*|desliga\w*)\s+(?:(?:o|os|a|as|todos os|todo o)\s+)?(efeitos?|eco|reverb|filtros?|abafado|radio)\b/.test(t)) {
       acoes.push({tipo: "semFx", alvo: citadasAqui.length ? citadasAqui : null}); frases.push("tirar os efeitos" + (citadasAqui.length ? " de " + citadasAqui.map(f => NOME[f]).join(" e ") : ""));
       return {acoes, frases, faltando};
     }
-    if (/\b(tir\w*|sem|remov\w*|limp\w*)\b.*\b(paradas?|stops?|hits?|freezes?)\b/.test(t)) {
+    if (/\b(tir\w*|sem|remov\w*|limp\w*)\s+(?:(?:o|os|a|as|todas as)\s+)?(paradas?|stops?|hits?|freezes?)\b/.test(t)) {
       acoes.push({tipo: "semParadas"}); frases.push("tirar as paradas");
       return {acoes, frases, faltando};
     }

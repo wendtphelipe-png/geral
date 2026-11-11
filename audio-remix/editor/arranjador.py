@@ -16,7 +16,7 @@ from pathlib import Path
 
 FAIXAS = ["voz", "bateria", "baixo", "outros"]
 BIBLIOTECA = Path(__file__).resolve().parent.parent / "biblioteca" / "estruturas.json"
-PARADAS_POR_MINUTO = {"poucas": 1.0, "normal": 2.6, "densas": 6.0}
+PARADAS_POR_MINUTO = {"poucas": 0.5, "normal": 1.2, "densas": 4.0}
 
 
 def catalogo():
@@ -73,6 +73,12 @@ class Montador:
         self.oitos_refrao = [u for s in self.lista if s["parte"] == self.refrao for u in s["oitos"]] or self.oitos
         self.fortes = sorted(self.oitos_refrao, key=lambda u: -self.medidas[u["id"]]["forca"])
         self.cursor = 0          # seção atual da música (para "música em ordem")
+        # partes fracas (introdução calma, pontes vazias) não entram no meio do corpo
+        forca_secao = [sum(self.medidas[u["id"]]["forca"] for u in s["oitos"]) / len(s["oitos"]) for s in self.lista]
+        mediana = sorted(forca_secao)[len(forca_secao) // 2] if forca_secao else 0
+        self.fraca = [f < 0.6 * mediana for f in forca_secao]
+        if all(self.fraca):
+            self.fraca = [False] * len(self.lista)
         self.usos = {}           # quantas vezes cada parte já entrou
         self.vez_refrao = 0
         self.linha, self.camadas, self.roteiro = [], [], []
@@ -90,13 +96,23 @@ class Montador:
     def tempo_atual(self):
         return sum(self.dur[b["u"]] / b["vel"] for b in self.linha)
 
+    def continuar_depois(self, u):
+        """Depois de usar um oito (por exemplo, o refrão da queda), a música segue da parte seguinte."""
+        for k, s in enumerate(self.lista):
+            if any(x["id"] == u["id"] for x in s["oitos"]):
+                self.cursor = k + 1
+                return
+
     def proximo_refrao(self):
         u = self.oitos_refrao[self.vez_refrao % len(self.oitos_refrao)]
         self.vez_refrao += 1
         return u
 
     def pegar_em_ordem(self, quantos, tam_min=2, tam_max=4):
-        """Trechos de tam_min a tam_max oitos, seguindo a música na ordem (e dando a volta, se precisar)."""
+        """Trechos da música na ordem original, sempre começando no início de uma frase.
+
+        Uma parte (A, B...) é dividida em frases de 2 ou 4 oitos contadas a partir do começo dela;
+        os trechos são frases inteiras, então o corte cai onde a própria música muda."""
         trechos, total, voltas = [], 0, 0
         while total < quantos and voltas < 6:
             if self.cursor >= len(self.lista):
@@ -104,22 +120,31 @@ class Montador:
                 self.usos = {p: max(0, v - 1) for p, v in self.usos.items()}
                 continue
             s = self.lista[self.cursor]
+            fraca = self.fraca[self.cursor]
             self.cursor += 1
+            if fraca:
+                continue
             vezes = self.usos.get(s["parte"], 0)
             if vezes >= (3 if s["parte"] == self.refrao else 2):
                 continue
-            tam = min(self.sorteio.randint(tam_min, tam_max), len(s["oitos"]), quantos - total)
-            inicio = 0 if vezes == 0 or len(s["oitos"]) <= tam else self.sorteio.randrange(0, len(s["oitos"]) - tam + 1)
-            trechos.append((s["parte"], s["oitos"][inicio:inicio + tam]))
+            falta = quantos - total
+            frase = tam_max if len(s["oitos"]) >= tam_max else len(s["oitos"])
+            if tam_max >= 4 and len(s["oitos"]) >= 4 and self.sorteio.random() < 0.35:
+                frase = 2
+            frase = max(1, min(frase, falta))
+            # nas repetições de uma parte longa, usa outra frase dela (sempre começando numa frase)
+            inicios = list(range(0, max(1, len(s["oitos"]) - frase + 1), 2)) or [0]
+            inicio = 0 if vezes == 0 else self.sorteio.choice(inicios)
+            trechos.append((s["parte"], s["oitos"][inicio:inicio + frase]))
             self.usos[s["parte"]] = vezes + 1
-            total += tam
+            total += frase
         return trechos
 
     def camada_estilo(self, estilo, ini, blocos):
         dur = sum(self.dur[b["u"]] / b["vel"] for b in blocos)
         batidas = round(dur / (60.0 / self.bpm))
         self.camadas.append({"nome": f"Bateria {estilo}", "estilo": estilo, "pos": round(ini, 4),
-                             "batidas": batidas, "dur": round(dur, 4)})
+                             "batidas": batidas, "dur": round(dur, 4), "unidades": [b["u"] for b in blocos]})
 
     # ---- os modos
     def executar(self, passo, n):
@@ -132,14 +157,14 @@ class Montador:
                 b = self.bloco(u, "Abertura sem grave", faixas={"voz": 1.0, "bateria": 0.0, "baixo": 0.0, "outros": 1.0},
                                fx={"tudo": {"reverb": 0.3}})
                 if k == n - 1:
-                    b["paradas"] = [[7, 1.0]]
+                    b["paradas"] = [[7, 0.5]]
                 self.linha.append(b)
             self.roteiro.append(f"Abertura: {n} oito(s) do refrão sem grave e sem bateria, com reverb e parada antes da queda.")
         elif modo == "abertura_so_voz":
             for k in range(n):
                 u = self.proximo_refrao()
                 self.linha.append(self.bloco(u, "Abertura só voz", faixas={"voz": 1.0, "bateria": 0.0, "baixo": 0.0, "outros": 0.15 if tv else 1.0},
-                                             fx={"tudo": {"reverb": 0.4}}, paradas=[[7, 1.0]] if k == n - 1 else []))
+                                             fx={"tudo": {"reverb": 0.4}}, paradas=[[7, 0.5]] if k == n - 1 else []))
             self.roteiro.append(f"Abertura: {n} oito(s) só com a voz, com reverb.")
         elif modo == "abertura_original":
             intro = next((u for u in self.unidades if u["tipo"] == "intro" and self.dur[u["id"]] > 1.5), None)
@@ -150,9 +175,13 @@ class Montador:
             self.cursor = 1
             self.roteiro.append("Abertura: o começo original da música.")
         elif modo == "queda":
+            # a queda é o começo de uma passagem do refrão, com tudo; depois a música segue dali
+            secoes_refrao = [s for s in self.lista if s["parte"] == self.refrao] or self.lista
+            sec = max(secoes_refrao, key=lambda s: sum(self.medidas[u["id"]]["forca"] for u in s["oitos"]) / len(s["oitos"]))
             for k in range(n):
-                u = self.fortes[k % len(self.fortes)]
+                u = sec["oitos"][k % len(sec["oitos"])]
                 self.linha.append(self.bloco(u, "Queda (tudo entra)"))
+            self.continuar_depois(u)
             self.roteiro.append("Queda: o refrão entra com tudo.")
         elif modo in ("corpo", "picotado"):
             pic = modo == "picotado"
@@ -160,10 +189,7 @@ class Montador:
             for j, (parte, pedaco) in enumerate(trechos):
                 for i, u in enumerate(pedaco):
                     b = self.bloco(u, ("Picotado · " if pic else "") + self.nome_parte(parte))
-                    if pic and self.sorteio.random() < 0.18:
-                        b["vel"] = 0.5 if self.sorteio.random() < 0.5 else 2
-                        b["papel"] += " (meio tempo)" if b["vel"] == 0.5 else " (tempo dobrado)"
-                    if i == len(pedaco) - 1 and self.sorteio.random() < (0.85 if pic else 0.65):
+                    if i == len(pedaco) - 1 and self.sorteio.random() < (0.85 if pic else 0.4):
                         b["paradas"] = [[7, 0.5]]
                     self.linha.append(b)
             self.roteiro.append(f"{'Picotado' if pic else 'Música em ordem'}: {sum(len(p) for _, p in trechos)} oitos em "
@@ -183,7 +209,7 @@ class Montador:
                 if modo == "respiro_sem_grave":
                     b = self.bloco(u, "Respiro sem grave", faixas={"voz": 1.0, "bateria": 1.0, "baixo": 0.0, "outros": 1.0})
                 elif modo == "respiro_sem_bateria":
-                    b = self.bloco(u, "Respiro sem bateria", faixas={"voz": 1.0, "bateria": 0.0, "baixo": 0.3, "outros": 1.0})
+                    b = self.bloco(u, "Respiro sem bateria", faixas={"voz": 1.0, "bateria": 0.0, "baixo": 1.0, "outros": 1.0})
                 else:
                     b = self.bloco(self.proximo_refrao(), "Só a voz", faixas={"voz": 1.0, "bateria": 0.0, "baixo": 0.0, "outros": 0.15 if tv else 1.0},
                                    fx={"tudo": {"reverb": 0.35}})
@@ -203,7 +229,7 @@ class Montador:
             blocos = []
             for parte, pedaco in self.pegar_em_ordem(n, 2, 4) or [(self.refrao, [self.proximo_refrao()])]:
                 for u in pedaco:
-                    blocos.append(self.bloco(u, f"Estilo: {estilo}", faixas={"voz": 1.0, "bateria": 0.0, "baixo": 0.35, "outros": 1.0}))
+                    blocos.append(self.bloco(u, f"Estilo: {estilo}", faixas={"voz": 1.0, "bateria": 0.25, "baixo": 1.0, "outros": 1.0}))
             if modo == "final_estilo" and blocos:
                 blocos[-1]["paradas"] = [[7, 1.0]]
                 blocos[-1]["fx"] = {"tudo": {"reverb": 0.4}}
@@ -283,7 +309,7 @@ def criar_mix(analise, alvo=165, semente=1, estrutura=None, meio_tempo=True):
     for b in candidatos:
         if contar() >= meta:
             break
-        b["paradas"] = [[4, 0.5]] if m.sorteio.random() < 0.6 else [[4, 0.5], [6, 0.5]]
+        b["paradas"] = [[7, 0.5]] if m.sorteio.random() < 0.7 else [[3, 0.5], [7, 0.5]]
     for b in m.linha:
         if not b.get("paradas"):
             b.pop("paradas", None)

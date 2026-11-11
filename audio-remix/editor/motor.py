@@ -172,11 +172,13 @@ def batidas_regulares(tempos, duracao):
     return np.array(saida)
 
 
-def achar_o_um(oenv, batidas, ritmo):
+def achar_o_um(oenv, batidas, ritmo, compassos=None):
     """Escolhe qual batida (0 a 7) é o "1" da contagem.
 
-    Junta duas pistas: o bumbo mais forte e as mudanças de harmonia/timbre,
-    que quase sempre acontecem no começo de um oito.
+    Pistas: os inícios de compasso do detector de batidas (Beat This!), quando
+    existem, decidem por votação qual batida é o 1 do compasso; entre os dois
+    compassos de um oito, decidem as mudanças de harmonia/timbre (que quase
+    sempre acontecem no começo de um oito) e o bumbo mais forte.
     """
     if len(batidas) < 16:
         return 0
@@ -197,7 +199,33 @@ def achar_o_um(oenv, batidas, ritmo):
         medias = np.array([v[i::8].mean() for i in range(8)])
         return (medias - medias.mean()) / (medias.std() + 1e-9)
 
-    return int(np.argmax(nota(mudanca) + 0.5 * nota(forca)))
+    pontos = nota(mudanca) + 0.5 * nota(forca)
+    if compassos is not None and len(compassos) >= 4:
+        # votação: quantos inícios de compasso caem em cada posição (0 a 3) da batida
+        votos = np.zeros(4)
+        for t in compassos:
+            i = int(np.argmin(np.abs(batidas - t)))
+            if abs(batidas[i] - t) < 0.08:
+                votos[i % 4] += 1
+        fase = int(np.argmax(votos))
+        return max((fase, fase + 4), key=lambda k: pontos[k])
+    return int(np.argmax(pontos))
+
+
+def batidas_beat_this(arquivo):
+    """Batidas e inícios de compasso pelo Beat This! (mais preciso). None se não estiver instalado."""
+    try:
+        import torch
+        from beat_this.inference import File2Beats
+    except Exception:
+        return None
+    try:
+        f2b = File2Beats(checkpoint_path="final0", device="cuda" if torch.cuda.is_available() else "cpu", dbn=False)
+        batidas, compassos = f2b(str(arquivo))
+        return np.asarray(batidas, float), np.asarray(compassos, float)
+    except Exception:
+        traceback.print_exc()
+        return None
 
 
 def analisar_projeto(pasta, deslocamento=None):
@@ -206,10 +234,14 @@ def analisar_projeto(pasta, deslocamento=None):
         bateria, _ = librosa.load(str(faixas / "bateria.wav"), sr=SR_ANALISE, mono=True)
         baixo, _ = librosa.load(str(faixas / "baixo.wav"), sr=SR_ANALISE, mono=True)
         oenv = librosa.onset.onset_strength(y=bateria + 0.5 * baixo, sr=SR_ANALISE, hop_length=HOP)
-        tempo, quadros = librosa.beat.beat_track(onset_envelope=oenv, sr=SR_ANALISE, hop_length=HOP)
-        batidas = batidas_regulares(librosa.frames_to_time(quadros, sr=SR_ANALISE, hop_length=HOP),
-                                    len(bateria) / SR_ANALISE)
-        deslocamento = achar_o_um(oenv, batidas, bateria + baixo)
+        bt = batidas_beat_this(pasta / "fonte.wav")
+        if bt is not None and len(bt[0]) > 16:
+            batidas, compassos = bt
+        else:
+            tempo, quadros = librosa.beat.beat_track(onset_envelope=oenv, sr=SR_ANALISE, hop_length=HOP)
+            batidas, compassos = librosa.frames_to_time(quadros, sr=SR_ANALISE, hop_length=HOP), None
+        batidas = batidas_regulares(batidas, len(bateria) / SR_ANALISE)
+        deslocamento = achar_o_um(oenv, batidas, bateria + baixo, compassos)
     else:
         antiga = ler_json(pasta / "analise.json")
         batidas = np.array(antiga["batidas"])
@@ -493,7 +525,30 @@ class Projeto:
             audio = somar(seco.copy(), cauda)
         return self._guardar(chave, audio)
 
-    def montar(self, timeline, camadas=None):
+    def cliques(self, timeline, inicios, total):
+        """Contagem audível: um clique em cada tempo dos oitos, mais forte e mais agudo no 1."""
+        saida = np.zeros((2, total), np.float32)
+        n = int(0.035 * SR)
+        t = np.arange(n) / SR
+        forte = (np.sin(2 * np.pi * 1760 * t) * np.exp(-t * 90) * 0.55).astype(np.float32)
+        fraco = (np.sin(2 * np.pi * 1100 * t) * np.exp(-t * 110) * 0.3).astype(np.float32)
+        for b, ini in zip(timeline, inicios):
+            u = self.unidades[b["u"]]
+            if u["tipo"] != "oito":
+                continue
+            de, ate = b.get("de", 0), b.get("ate", 1)
+            nb = max(1, int(round(8 * (ate - de))))
+            primeiro = int(round(8 * de))
+            dur = (u["fim"] - u["ini"]) * (ate - de) / float(b.get("vel", 1))
+            for k in range(nb):
+                pos = int(ini * SR + dur * k / nb)
+                som = forte if (primeiro + k) % 8 == 0 else fraco
+                fim = min(total, pos + n)
+                if pos < total:
+                    saida[:, pos:fim] += som[: fim - pos]
+        return saida
+
+    def montar(self, timeline, camadas=None, clique=False):
         """Trilha principal (blocos em sequência) + camadas (clipes em posições livres).
         Devolve (áudio (2, n), início de cada bloco em segundos)."""
         with self.trava:
@@ -527,6 +582,8 @@ class Projeto:
         pico = float(np.abs(saida).max()) if saida.size else 0
         if pico > 0.98:  # protege contra distorção
             saida *= 0.98 / pico
+        if clique:
+            saida += self.cliques(timeline, inicios, saida.shape[1])
         return saida, inicios
 
     def duracao(self, timeline, camadas=None):

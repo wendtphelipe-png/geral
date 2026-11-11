@@ -41,15 +41,24 @@ def salvar_chave(valor):
     _modelos = None
 
 
+_cliente = None
+_cliente_chave = None
+
+
 def cliente():
+    """Um cliente só, guardado. (Criar um cliente por chamada fazia a conexão fechar antes da resposta:
+    "Cannot send a request, as the client has been closed".)"""
+    global _cliente, _cliente_chave
     k = chave()
     if not k:
         raise RuntimeError("a chave do Google ainda não foi colada (botão IA, no alto do editor)")
-    try:
-        from google import genai
-    except ImportError:
-        raise RuntimeError("falta instalar a biblioteca do Google: rode PREPARAR-ANALISADOR.bat de novo")
-    return genai.Client(api_key=k)
+    if _cliente is None or _cliente_chave != k:
+        try:
+            from google import genai
+        except ImportError:
+            raise RuntimeError("falta instalar a biblioteca do Google: rode PREPARAR-ANALISADOR.bat de novo")
+        _cliente, _cliente_chave = genai.Client(api_key=k), k
+    return _cliente
 
 
 def modelos():
@@ -57,7 +66,8 @@ def modelos():
     global _modelos
     if _modelos is None:
         nomes = []
-        for m in cliente().models.list():
+        c = cliente()
+        for m in c.models.list():
             nome = (m.name or "").split("/")[-1]
             if "lyria" in nome and "realtime" not in nome:
                 nomes.append(nome)
@@ -95,7 +105,8 @@ def gerar(prompt, tipo="clip"):
                 info = json.loads((CACHE / f"{h}.json").read_text(encoding="utf-8")) if (CACHE / f"{h}.json").exists() else {}
                 return pronto, info.get("texto", ""), modelo
         try:
-            resposta = cliente().models.generate_content(
+            c = cliente()
+            resposta = c.models.generate_content(
                 model=modelo, contents=prompt,
                 config=types.GenerateContentConfig(response_modalities=["AUDIO", "TEXT"]))
         except Exception as erro:

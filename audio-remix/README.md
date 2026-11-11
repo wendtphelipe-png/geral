@@ -13,6 +13,11 @@ App para criar mixes profissionais e personalizados para coreografias de danças
 
 Dois cliques em `ABRIR-EDITOR.bat`. O navegador abre em http://127.0.0.1:3060. Para desligar, feche a janela preta.
 
+### Antes de tudo: conferir a contagem
+Depois de importar uma música, aperte o botão **Contagem** (o metrônomo, ao lado do tocar, ou a tecla K) e toque. Ouve-se um clique em cada tempo, mais forte e agudo no **1** de cada oito. Se o clique forte não cair no 1 da música, ajuste com as setas **o "1" na batida**, embaixo à esquerda (cada clique move uma batida). O mix automático depende disso: com a contagem errada, todos os cortes caem fora do lugar.
+
+As batidas e o começo de cada compasso são encontrados pelo detector *Beat This!*, que é instalado sozinho pelo ABRIR-EDITOR.bat.
+
 ### Criar mix automático (o principal)
 Escolha uma **estrutura** na lista amarela ao lado do botão e clique em **Criar mix automático**. O mix sai na duração do campo de duração desejada (padrão 2:45). Cada oito mostra na régua o papel dele, e a explicação aparece na barra de comando. Clicar de novo cria outra versão; Ctrl+Z volta à anterior. Depois, selecione oitos e peça ajustes por texto.
 

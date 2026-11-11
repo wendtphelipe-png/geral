@@ -76,14 +76,14 @@
    "nome": "Meio tempo",
    "grupo": "Tempo",
    "oitos": 1,
-   "desc": "Um oito em câmera lenta (dura o dobro)."
+   "desc": "Um oito em câmera lenta (dura o dobro). Experimental: esticar o áudio deixa o som um pouco borrado."
   },
   {
    "id": "tempo_dobrado",
    "nome": "Tempo dobrado",
    "grupo": "Tempo",
    "oitos": 2,
-   "desc": "Oitos acelerados (cada um dura a metade)."
+   "desc": "Oitos acelerados (cada um dura a metade). Experimental: esticar o áudio deixa o som um pouco borrado."
   },
   {
    "id": "estilo",
@@ -127,7 +127,7 @@
   {
    "id": "classico_idl",
    "nome": "Clássico IDL",
-   "desc": "A fórmula mais comum nas apresentações campeãs: abertura sem grave, queda, música picotada em ordem, dois respiros, meio tempo e final na voz.",
+   "desc": "A fórmula mais comum nas apresentações campeãs: abertura sem grave, queda, música picotada em frases inteiras, dois respiros e final na voz.",
    "paradas": "normal",
    "passos": [
     {
@@ -146,9 +146,6 @@
     {
      "modo": "corpo",
      "oitos": "auto"
-    },
-    {
-     "modo": "meio_tempo"
     },
     {
      "modo": "corpo",

@@ -50,6 +50,9 @@ const casos = [
   ["corta ao meio", ({tl, sel}) => { assert.strictEqual(tl.length, 6); assert.deepStrictEqual([tl[0].de, tl[0].ate, tl[1].de, tl[1].ate], [0, 0.5, 0.5, 1]); assert.deepStrictEqual(sel, [0, 1, 2, 3]); }],
   ["corta a voz", ({tl}) => { assert.strictEqual(tl.length, 4); assert.strictEqual(tl[0].faixas.voz, 0); }],
   ["volta ao original", ({tl}) => { assert.strictEqual(tl[0].env, undefined); assert.strictEqual(tl[0].faixas.voz, 1); }],
+  ["tira a voz e eco na bateria", ({tl, r}) => { assert.strictEqual(tl[0].faixas.voz, 0); assert.ok(tl[0].fx.bateria.eco > 0); assert.strictEqual(tl[0].fx.tudo, undefined); assert.strictEqual(r.frases.length, 2); }],
+  ["sem efeitos", ({tl}) => assert.strictEqual(tl[0].fx, undefined)],
+  ["tira todos os efeitos da voz", ({r}) => assert.strictEqual(r.acoes[0].tipo, "semFx")],
   ["só instrumental", ({tl}) => assert.deepStrictEqual(tl[0].faixas, {voz: 0, bateria: 1, baixo: 1, outros: 1})],
 ];
 let ok = 0;
