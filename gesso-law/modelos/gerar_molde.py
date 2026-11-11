@@ -221,8 +221,10 @@ def main():
         for alt in (4.5, 3.8, 3.2, 2.6):
             cs = texto(rotulos[n], alt)
             w, h = caixa_texto(cs)
-            for dy in (-(7 + h / 2), (7 + h / 2), -(10 + h / 2), (10 + h / 2)):
-                cx, cy = dc[0], dc[1] + dy
+            for dx_, dy in [(0, -(7 + h / 2)), (0, 7 + h / 2), (0, -(10 + h / 2)), (0, 10 + h / 2)] + \
+                    [(sx * (6 + w / 2), sy * k) for sx in (1, -1) for k in (0, 6, 12, 18) for sy in (1, -1)] + \
+                    [(sx * k, sy * (14 + h / 2)) for k in (6, 12) for sx in (1, -1) for sy in (1, -1)]:
+                cx, cy = dc[0] + dx_, dc[1] + dy
                 if costas.contains(sh_box(cx - w / 2 - 0.5, cy - h / 2 - 0.5, cx + w / 2 + 0.5, cy + h / 2 + 0.5)):
                     base = base - Manifold.extrude(cs, 0.81).translate((cx, cy, -0.8))
                     colocado = True
