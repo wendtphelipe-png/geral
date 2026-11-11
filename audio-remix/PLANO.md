@@ -118,6 +118,7 @@ Atenção: as assinaturas (o plano do app Claude e o Google AI Pro) não incluem
 2. **Etapa 1: Editor por oitos (primeira versão pronta para testar no PC, 22/10/2026).** Abrir uma música, ver as faixas por oito, ligar e desligar voz e bateria, volume, eco, copiar trechos, ouvir na hora, exportar MP3/WAV.
    - 11/11/2026: eco, reverb, filtros (abafado, rádio), paradas, "trazer a faixa do oito N" e o **mix automático** (arranjador.py), que monta o mix sozinho com os padrões da IDL.
    - 11/11/2026: **estruturas de mix** (7 prontas, montador de arrastar, biblioteca pessoal), **blocos de outro estilo** com bateria sintetizada pelos padrões da biblioteca (bateria.py) e **analisar um mix** (padrao.py): músicas usadas, comparação com as originais, relatório e estrutura aprendida.
+   - 11/11/2026: **Lyria conectado** (ia.py, biblioteca oficial google-genai): blocos de estilo criados pela IA no BPM e no tom da música (com o andamento acertado para encaixar nos oitos), trechos por texto ("ia: ...") e músicas do zero na janela Nova música. Chave só no PC; resultados guardados em cache.
 3. **Etapa 2: Colagem com transições (Modo 1).** Várias músicas, ajuste automático de BPM, tom e volume, biblioteca de transições.
 4. **Etapa 3: Kits de estilo e injeção (Modo 2).** Baterias e baixos por estilo (da pesquisa), troca de groove por trecho.
 5. **Etapa 4: Pedidos por texto.** Escrever o pedido e o app transformar em instruções.
