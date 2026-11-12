@@ -2,6 +2,7 @@
 
 App para criar mixes profissionais e personalizados para coreografias de danças urbanas. Roda no PC do Phelipe (precisa da placa de vídeo).
 
+- [DOSSIE.md](DOSSIE.md): passagem completa do projeto para o Claude no PC (contexto, arquitetura, estado, testes, próximos passos).
 - [PLANO.md](PLANO.md): os três modos do app, o editor por contagens de 8, motores e etapas.
 - [PESQUISA-ESTILOS.md](PESQUISA-ESTILOS.md): a música de cada estilo, com origem e explicação.
 - [biblioteca/BIBLIOTECA.md](biblioteca/BIBLIOTECA.md): fichas de 11 estilos com BPM, groove, padrão de bateria, instrumentos, efeitos e mais de 260 músicas de referência. A fonte que o app usa é `biblioteca/estilos.json`.
