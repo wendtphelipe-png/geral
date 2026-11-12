@@ -302,16 +302,51 @@ def descrever_unidades(faixas, unidades):
             u["onda"][nome] = [round(v / maximo, 3) for v in u["onda"][nome]]
     oitos = [i for i, u in enumerate(unidades) if u["tipo"] == "oito"]
     if len(oitos) >= 4:
-        from scipy.cluster.hierarchy import fcluster, linkage
         dados = np.array([vetores[i] for i in oitos])
         dados = dados - dados.mean(axis=0)
         dados = dados / (np.abs(dados).max() + 1e-9)  # mesma escala para tudo (não infla detalhes sem importância)
-        grupos = fcluster(linkage(dados, method="average", metric="cosine"), t=0.5, criterion="distance")
         letras, ordem = {}, iter("ABCDEFGHIJKLMNOP")
-        for i, g in zip(oitos, grupos):
+        for i, g in zip(oitos, agrupar_partes(dados)):
             if g not in letras:
                 letras[g] = next(ordem, "?")
             unidades[i]["parte"] = letras[g]
+
+
+MAX_PARTES = 6  # uma música pop tem poucas partes (introdução, verso, pré-refrão, refrão, ponte...)
+
+
+def agrupar_partes(dados):
+    """Um grupo (parte) por oito. Numa música real, o agrupamento fino picava a música em
+    10 a 15 partes de 1 oito cada (Toxic deu 13), e o mix automático passava a cortar a cada
+    oito e a repetir os mesmos trechos. Por isso: no máximo MAX_PARTES grupos, e nenhuma
+    passagem de um oito só (ela entra na parte vizinha mais parecida)."""
+    from scipy.cluster.hierarchy import fcluster, linkage
+    arvore = linkage(dados, method="average", metric="cosine")
+    grupos = fcluster(arvore, t=0.5, criterion="distance")
+    if len(set(grupos)) > MAX_PARTES:
+        grupos = fcluster(arvore, t=MAX_PARTES, criterion="maxclust")
+    grupos = list(grupos)
+
+    def parecido(i, j):
+        a, b = dados[i], dados[j]
+        return float(a @ b / (np.linalg.norm(a) * np.linalg.norm(b) + 1e-9))
+
+    for _ in range(len(grupos)):
+        trocou = False
+        k = 0
+        while k < len(grupos):
+            fim = k
+            while fim + 1 < len(grupos) and grupos[fim + 1] == grupos[k]:
+                fim += 1
+            if fim == k and len(grupos) > 1:  # passagem de um oito só
+                vizinhos = [j for j in (k - 1, k + 1) if 0 <= j < len(grupos)]
+                melhor = max(vizinhos, key=lambda j: parecido(k, j))
+                grupos[k] = grupos[melhor]
+                trocou = True
+            k = fim + 1
+        if not trocou:
+            break
+    return grupos
 
 
 def timeline_inicial(analise):

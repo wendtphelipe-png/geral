@@ -79,6 +79,11 @@ class Montador:
         self.fraca = [f < 0.6 * mediana for f in forca_secao]
         if all(self.fraca):
             self.fraca = [False] * len(self.lista)
+        # oitos soltos bem mais baixos que o resto (uma pausa da própria música dentro de uma parte forte):
+        # no corpo eles virariam um buraco de volume no meio da frase (em Toxic, 9 dB abaixo)
+        forcas = sorted(m["forca"] for m in self.medidas.values())
+        mediana_oito = forcas[len(forcas) // 2] if forcas else 0
+        self.oito_fraco = {uid for uid, m in self.medidas.items() if m["forca"] < 0.55 * mediana_oito}
         self.usos = {}           # quantas vezes cada parte já entrou
         self.vez_refrao = 0
         self.linha, self.camadas, self.roteiro = [], [], []
@@ -103,9 +108,16 @@ class Montador:
                 self.cursor = k + 1
                 return
 
-    def proximo_refrao(self):
-        u = self.oitos_refrao[self.vez_refrao % len(self.oitos_refrao)]
-        self.vez_refrao += 1
+    def proximo_refrao(self, com_voz=False):
+        """O próximo oito do refrão, pulando os muito fracos. `com_voz`: só oitos com voz de
+        verdade (nos modos "só a voz", um oito quase instrumental viraria quase silêncio)."""
+        vozes = sorted(self.medidas[u["id"]]["voz"] for u in self.oitos_refrao)
+        minimo_voz = vozes[len(vozes) // 2] if com_voz and vozes else -1
+        for _ in range(len(self.oitos_refrao)):
+            u = self.oitos_refrao[self.vez_refrao % len(self.oitos_refrao)]
+            self.vez_refrao += 1
+            if u["id"] not in self.oito_fraco and self.medidas[u["id"]]["voz"] >= minimo_voz:
+                return u
         return u
 
     def pegar_em_ordem(self, quantos, tam_min=2, tam_max=4):
@@ -135,9 +147,12 @@ class Montador:
             # nas repetições de uma parte longa, usa outra frase dela (sempre começando numa frase)
             inicios = list(range(0, max(1, len(s["oitos"]) - frase + 1), 2)) or [0]
             inicio = 0 if vezes == 0 else self.sorteio.choice(inicios)
-            trechos.append((s["parte"], s["oitos"][inicio:inicio + frase]))
+            pedaco = [u for u in s["oitos"][inicio:inicio + frase] if u["id"] not in self.oito_fraco]
             self.usos[s["parte"]] = vezes + 1
-            total += frase
+            if not pedaco:
+                continue
+            trechos.append((s["parte"], pedaco))
+            total += len(pedaco)
         return trechos
 
     def camada_estilo(self, estilo, ini, blocos):
@@ -162,7 +177,7 @@ class Montador:
             self.roteiro.append(f"Abertura: {n} oito(s) do refrão sem grave e sem bateria, com reverb e parada antes da queda.")
         elif modo == "abertura_so_voz":
             for k in range(n):
-                u = self.proximo_refrao()
+                u = self.proximo_refrao(com_voz=True)
                 self.linha.append(self.bloco(u, "Abertura só voz", faixas={"voz": 1.0, "bateria": 0.0, "baixo": 0.0, "outros": 0.15 if tv else 1.0},
                                              fx={"tudo": {"reverb": 0.4}}, paradas=[[7, 0.5]] if k == n - 1 else []))
             self.roteiro.append(f"Abertura: {n} oito(s) só com a voz, com reverb.")
@@ -211,7 +226,7 @@ class Montador:
                 elif modo == "respiro_sem_bateria":
                     b = self.bloco(u, "Respiro sem bateria", faixas={"voz": 1.0, "bateria": 0.0, "baixo": 1.0, "outros": 1.0})
                 else:
-                    b = self.bloco(self.proximo_refrao(), "Só a voz", faixas={"voz": 1.0, "bateria": 0.0, "baixo": 0.0, "outros": 0.15 if tv else 1.0},
+                    b = self.bloco(self.proximo_refrao(com_voz=True), "Só a voz", faixas={"voz": 1.0, "bateria": 0.0, "baixo": 0.0, "outros": 0.15 if tv else 1.0},
                                    fx={"tudo": {"reverb": 0.35}})
                 self.linha.append(b)
             self.roteiro.append({"respiro_sem_grave": "Respiro sem grave", "respiro_sem_bateria": "Respiro sem bateria",
@@ -240,7 +255,7 @@ class Montador:
                                 f"com a bateria original trocada pela bateria de {estilo}.")
         elif modo == "final_voz":
             for k in range(n):
-                u = self.fortes[min(1, len(self.fortes) - 1)] if k == 0 else self.proximo_refrao()
+                u = max(self.fortes[: max(2, len(self.fortes) // 2)], key=lambda x: self.medidas[x["id"]]["voz"]) if k == 0 else self.proximo_refrao(com_voz=True)
                 faixas = {"voz": 1.0, "bateria": 0.0, "baixo": 0.0, "outros": 0.25} if tv else {"voz": 0.0, "bateria": 0.0, "baixo": 0.3, "outros": 1.0}
                 b = self.bloco(u, "Final na voz" if tv else "Final suave", faixas=faixas, fx={"tudo": {"reverb": 0.55}})
                 if k == n - 1:
@@ -310,6 +325,16 @@ def criar_mix(analise, alvo=165, semente=1, estrutura=None, meio_tempo=True):
         if contar() >= meta:
             break
         b["paradas"] = [[7, 0.5]] if m.sorteio.random() < 0.7 else [[3, 0.5], [7, 0.5]]
+    # as frases do corpo também põem paradas; se passarem da densidade da estrutura, as
+    # sobras saem (as da abertura, do eco jogado antes de um respiro e dos blocos de estilo
+    # fazem parte do desenho e ficam)
+    do_corpo = [b for b in m.linha if b.get("paradas") and not b.get("fx")
+                and not b["papel"].startswith(("Abertura", "Respiro", "Só a voz", "Final", "Estilo"))]
+    m.sorteio.shuffle(do_corpo)
+    for b in do_corpo:
+        if contar() <= meta:
+            break
+        b["paradas"] = []
     for b in m.linha:
         if not b.get("paradas"):
             b.pop("paradas", None)

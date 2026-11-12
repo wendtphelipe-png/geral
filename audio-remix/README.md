@@ -19,6 +19,8 @@ Depois de importar uma música, aperte o botão **Contagem** (o metrônomo, ao l
 
 As batidas e o começo de cada compasso são encontrados pelo detector *Beat This!*, que é instalado sozinho pelo ABRIR-EDITOR.bat.
 
+Projetos importados antes de 12/11/2026 têm as partes (A, B, C...) calculadas do jeito antigo, picadas demais, e a contagem pode ter sido feita sem o Beat This!. Importe a música de novo para recalcular tudo.
+
 ### Criar mix automático (o principal)
 Escolha uma **estrutura** na lista amarela ao lado do botão e clique em **Criar mix automático**. O mix sai na duração do campo de duração desejada (padrão 2:45). Cada oito mostra na régua o papel dele, e a explicação aparece na barra de comando. Clicar de novo cria outra versão; Ctrl+Z volta à anterior. Depois, selecione oitos e peça ajustes por texto.
 
