@@ -1,0 +1,22 @@
+{
+  "v": 3,
+  "createdOnFiles": {"v": 1, "at": "2026-11-05T12:00:00Z"},
+  "title": "Palco & Pincel by LAW — Identidade visual",
+  "launch": {"view": "canvas"},
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {"x": 0, "y": 0, "w": 1200, "h": 720, "title": "Conceito"},
+    "Direcao-A.dc.html": {"x": 0, "y": 840, "w": 1200, "h": 1040, "title": "Direção A — Holofote"},
+    "Direcao-B.dc.html": {"x": 1280, "y": 840, "w": 1200, "h": 1040, "title": "Direção B — Ateliê Alegre"},
+    "Direcao-C.dc.html": {"x": 2560, "y": 840, "w": 1200, "h": 1040, "title": "Direção C — Movimento"},
+    "Direcao-A2.dc.html": {"x": 0, "y": 2000, "w": 1200, "h": 1040, "title": "Direção A2 — Holofote no Caderno"},
+    "Direcao-A3.dc.html": {"x": 1280, "y": 2000, "w": 1200, "h": 1040, "title": "Direção A3 — Caderno Pautado"},
+    "A2-Ingresso.dc.html": {"x": 0, "y": 3160, "w": 1200, "h": 760, "title": "A2 · Variação 1 — Ingresso"},
+    "A2-Linha.dc.html": {"x": 1280, "y": 3160, "w": 1200, "h": 760, "title": "A2 · Variação 2 — Em linha"},
+    "A2-Minuscula.dc.html": {"x": 2560, "y": 3160, "w": 1200, "h": 760, "title": "A2 · Variação 3 — Letra bastão minúscula"},
+    "Aplicacoes.dc.html": {"x": 0, "y": 4040, "w": 1600, "h": 1240, "title": "Aplicações da marca (estilo A2)"}
+  },
+  "order": ["Main.dc.html", "Direcao-A.dc.html", "Direcao-B.dc.html", "Direcao-C.dc.html", "Direcao-A2.dc.html", "Direcao-A3.dc.html", "A2-Ingresso.dc.html", "A2-Linha.dc.html", "A2-Minuscula.dc.html", "Aplicacoes.dc.html"],
+  "notes": {},
+  "designSystems": []
+}
