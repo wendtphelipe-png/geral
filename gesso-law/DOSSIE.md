@@ -72,8 +72,8 @@ Quadro com todas as opções: https://claude.ai/artifact/KYzCiQCQ4rEN3fKNujdD1v 
 
 ## 6. Processo de produção
 1. **Peça-matriz** impressa em resina na **Elegoo Mars 5** (mesa 143 x 90 mm, altura 150 mm).
-2. **Molde kit M (atual, desde 21/11):** uma bandeja por kit de 6 + tampa universal, em filamento.
-   Ver "Como fazer o molde (kit M)" abaixo. O molde padrão M (a seguir) ficou como alternativa.
+2. **Molde kit M (atual, desde 21/11):** contramolde por kit (já com a parede da moldura) + tampa universal,
+   em filamento. Ver "Como fazer o molde (kit M)" abaixo. O molde padrão M (a seguir) ficou como referência.
    **Molde padrão M** (alternativa) impresso em filamento (mesa 270 x 270 mm, altura 300 mm):
    **moldura** e **base** universais (impressas uma vez só, servem para todas as coleções) e um
    **miolo** fino por coleção/parte, que copia as 6 peças.
@@ -100,17 +100,21 @@ Diagnóstico: as peças são maciças e largas, o "puxão" a cada camada arranca
 - Exposição normal 10 a 20% acima da atual; resina e ambiente perto de 25 °C; película da cuba em bom estado.
 
 ### Como fazer o molde (kit M) — ATUAL
-Detalhes: `modelos/molde-kit-M/README.md`. Gerar: `modelos/molde_kit.py bandeja pasta_pecas saida "COLEÇÃO" "PARTE N de M" p1:Nome ... p6:Nome`.
-- **Por quê:** economia de filamento e de tempo (novos moldes serão frequentes), mantendo 1 molde por kit de 6.
-  A bandeja segue o contorno de cada peça, tem só a altura da peça mais grossa e imprime sem suporte;
-  a tampa universal (impressa uma vez) substitui moldura e base.
-- **Natal Parte 1:** bandeja 249 x 210 x 40 mm, ~277 g de ABS; silicone ~221 ml.
-  **Natal Parte 2:** 250 x 209 x 42 mm, ~279 g; silicone ~197 ml. Tampa universal ~124 g, uma vez só.
+Detalhes: `modelos/molde-kit-M/README.md`. Gerar: `modelos/molde_kit.py contramolde pasta_pecas saida "COLEÇÃO" "PARTE N de M" p1:Nome ... p6:Nome`.
+- **Mesma ideia do padrão M** (sanduíche, ~3,5 mm de silicone, **silicone numa peça só** com as 6 cavidades,
+  tampa com as peças pressionada por cima, excesso pelos respiros), feita para imprimir rápido e barato:
+  - o contramolde já inclui a parede da moldura e o batente da tampa (não existe mais moldura separada);
+  - altura só a da peça mais grossa do kit; imprime com o fundo na mesa, **sem suporte**;
+  - preenchimento **Relâmpago (Lightning)**: só sustenta as superfícies de cima, gasta pouco;
+  - a base virou uma tampa fina universal (3 mm + nervuras), impressa uma vez só.
+- **Natal Parte 1:** contramolde 263 x 214 x 42 mm, ~270 g de ABS (Relâmpago); silicone ~279 ml (preparar ~307).
+  **Natal Parte 2:** 263 x 214 x 44 mm, ~273 g; silicone ~264 ml (preparar ~291). Tampa universal ~171 g, uma vez só.
   (Antes: miolo ~360 g + muito suporte por kit, e moldura ~394 g + base ~204 g uma vez só.)
-- Arquivos: `natal-2026/parte-N/molde-kit/` (bandeja + `LEIA.txt`) e `molde-kit-M/tampa_kit_M.stl`.
-- Conferido em 21/11: peça única e fechada, nada no ar (sem suporte), folga peça-bandeja mínima 3,3 mm,
-  pinos batendo com a tampa. Ainda não testado na prática.
-- (Testado e recusado em 21/11: um copinho separado por peça. O Phelipe quer manter 1 molde por kit de 6.)
+- Arquivos: `natal-2026/parte-N/molde-kit/` (contramolde + `LEIA.txt`) e `molde-kit-M/tampa_kit_M.stl`.
+- Conferido em 21/11: peça única e fechada, nada no ar, lâmina medida 3,5 mm, folga peça-contramolde mínima
+  3,3 mm nas 6 peças. Ainda não testado na prática.
+- (Testados e recusados em 21/11: copinhos separados por peça e bandeja sem lâmina. O silicone tem que sair
+  numa peça só, com a lâmina ligando as 6 cavidades.)
 
 ### Como fazer o molde (molde padrão M) — alternativa
 Detalhes: `modelos/molde-padrao-M/README.md`. Gerar o miolo de uma coleção: `modelos/molde_padrao.py colecao ...`.

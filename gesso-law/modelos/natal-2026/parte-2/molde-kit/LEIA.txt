@@ -1,9 +1,3 @@
-Bandeja NATAL 2026 PARTE 2 de 2: 250 x 209 x 42 mm, fechada=True
-Silicone por cavidade (já com 10% de sobra):
-  vaga 1 MEIA: ~24 ml
-  vaga 2 CHAMINE: ~39 ml
-  vaga 3 BENGALA: ~27 ml
-  vaga 4 GUIRLANDA: ~38 ml
-  vaga 5 SINO: ~27 ml
-  vaga 6 PINGUIM: ~42 ml
-  total: ~197 ml
+Contramolde NATAL 2026 PARTE 2 de 2: 262 x 214 x 44 mm, fechado=True
+Vagas: 1 MEIA, 2 CHAMINE, 3 BENGALA, 4 GUIRLANDA, 5 SINO, 6 PINGUIM
+Silicone (peça única): ~264 ml; preparar ~291 ml (10% de sobra)
