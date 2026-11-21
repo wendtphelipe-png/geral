@@ -40,7 +40,7 @@ PECA_L, PECA_A, PECA_E = 64.0, 82.0, 35.0     # limites do tamanho M (sem o pino
 SIL = 3.9          # silicone em volta das peças: 3,5 mm + 0,4 que o arredondamento da malha come
 LAMINA = 3.0       # lâmina de silicone que liga as 6 cavidades: 3,0 + 0,5 do degrau da malha = 3,5 mm (medido)
 FUNDO = 2.0        # plástico mínimo sob a peça mais grossa
-MARGEM = 5.0       # silicone além da cavidade mais externa
+MARGEM = 6.0       # silicone além da cavidade mais externa (faixa onde ficam os respiros da borda)
 SX, SY = 85.0, 103.0           # distância entre os centros das vagas
 DEGRAU = 2.0       # largura do batente onde a tampa assenta (em volta da lâmina)
 FOLGA = 0.3        # folga da tampa dentro da parede
@@ -53,6 +53,21 @@ DX = 0.5
 
 AX = SX + PECA_L / 2 + SIL + MARGEM            # meia-largura da lâmina de silicone
 AY = SY / 2 + PECA_A / 2 + SIL + MARGEM
+
+
+RESP_R, RESP_R_FORA = 1.5, 2.5   # respiro afunilado: 3 mm na face do silicone, 5 mm do lado de fora
+RESP_BORDA = 3.0                 # distância dos respiros da borda até a beira da lâmina
+
+
+def respiros():
+    """Poucos respiros, em lugares que nunca caem sobre uma cavidade (qualquer peça M):
+    4 cantos, meio dos 4 lados (na faixa da margem) e 2 no corredor entre as fileiras."""
+    d = RESP_BORDA
+    c = CHANFRO
+    return [(-(AX - d), -(AY - d)), (AX - d, -(AY - d)), (-(AX - d), AY - d),
+            (AX - d, AY - c - 2.0),                                           # ao lado do canto chanfrado
+            (-(AX - d), 0.0), (AX - d, 0.0), (0.0, -(AY - d)), (0.0, AY - d),
+            (-SX / 2, 0.0), (SX / 2, 0.0)]
 
 
 def centros():
@@ -112,19 +127,12 @@ def tampa(sai):
                           fillrule=FillRule.EvenOdd)
         t = t - Manifold.extrude(cs, 0.8).translate((0, 0, -TAMPA_ESP - 0.01))
     furos = None
-    n = 0
-    for gx in np.arange(-ax + 4, ax - 3, 7.0):
-        for gy in np.arange(-ay + 4, ay - 3, 7.0):
-            if gx + gy > ax + ay - _chanfro(DEGRAU) - 4:
-                continue
-            if any((gx - cx) ** 2 + (gy - cy) ** 2 < 11 ** 2 or (abs(gx - cx) < 7 and abs(gy - cy + 15) < 7)
-                   for cx, cy in centros()):
-                continue
-            if np.min(np.abs(nx_ - gx)) < 2.6 or np.min(np.abs(ny_ - gy)) < 2.6:
-                continue
-            f = Manifold.cylinder(40, 1.5, 1.5, 16).translate((gx, gy, -20))
-            furos = f if furos is None else furos + f
-            n += 1
+    for gx, gy in respiros():
+        # afunilado: estreito na face do silicone (z = 0), largo para fora; o silicone quebra rente à lâmina
+        f = (Manifold.cylinder(TAMPA_ESP + 0.2, RESP_R_FORA, RESP_R, 32).translate((gx, gy, -TAMPA_ESP - 0.1))
+             + Manifold.cylinder(30, RESP_R_FORA, RESP_R_FORA, 32).translate((gx, gy, -TAMPA_ESP - 30)))
+        furos = f if furos is None else furos + f
+    n = len(respiros())
     t = t - furos
     m = para_trimesh(t)
     # para imprimir: a face lisa (a que encosta no silicone) na mesa, nervuras para cima

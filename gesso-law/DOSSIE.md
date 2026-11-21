@@ -107,8 +107,11 @@ Detalhes: `modelos/molde-kit-M/README.md`. Gerar: `modelos/molde_kit.py contramo
   - altura só a da peça mais grossa do kit; imprime com o fundo na mesa, **sem suporte**;
   - preenchimento **Relâmpago (Lightning)**: só sustenta as superfícies de cima, gasta pouco;
   - a base virou uma tampa fina universal (3 mm + nervuras), impressa uma vez só.
-- **Natal Parte 1:** contramolde 263 x 214 x 42 mm, ~270 g de ABS (Relâmpago); silicone ~279 ml (preparar ~307).
-  **Natal Parte 2:** 263 x 214 x 44 mm, ~273 g; silicone ~264 ml (preparar ~291). Tampa universal ~171 g, uma vez só.
+  - **só 10 respiros** na tampa (pedido do Phelipe: poucos e estratégicos): 4 cantos e meio dos 4 lados na faixa
+    de 6 mm da borda da lâmina + 2 no corredor entre as fileiras. Nunca caem sobre cavidade em nenhuma coleção M
+    (conferido no pior caso). Furos afunilados: o silicone quebra rente; o resto se corta rente, sem marca nas cavidades.
+- **Natal Parte 1:** contramolde 264 x 216 x 42 mm, ~270 g de ABS (Relâmpago); silicone ~282 ml (preparar ~311).
+  **Natal Parte 2:** 264 x 216 x 44 mm, ~275 g; silicone ~268 ml (preparar ~294). Tampa universal ~180 g, uma vez só.
   (Antes: miolo ~360 g + muito suporte por kit, e moldura ~394 g + base ~204 g uma vez só.)
 - Arquivos: `natal-2026/parte-N/molde-kit/` (contramolde + `LEIA.txt`) e `molde-kit-M/tampa_kit_M.stl`.
 - Conferido em 21/11: peça única e fechada, nada no ar, lâmina medida 3,5 mm, folga peça-contramolde mínima
