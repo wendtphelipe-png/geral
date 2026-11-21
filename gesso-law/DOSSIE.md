@@ -1,6 +1,6 @@
 # Dossiê: Palco & Pincel by LAW
 
-Resumo de tudo o que foi conversado e criado (out. a nov. 2026). Última atualização: 18/11/2026.
+Resumo de tudo o que foi conversado e criado (out. a nov. 2026). Última atualização: 21/11/2026.
 Repositório: `github.com/wendtphelipe-png/geral`, pasta `gesso-law/`. Ramo original: `claude/optimistic-wozniak-mkqrv5`;
 a versão mais nova (com esta atualização) está no ramo `claude/trusting-babbage-f9ex0t`.
 
@@ -105,6 +105,20 @@ Detalhes: `modelos/molde-padrao-M/README.md`. Gerar o miolo de uma coleção: `m
    "1 Papai Noel", "2 Boneco"... gravados na borda).
 4. Descer a base até encostar nos batentes; o excesso sai pelos respiros. Peso ou grampos até curar.
 - Impressão: moldura com a tampa na mesa, base com o lado liso na mesa, miolo com as nervuras na mesa.
+- **Miolo (conferido em 21/11):** 256 x 213 x 41 mm, malha fechada. Na posição de impressão (cavidades para
+  cima) a faixa de 12 mm da borda fica no ar a 35 mm: precisa de suporte **só nessa faixa**. Os vãos entre as
+  nervuras (até 24 mm) e os corredores de 4 mm entre as vagas são pontes e não precisam de suporte.
+  No fatiador: suporte "só a partir da mesa" + "não suportar pontes" (ou pintar suporte só na borda).
+  A parte de baixo dessa faixa encosta nas paredes da moldura: lixar os restos de suporte até ficar lisa.
+
+### Gesso: proporção de referência (pesar tudo)
+- **Gesso pedra (tipo III):** 100 g de gesso para 30 a 35 g de água. Recomendado: mais duro, copia melhor
+  os detalhes finos e quebra menos no envio.
+- **Gesso comum:** 100 g para 60 a 70 g de água. Primeiro lote real: 260 g de gesso comum para as 6 peças.
+- Volume das peças: Parte 1 ~280 ml, Parte 2 ~200 ml (o Presente sozinho ~100 ml).
+- Água primeiro, polvilhar o gesso, descansar 1 a 2 min, mexer devagar 1 a 2 min, pincelar os detalhes,
+  encher devagar e vibrar ~30 s. Desmoldar em 30 a 60 min; secar 24 a 48 h antes de pintar.
+
 - **Testar antes:** imprimir só um canto da base e conferir o encaixe (folgas 0,2 mm no pino,
   0,25 mm entre base e parede, 0,3 mm no miolo).
 
@@ -151,7 +165,52 @@ Todas cabem na mesa da Mars 5 (143,4 x 89,6 mm). Mesa 1 entregue para a primeira
 | `adaptador_encaixe.py` | Disco com pino em D para colar em peças antigas |
 | `previa3d.py` | Imagens de prévia das peças |
 
-## 8. Decisões de processo (em ordem)
+## 8. Custos e preços (21/11/2026)
+
+### Custo dos itens
+| Item | Compra | Custo |
+|---|---|---|
+| Gesso comum | R$ 8,00 o kg; 260 g para 6 peças | R$ 0,35 por peça |
+| Tinta (azul, vermelho, amarelo, preto, branco + 6ª cor) | R$ 11,90 por 100 ml; 6 cores de 2 ml | R$ 1,43 por kit |
+| Potinhos de 2 ml (tiras de 6) | R$ 95 por 120 | R$ 4,75 por kit (6) |
+| Pincéis | R$ 57 por 100 | R$ 1,14 por kit (2) |
+| Paleta godê | R$ 35 por 20 | R$ 1,75 por kit |
+| **Kit de pintura (igual em todo kit)** | | **R$ 9,07** |
+| Forro de mesa | estimativa | R$ 0,80 |
+| Embalagem | estimativa | R$ 3,50 (1 peça) a R$ 6,00 (6 peças) |
+
+- 6ª cor sugerida: **verde** (a mais usada no Natal; misturar verde gasta muito azul e amarelo). Precisa de mais um
+  frasco de 100 ml, que rende ~50 kits.
+- Conferir no primeiro teste se 2 ml por cor bastam para 6 peças (branco e vermelho são os mais usados).
+- Ainda fora da conta: moldes e peças-matriz (resina, silicone, filamento), perdas, tempo de trabalho e o
+  plano mensal da Nuvemshop.
+
+### Custo e preço sugerido por kit (frete à parte; taxa de pagamento estimada em 6%)
+| Kit | Custo | Preço sugerido | Sobra | Por peça |
+|---|---|---|---|---|
+| 6 peças | R$ 17,95 | R$ 69,90 (lançamento: R$ 59,90) | R$ 47,76 | R$ 11,65 |
+| 3 peças | R$ 15,41 | R$ 44,90 | R$ 26,80 | R$ 14,97 |
+| 2 peças | R$ 14,56 | R$ 36,90 | R$ 20,12 | R$ 18,45 |
+| 1 peça (presente) | R$ 13,71 | R$ 27,90 | R$ 12,51 | R$ 27,90 |
+| Lembrancinha (1 peça, 3 cores, 1 pincel, sem godê; mínimo 10) | ~R$ 7 | R$ 14,90 a R$ 17,90 | | |
+
+### Pesquisa de mercado (20/11/2026)
+- **Mercado de massa:** peças pequenas e chapadas de gesso cru saem a R$ 0,50 a R$ 2,50 cada; kits de 25 a 50
+  peças com guache e pincel, R$ 28 a R$ 98. Não dá para disputar preço com eles.
+- **Lembrancinha com tinta e pincel:** R$ 6 a R$ 9 a unidade. Kit de Natal com 10 lembrancinhas: R$ 90.
+  10 Papais Noéis de gesso para pintar: R$ 75. Kit de enfeites de Natal em loja especializada: R$ 95.
+- **Posicionamento:** presente de qualidade, não recreação barata. Diferenciais para mostrar nas fotos e textos:
+  peça de ~7 cm com volume real, desenho próprio, godê e forro, cartão "HORA DO SHOW!", feito à mão, a história
+  da Laura.
+- O "faça você mesmo" está em alta (Pinterest); outras marcas pequenas trabalham com datas comemorativas.
+- Tinta padrão do mercado: à base de água, atóxica. Indicar "a partir de 3 anos" (ou mais).
+- **ATENÇÃO, Inmetro:** certificadoras listam "jogo de moldagem de gesso" e "kits de pintura para personalizar"
+  entre os brinquedos com certificação obrigatória (Portaria Inmetro 302/2021). Existe um modelo de certificação
+  para MEI, pequena empresa e artesão; o que é feito sob encomenda é isento. Também é preciso confirmar se pode
+  passar a tinta do frasco certificado para potinhos sem marca. **Consultar uma certificadora ou o Sebrae antes
+  de lançar a loja.** (Fontes: certificadoras e consultorias, não o texto oficial completo.)
+
+## 9. Decisões de processo (em ordem)
 1. Peças maciças com volume real; nada de "medalha" achatada.
 2. Suportes de reforço suaves e escondidos, sem "colunas".
 3. Peças aumentadas para o máximo da mesa da Mars 5 (o tamanho original ficou pequeno).
@@ -161,12 +220,14 @@ Todas cabem na mesa da Mars 5 (143,4 x 89,6 mm). Mesa 1 entregue para a primeira
 7. Desenhos novos partem de modelos prontos escolhidos por foto, não do zero.
 8. (11/11) Molde padrão M: moldura e base universais, só o miolo muda por coleção; pino no centro da peça.
 9. (18/11) As 12 peças de Natal aprovadas; começa a impressão das mesas na Mars 5.
+10. (20/11) Primeiro lote de 6 peças de gesso pronto (260 g de gesso comum). Custos levantados (seção 8).
 
-## 9. Próximos passos
+## 10. Próximos passos
 1. Imprimir as 6 mesas de Natal na Mars 5 (começando pela Mesa 1).
 2. Teste de encaixe (canto da base com uma peça já impressa); depois imprimir moldura, base e os 2 miolos.
 3. Coleção própria de brinquedos (sugestão: cowboy, astronauta, dinossauro, alienígena, robô, porquinho).
 4. Nuvemshop: criar loja, aplicar identidade, cadastrar produtos com as variações de cordão e ímã.
 5. Comprar o domínio `palcoepincel.com.br`; criar as redes.
-6. Preços, custo por peça (gesso, tinta, embalagem, cordão, ímã) e fotos/vídeos reais.
-7. Ideia em aberto: suporte barato (plástico moldado com soprador térmico) para clientes que comprarem moldes.
+6. Preços reais de embalagem e forro; escolher a 6ª cor; testar se 2 ml por cor bastam; fotos/vídeos reais.
+7. Consultar certificadora ou Sebrae sobre o Inmetro (ver seção 8).
+8. Ideia em aberto: suporte barato (plástico moldado com soprador térmico) para clientes que comprarem moldes.
