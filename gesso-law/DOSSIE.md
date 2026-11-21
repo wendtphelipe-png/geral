@@ -105,11 +105,14 @@ Detalhes: `modelos/molde-padrao-M/README.md`. Gerar o miolo de uma coleção: `m
    "1 Papai Noel", "2 Boneco"... gravados na borda).
 4. Descer a base até encostar nos batentes; o excesso sai pelos respiros. Peso ou grampos até curar.
 - Impressão: moldura com a tampa na mesa, base com o lado liso na mesa, miolo com as nervuras na mesa.
-- **Miolo (conferido em 21/11):** 256 x 213 x 41 mm, malha fechada. Na posição de impressão (cavidades para
-  cima) a faixa de 12 mm da borda fica no ar a 35 mm: precisa de suporte **só nessa faixa**. Os vãos entre as
-  nervuras (até 24 mm) e os corredores de 4 mm entre as vagas são pontes e não precisam de suporte.
-  No fatiador: suporte "só a partir da mesa" + "não suportar pontes" (ou pintar suporte só na borda).
+- **Miolo (refeito em 21/11):** a primeira versão (casca oca com nervuras) fazia o PrusaSlicer encher todas as
+  vagas de suporte. Agora as vagas são **maciças por baixo da casca** (`MACICO = True` em `molde_padrao.py`):
+  o preenchimento do fatiador sustenta a casca. Cavidades e encaixe iguais (silicone continua ~291 ml na Parte 1).
+  256 x 213 x 41 mm, ~425 g de PLA com 10% de preenchimento. Na posição de impressão (cavidades para cima,
+  face plana na mesa) só a faixa de 12 mm da borda fica no ar a 35 mm e precisa de suporte.
+  PrusaSlicer: suporte "Somente na mesa de impressão", ângulo 55°, 10% giroide, 3 perímetros, camada 0,28 mm, borda (brim) 5 mm.
   A parte de baixo dessa faixa encosta nas paredes da moldura: lixar os restos de suporte até ficar lisa.
+  Arquivos já virados para imprimir: pedir ao Claude (são gerados a partir de `parte-N/miolo.stl`).
 
 ### Gesso: proporção de referência (pesar tudo)
 - **Gesso pedra (tipo III):** 100 g de gesso para 30 a 35 g de água. Recomendado: mais duro, copia melhor
