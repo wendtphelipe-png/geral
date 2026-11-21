@@ -72,7 +72,9 @@ Quadro com todas as opções: https://claude.ai/artifact/KYzCiQCQ4rEN3fKNujdD1v 
 
 ## 6. Processo de produção
 1. **Peça-matriz** impressa em resina na **Elegoo Mars 5** (mesa 143 x 90 mm, altura 150 mm).
-2. **Molde padrão M** impresso em filamento (mesa 270 x 270 mm, altura 300 mm):
+2. **Molde copinho M (atual, desde 21/11):** um copinho por peça + tampa universal, em filamento.
+   Ver "Como fazer o molde (copinho M)" abaixo. O molde padrão M (a seguir) ficou como alternativa.
+   **Molde padrão M** (alternativa) impresso em filamento (mesa 270 x 270 mm, altura 300 mm):
    **moldura** e **base** universais (impressas uma vez só, servem para todas as coleções) e um
    **miolo** fino por coleção/parte, que copia as 6 peças.
 3. **Silicone** prensado entre a base (com as peças encaixadas) e o miolo (vão de 3,5 mm) forma um molde
@@ -97,7 +99,18 @@ Diagnóstico: as peças são maciças e largas, o "puxão" a cada camada arranca
 - Subida 60 a 90 mm/min (primeiros 1 a 2 mm a 30 a 50 mm/min), altura 5 a 6 mm, espera 1 a 2 s.
 - Exposição normal 10 a 20% acima da atual; resina e ambiente perto de 25 °C; película da cuba em bom estado.
 
-### Como fazer o molde (molde padrão M)
+### Como fazer o molde (copinho M) — ATUAL
+Detalhes: `modelos/molde-copinho-M/README.md`. Gerar: `modelos/molde_copinho.py copinhos pasta_pecas saida "COLEÇÃO" peca:Nome ...`.
+- **Por quê:** economia de filamento e de tempo, já que novos moldes serão frequentes. Sem moldura, sem base,
+  sem suporte. Cada copinho segue o contorno da peça e a altura acompanha a espessura dela.
+- **Natal Parte 1:** 6 copinhos ~253 g de ABS + tampa universal ~30 g (uma vez só). Silicone ~220 ml.
+  (O sistema anterior: miolo ~360 g + suportes por coleção, mais moldura ~394 g e base ~204 g uma vez só.)
+- **Natal Parte 2:** 6 copinhos ~233 g. Arquivos em `natal-2026/parte-N/copinhos/` com `LEIA.txt` (silicone por peça).
+- Conferido em 21/11: folga peça-copinho mínima 3,3 mm (mediana ~4,3 com a aba), pinos batendo com a tampa,
+  malhas fechadas, nenhuma área no ar (imprime sem suporte). Ainda não testado na prática.
+- Uso: peça presa na tampa pelo pino D -> silicone no copinho -> tampa desce pelos 2 pinos -> curar.
+
+### Como fazer o molde (molde padrão M) — alternativa
 Detalhes: `modelos/molde-padrao-M/README.md`. Gerar o miolo de uma coleção: `modelos/molde_padrao.py colecao ...`.
 1. Moldura com a tampa na mesa; miolo da coleção dentro (nervuras para baixo, cavidades para cima).
 2. Desmoldante/vaselina em tudo; despejar o silicone (~300 ml).
