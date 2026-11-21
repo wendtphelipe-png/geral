@@ -72,8 +72,8 @@ Quadro com todas as opções: https://claude.ai/artifact/KYzCiQCQ4rEN3fKNujdD1v 
 
 ## 6. Processo de produção
 1. **Peça-matriz** impressa em resina na **Elegoo Mars 5** (mesa 143 x 90 mm, altura 150 mm).
-2. **Molde copinho M (atual, desde 21/11):** um copinho por peça + tampa universal, em filamento.
-   Ver "Como fazer o molde (copinho M)" abaixo. O molde padrão M (a seguir) ficou como alternativa.
+2. **Molde kit M (atual, desde 21/11):** uma bandeja por kit de 6 + tampa universal, em filamento.
+   Ver "Como fazer o molde (kit M)" abaixo. O molde padrão M (a seguir) ficou como alternativa.
    **Molde padrão M** (alternativa) impresso em filamento (mesa 270 x 270 mm, altura 300 mm):
    **moldura** e **base** universais (impressas uma vez só, servem para todas as coleções) e um
    **miolo** fino por coleção/parte, que copia as 6 peças.
@@ -99,16 +99,18 @@ Diagnóstico: as peças são maciças e largas, o "puxão" a cada camada arranca
 - Subida 60 a 90 mm/min (primeiros 1 a 2 mm a 30 a 50 mm/min), altura 5 a 6 mm, espera 1 a 2 s.
 - Exposição normal 10 a 20% acima da atual; resina e ambiente perto de 25 °C; película da cuba em bom estado.
 
-### Como fazer o molde (copinho M) — ATUAL
-Detalhes: `modelos/molde-copinho-M/README.md`. Gerar: `modelos/molde_copinho.py copinhos pasta_pecas saida "COLEÇÃO" peca:Nome ...`.
-- **Por quê:** economia de filamento e de tempo, já que novos moldes serão frequentes. Sem moldura, sem base,
-  sem suporte. Cada copinho segue o contorno da peça e a altura acompanha a espessura dela.
-- **Natal Parte 1:** 6 copinhos ~253 g de ABS + tampa universal ~30 g (uma vez só). Silicone ~220 ml.
-  (O sistema anterior: miolo ~360 g + suportes por coleção, mais moldura ~394 g e base ~204 g uma vez só.)
-- **Natal Parte 2:** 6 copinhos ~233 g. Arquivos em `natal-2026/parte-N/copinhos/` com `LEIA.txt` (silicone por peça).
-- Conferido em 21/11: folga peça-copinho mínima 3,3 mm (mediana ~4,3 com a aba), pinos batendo com a tampa,
-  malhas fechadas, nenhuma área no ar (imprime sem suporte). Ainda não testado na prática.
-- Uso: peça presa na tampa pelo pino D -> silicone no copinho -> tampa desce pelos 2 pinos -> curar.
+### Como fazer o molde (kit M) — ATUAL
+Detalhes: `modelos/molde-kit-M/README.md`. Gerar: `modelos/molde_kit.py bandeja pasta_pecas saida "COLEÇÃO" "PARTE N de M" p1:Nome ... p6:Nome`.
+- **Por quê:** economia de filamento e de tempo (novos moldes serão frequentes), mantendo 1 molde por kit de 6.
+  A bandeja segue o contorno de cada peça, tem só a altura da peça mais grossa e imprime sem suporte;
+  a tampa universal (impressa uma vez) substitui moldura e base.
+- **Natal Parte 1:** bandeja 249 x 210 x 40 mm, ~277 g de ABS; silicone ~221 ml.
+  **Natal Parte 2:** 250 x 209 x 42 mm, ~279 g; silicone ~197 ml. Tampa universal ~124 g, uma vez só.
+  (Antes: miolo ~360 g + muito suporte por kit, e moldura ~394 g + base ~204 g uma vez só.)
+- Arquivos: `natal-2026/parte-N/molde-kit/` (bandeja + `LEIA.txt`) e `molde-kit-M/tampa_kit_M.stl`.
+- Conferido em 21/11: peça única e fechada, nada no ar (sem suporte), folga peça-bandeja mínima 3,3 mm,
+  pinos batendo com a tampa. Ainda não testado na prática.
+- (Testado e recusado em 21/11: um copinho separado por peça. O Phelipe quer manter 1 molde por kit de 6.)
 
 ### Como fazer o molde (molde padrão M) — alternativa
 Detalhes: `modelos/molde-padrao-M/README.md`. Gerar o miolo de uma coleção: `modelos/molde_padrao.py colecao ...`.
