@@ -50,6 +50,8 @@ TAMPA = 3.0
 CANTO = 11.0
 NERVURA = 1.2
 PASSO_NERV = 24.0
+MACICO = True        # vagas maciças por baixo da casca (o preenchimento do fatiador sustenta tudo, sem suporte
+                     # dentro das vagas); False = só nervuras (gasta menos plástico, mas exige muito suporte)
 DX = 0.5
 
 VAGA_L = PECA_L + 2 * SIL + 2 * CASCA      # 75
@@ -223,6 +225,8 @@ def miolo(pecas, rotulos, colecao, parte, sai):
     placa = dentro[:, :, None] & (Zg >= 0) & (Zg <= Z_LAMINA) & ~env
     nerv = ((np.abs(((X[None, :] + 1000) % PASSO_NERV) - PASSO_NERV / 2) <= NERVURA / 2) |
             (np.abs(((Y[:, None] + 1000) % PASSO_NERV) - PASSO_NERV / 2) <= NERVURA / 2))
+    if MACICO:
+        nerv = np.ones_like(nerv)
     borda_vaga = np.zeros_like(dentro)                      # contorno da vaga também vira nervura
     for cx, cy in centros():
         rx, ry = np.abs(X[None, :] - cx), np.abs(Y[:, None] - cy)
