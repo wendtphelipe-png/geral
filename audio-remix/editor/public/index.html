@@ -234,6 +234,10 @@ select.estrutura{background:var(--pista);border:1px solid #6B5A1E;color:#FFE08A;
 .op .tags{font-size:12px;color:var(--fraco);flex:1;min-width:0}
 .op .botao{height:28px;padding:0 10px;font-size:12.5px}
 .op .botao svg{width:13px;height:13px}
+.claude-est{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px}
+.claude-est.hidden{display:none}
+.campo-claude{flex:1;min-width:220px;background:var(--noite);border:1px solid var(--borda2);border-radius:8px;padding:7px 10px;font-size:13px}
+.opc.desligada{opacity:.45}
 .resposta{font-size:12.5px;color:var(--apagado);min-height:17px}
 .resposta b{color:var(--tinta)}
 .resposta.aviso{color:#FFC27A}
@@ -509,15 +513,19 @@ select.estrutura{background:var(--pista);border:1px solid #6B5A1E;color:#FFE08A;
       <div class="escolhas" id="escolhaInst">
         <label class="opc" style="--cor:var(--bateria)"><input type="checkbox" value="bateria" checked>Bateria</label>
         <label class="opc" style="--cor:var(--baixo)"><input type="checkbox" value="baixo">Baixo</label>
-        <label class="opc" style="--cor:var(--outros)"><input type="checkbox" value="outros">Outros instrumentos</label>
+        <label class="opc" style="--cor:var(--outros)" id="instOutros"><input type="checkbox" value="outros">Outros instrumentos <small>só Lyria</small></label>
       </div>
       <span class="nota-est">A faixa original de cada instrumento marcado fica em 25%. Dá para mudar depois de criar as opções.</span>
     </div>
     <div class="secao-est"><span class="rot-est">Criar com</span>
       <div class="escolhas">
         
-        <label class="opc"><input type="radio" name="fonteEst" value="sint" checked>Bateria sintetizada <small>grátis, só bateria</small></label>
+        <label class="opc"><input type="radio" name="fonteEst" value="pc" checked>No PC, grátis: 3 opções <small>com os sons e as notas da própria música</small></label>
         <label class="opc"><input type="radio" name="fonteEst" value="lyria">Lyria, 3 opções <small>US$ 0,12 no total, cerca de 30 s</small></label>
+      </div>
+      <div class="claude-est" id="claudeEst">
+        <label class="opc"><input type="checkbox" id="usarClaude" checked>Uma das opções composta pelo Claude <small>usa a sua assinatura, sem custo extra</small></label>
+        <input id="pedidoClaude" class="campo-claude" maxlength="300" placeholder="Pedido para o Claude (opcional). Ex.: mais sincopado, com fantasmas na caixa">
       </div>
     </div>
     <div class="acoes-est"><button class="botao prim" id="criarOpcoes"><svg><use href="#i-varinha"/></svg>Criar opções</button></div>
@@ -1807,8 +1815,9 @@ let estiloEst = null, opcoesEst = [], selEst = [], durEst = 0, iniEst = 0, antes
 const instMarcados = () => [...document.querySelectorAll("#escolhaInst input:checked")].map(i => i.value);
 const nomeInst = {bateria: "bateria", baixo: "baixo", outros: "outros instrumentos"};
 
-async function pedirOpcoes(nomeEst, l, dur, usar_ia, quantas) {
-  const d = await (await api(`projetos/${proj.id}/estilo`, json("POST", {estilo: nomeEst, unidades: l.map(i => tl[i].u), dur, usar_ia, opcoes: quantas}))).json();
+async function pedirOpcoes(nomeEst, l, dur, usar_ia, quantas, extra = {}) {
+  const blocos = l.map(i => ({u: tl[i].u, de: tl[i].de ?? 0, ate: tl[i].ate ?? 1, vel: tl[i].vel ?? 1}));
+  const d = await (await api(`projetos/${proj.id}/estilo`, json("POST", Object.assign({estilo: nomeEst, unidades: l.map(i => tl[i].u), dur, usar_ia, opcoes: quantas, blocos}, extra)))).json();
   for (const o of d.opcoes) for (const f of Object.values(o.faixas)) if (f.importado) importados[f.importado.id] = f.importado;
   return d;
 }
@@ -1840,7 +1849,8 @@ function abrirEstilo(pre) {
   });
   const lyria = $("input[name=fonteEst][value=lyria]");
   lyria.disabled = !iaPronta;
-  if (!iaPronta) $("input[name=fonteEst][value=sint]").checked = true;
+  if (!iaPronta) $("input[name=fonteEst][value=pc]").checked = true;
+  ajustarFonteEst();
   opcoesEst = []; $("#listaOpcoes").innerHTML = ""; $("#andamentoEst").classList.add("hidden");
   $("#janelaEstilo").classList.remove("hidden");
 }
@@ -1849,14 +1859,26 @@ $("#btEstilo").onclick = () => abrirEstilo();
 $("#fecharEstilo").onclick = fecharEstilo;
 $("#janelaEstilo").addEventListener("click", e => { if (e.target.id === "janelaEstilo") fecharEstilo(); });
 
+// no PC há bateria e baixo (o Claude pode compor uma das opções); "outros instrumentos" só vêm do Lyria
+function ajustarFonteEst() {
+  const pc = $("input[name=fonteEst]:checked").value === "pc";
+  $("#claudeEst").classList.toggle("hidden", !pc || !claudeInstalado);
+  const outros = $("#escolhaInst input[value=outros]");
+  outros.disabled = pc; if (pc) outros.checked = false;
+  $("#instOutros").classList.toggle("desligada", pc);
+}
+document.querySelectorAll("input[name=fonteEst]").forEach(r => r.onchange = () => { ajustarFonteEst(); opcoesEst = []; $("#listaOpcoes").innerHTML = ""; });
+
 $("#criarOpcoes").onclick = async () => {
   const usar_ia = $("input[name=fonteEst]:checked").value === "lyria" && iaPronta;
+  const claude = !usar_ia && claudeInstalado && $("#usarClaude").checked;
+  const pedido = $("#pedidoClaude").value.trim();
   $("#criarOpcoes").disabled = true; $("#listaOpcoes").innerHTML = ""; previa.pause();
   $("#andamentoEst").classList.remove("hidden");
   $("#etapaEst").textContent = usar_ia ? "O Lyria está criando 3 opções, e cada uma está sendo separada em instrumentos (cerca de 30 s)..."
-                                       : "Criando a bateria sintetizada...";
+    : "Preparando os sons e as notas da música (só demora na primeira vez)" + (claude ? " e o Claude está compondo uma opção" : "") + "...";
   try {
-    const d = await pedirOpcoes(estiloEst, selEst, durEst, usar_ia, usar_ia ? 3 : 1);
+    const d = await pedirOpcoes(estiloEst, selEst, durEst, usar_ia, 3, {claude, pedido});
     opcoesEst = d.opcoes; desenharOpcoes(d.aviso);
   } catch (e) { $("#listaOpcoes").innerHTML = `<p class="nota-est" style="color:#FFC27A">Não consegui criar: ${esc(e.message)}.</p>`; }
   finally { $("#criarOpcoes").disabled = false; $("#andamentoEst").classList.add("hidden"); }
@@ -1868,7 +1890,8 @@ function desenharOpcoes(aviso) {
     (usar ? `<button class="botao prim" data-usar="${i}">Usar esta</button>` : "") + "</div>";
   $("#listaOpcoes").innerHTML = (aviso ? `<p class="nota-est" style="color:#FFC27A">${esc(aviso[0].toUpperCase() + aviso.slice(1))}.</p>` : "") +
     linha(-1, "Sem estilo", "a seleção como está agora, para comparar", false) +
-    opcoesEst.map((o, i) => linha(i, `Opção ${o.n}`, `${o.modelo ? "Lyria" : "sintetizada"} · tem ${Object.keys(o.faixas).map(f => nomeInst[f]).join(", ")}` +
+    opcoesEst.map((o, i) => linha(i, `Opção ${o.n}`, `${o.modelo ? "Lyria" : o.origem === "Claude" ? "composta pelo Claude" : "biblioteca"}` +
+      (o.modelo ? "" : ` · ${esc(o.nome.replace(/^Claude: /, ""))}`) + ` · tem ${Object.keys(o.faixas).map(f => nomeInst[f]).join(", ")}` +
       (o.semitons ? ` · baixo e outros ${o.semitons > 0 ? "subiram" : "desceram"} ${Math.abs(o.semitons)} semitom${Math.abs(o.semitons) > 1 ? "s" : ""} para o tom da música` : ""), true)).join("");
   $("#listaOpcoes").querySelectorAll("[data-ouvir]").forEach(b => b.onclick = () => ouvirOpcao(+b.dataset.ouvir));
   $("#listaOpcoes").querySelectorAll("[data-usar]").forEach(b => b.onclick = () => usarOpcao(+b.dataset.usar));

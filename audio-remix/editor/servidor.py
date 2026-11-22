@@ -402,12 +402,24 @@ class Pedido(BaseHTTPRequestHandler):
             dur = numero(dados.get("dur"), 0.5, 600, 8 * 60 / bpm)
             usar_lyria = bool(dados.get("usar_ia")) and bool(ia.chave())
             quantas = int(numero(dados.get("opcoes"), 1, 3, 1))
+            # blocos da seleção na linha do tempo (para a grade de batidas); sem eles, os oitos inteiros
+            blocos = []
+            for b in (dados.get("blocos") or [])[:64]:
+                if isinstance(b, dict) and b.get("u") in proj.unidades:
+                    vel = float(b.get("vel", 1))
+                    blocos.append({"u": b["u"], "de": numero(b.get("de", 0), 0, 1, 0), "ate": numero(b.get("ate", 1), 0, 1, 1),
+                                   "vel": vel if vel in motor.VELOCIDADES else 1})
+            blocos = blocos or [{"u": u, "de": 0, "ate": 1, "vel": 1} for u in unidades]
+            if not usar_lyria:  # motor do PC: grátis
+                lista, aviso = estilo.opcoes_pc(p, proj, nome_estilo, unidades, blocos, quantas,
+                                                bool(dados.get("claude", True)), str(dados.get("pedido") or "")[:300])
+                return self.enviar({"opcoes": lista, "dur": round(dur, 4), "aviso": aviso, "lyria": False})
             try:
-                lista, aviso = estilo.opcoes(p, proj, nome_estilo, unidades, dur, usar_lyria, quantas)
-            except RuntimeError as erro:  # o Lyria falhou em todas: fica a bateria sintetizada
-                lista, _ = estilo.opcoes(p, proj, nome_estilo, unidades, dur, False, 1)
-                aviso = f"{erro}; usei a bateria sintetizada"
-            return self.enviar({"opcoes": lista, "dur": round(dur, 4), "aviso": aviso, "lyria": usar_lyria and not aviso.endswith("sintetizada")})
+                lista, aviso = estilo.opcoes(p, proj, nome_estilo, unidades, dur, True, quantas)
+            except RuntimeError as erro:  # o Lyria falhou em todas: fica o motor do PC
+                lista, _ = estilo.opcoes_pc(p, proj, nome_estilo, unidades, blocos, 1, False)
+                aviso = f"{erro}; usei o motor do PC"
+            return self.enviar({"opcoes": lista, "dur": round(dur, 4), "aviso": aviso, "lyria": not aviso.endswith("do PC")})
 
         if metodo == "POST" and acao == "ia-trecho":
             dados = self.corpo_json()

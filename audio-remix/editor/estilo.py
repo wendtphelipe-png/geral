@@ -98,8 +98,54 @@ def _separar(pasta, audio, nome):
         return saida
 
 
+def opcoes_pc(pasta, proj, estilo, unidades, blocos, quantas, usar_claude, pedido=""):
+    """Opções do motor do PC (grátis): padrões da biblioteca e, se o Claude Code estiver logado, um
+    composto pelo Claude (cota da assinatura), tocados com o kit e a harmonia da própria música."""
+    import claude_local
+    import compositor
+    import harmonia
+    import kit
+    harm = harmonia.analisar(pasta)
+    sons = kit.carregar(pasta, proj)
+    biblioteca = compositor.padroes_do_estilo(estilo)
+    quantas = max(1, min(3, int(quantas)))
+    aviso = ""
+
+    def do_claude():
+        batidas, _ = compositor.grade(proj, blocos)
+        notas = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
+        progressao = [notas[harmonia.tonica(harm, i) % 12] + ("" if harmonia.acorde(harm, i) == "maj" else "m")
+                      for _, _, i, pos in batidas if pos % 2 == 0]
+        exemplo = {k: biblioteca[0][k] for k in ("nome", "bateria", "baixo")}
+        return claude_local.compor(estilo, bateria.estilos()[estilo], proj.analise.get("bpm") or 120, progressao,
+                                   [b["nome"] for b in biblioteca], exemplo, pedido)
+
+    padroes = biblioteca[:quantas]
+    if usar_claude and quantas > 1 and claude_local.executavel():
+        with ThreadPoolExecutor(max_workers=1) as fila:  # o Claude compõe enquanto o resto é preparado
+            futuro = fila.submit(do_claude)
+            try:
+                composto = futuro.result(timeout=claude_local.ESPERA + 10)
+                padroes = ([composto] + biblioteca[:quantas - 1]) if pedido else (biblioteca[:quantas - 1] + [composto])
+            except Exception as erro:
+                traceback.print_exc()
+                aviso = f"o Claude não compôs desta vez ({str(erro)[:120]}); vieram só os padrões da biblioteca"
+
+    lista = []
+    for k, padrao in enumerate(padroes):
+        partes = compositor.tocar(proj, harm, sons, blocos, estilo, padrao, semente=k + 1)
+        faixas = {}
+        for inst, som in partes.items():
+            info = motor.salvar_importado(pasta, som, f"{bateria.estilos()[estilo]['nome']} {k + 1} · {inst}")
+            fonte = {"tipo": "importado", "id": info["id"]}
+            faixas[inst] = {"fonte": fonte, "importado": info, "ganho": ganho_como_faixa(proj, unidades, fonte, inst)}
+        lista.append({"n": k + 1, "nome": padrao["nome"], "modelo": None, "faixas": faixas, "semitons": 0,
+                      "origem": "Claude" if padrao["nome"].startswith("Claude:") else "biblioteca"})
+    return lista, aviso
+
+
 def opcoes(pasta, proj, estilo, unidades, dur, usar_lyria, quantas):
-    """Devolve (lista de opções, aviso). Cada opção: {n, nome, modelo, faixas: {inst: {fonte, ganho, importado}}}."""
+    """Opções do Lyria (pago). Devolve (lista de opções, aviso). Cada opção: {n, nome, modelo, faixas: {inst: {fonte, ganho, importado}}}."""
     bpm = proj.analise.get("bpm") or 120
     batidas = max(1, int(round(dur / (60.0 / bpm))))
     nome_estilo = bateria.estilos()[estilo]["nome"]

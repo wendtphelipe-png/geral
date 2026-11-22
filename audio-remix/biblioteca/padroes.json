@@ -1,0 +1,138 @@
+{
+ "versao": 1,
+ "observacao": "Padrões do motor de estilos do PC (editor/compositor.py). Bateria: uma linha por peça, 16 passos (repete a cada compasso) ou 32 (2 compassos); X forte, x normal, o fantasma, . silêncio. Baixo: [passo 0-31, função, duração em passos, força 0-1]; passos 0-15 repetem nos 2 compassos. Funções: T tônica do meio compasso, 5 quinta, 8 oitava acima, 3 terça do acorde, b7 sétima menor, 6 sexta, N a nota que o baixo da música toca naquele tempo, A aproximação (meio tom abaixo da próxima tônica). Notas fora da escala da música são trocadas por nota segura (menos a aproximação, que é curta e de propósito).",
+ "estilos": {
+  "breaking": {
+   "bateria": [
+    {"nome": "Break clássico", "bumbo": "X.X.......X.X...", "caixa": "....X..o.o..X...", "chimbal": "x.x.x.x.x.x.x.x."},
+    {"nome": "Break com respiro", "bumbo": "X.....X...X..X..", "caixa": "....X.......X..o", "chimbal": "x.xxx.x.x.xxx.x."},
+    {"nome": "Break em dois compassos", "bumbo": "X.X.......X.....X.X.......X.X...", "caixa": "....X..o.o..X......o..X..o.oX...", "chimbal": "x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x."}
+   ],
+   "baixo": [
+    {"nome": "Funk sincopado", "notas": [[0, "T", 3, 1], [3, "T", 1, 0.6], [6, "8", 1, 0.8], [8, "T", 2, 0.9], [11, "5", 1, 0.7], [14, "b7", 2, 0.8]]},
+    {"nome": "Funk com aproximação", "notas": [[0, "T", 2, 1], [2, "T", 1, 0.6], [7, "5", 1, 0.8], [10, "T", 2, 0.9], [13, "8", 1, 0.7], [15, "A", 1, 0.7]]},
+    {"nome": "Funk aberto", "notas": [[0, "T", 4, 1], [6, "8", 2, 0.8], [10, "5", 2, 0.8], [14, "N", 2, 0.7]]}
+   ]
+  },
+  "locking": {
+   "bateria": [
+    {"nome": "Funk anos 70", "bumbo": "X.....X.X.......", "caixa": "....X.......X...", "chimbal": "x.x.x.x.x.x.x.x."},
+    {"nome": "Funk com fantasmas", "bumbo": "X..X......X.....", "caixa": "....X..o.o..X...", "chimbal": "xoxoxoxoxoxoxoxo"},
+    {"nome": "Funk com 'lock' no fim", "bumbo": "X.......X.X.....X.......X.X.....", "caixa": "....X.......X.......X.......X.X.", "chimbal": "x.x.x.x.x.x.x.x.x.x.x.x.x.xX..."}
+   ],
+   "baixo": [
+    {"nome": "Oitavas de funk", "notas": [[0, "T", 1, 1], [2, "8", 1, 0.8], [4, "T", 1, 0.7], [6, "8", 1, 0.8], [8, "T", 1, 0.9], [10, "8", 1, 0.8], [12, "5", 1, 0.7], [14, "b7", 1, 0.8]]},
+    {"nome": "Funk com aproximação", "notas": [[0, "T", 2, 1], [3, "T", 1, 0.6], [6, "5", 1, 0.8], [8, "8", 2, 0.9], [11, "b7", 1, 0.7], [14, "A", 2, 0.8]]},
+    {"nome": "Segue a música", "notas": [[0, "T", 3, 1], [4, "N", 2, 0.8], [8, "T", 3, 0.9], [12, "N", 2, 0.8], [15, "A", 1, 0.6]]}
+   ]
+  },
+  "popping": {
+   "bateria": [
+    {"nome": "Electro-funk", "bumbo": "X.....X...X.....", "caixa": "....X.......X...", "chimbal": "x.x.x.x.x.x.x.x."},
+    {"nome": "Electro com semicolcheias", "bumbo": "X.........X.X...", "caixa": "....X.......X...", "chimbal": "xoxoxoxoxoxoxoxo"},
+    {"nome": "Pesado", "bumbo": "X..X..X...X.....", "caixa": "....X.......X...", "chimbal": "x.x.x.x.x.x.x.x."}
+   ],
+   "baixo": [
+    {"nome": "Synth funk", "notas": [[0, "T", 2, 1], [3, "T", 1, 0.7], [6, "8", 1, 0.8], [10, "T", 2, 0.9], [13, "5", 1, 0.7]]},
+    {"nome": "Longo e grave", "notas": [[0, "T", 4, 1], [6, "T", 1, 0.8], [8, "8", 2, 0.9], [11, "b7", 1, 0.7], [14, "5", 2, 0.8]]},
+    {"nome": "Repique", "notas": [[0, "T", 1, 1], [1, "T", 1, 0.6], [4, "N", 2, 0.8], [8, "T", 1, 0.9], [9, "T", 1, 0.6], [12, "N", 2, 0.8]]}
+   ]
+  },
+  "hiphop": {
+   "bateria": [
+    {"nome": "Boom bap", "bumbo": "X......X.X......", "caixa": "....X.......X...", "chimbal": "x.x.x.x.x.x.x.x."},
+    {"nome": "Boom bap com respiro", "bumbo": "X.........X..X..", "caixa": "....X.......X...", "chimbal": "x.x.x.x.x.xxx.x."},
+    {"nome": "Boom bap em dois compassos", "bumbo": "X......X..X.....X.....X...X.X...", "caixa": "....X.......X.......X.......X...", "chimbal": "x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x."}
+   ],
+   "baixo": [
+    {"nome": "Segue o bumbo", "notas": [[0, "T", 3, 1], [7, "T", 1, 0.8], [9, "T", 3, 0.9], [14, "5", 2, 0.7]]},
+    {"nome": "Longo", "notas": [[0, "T", 6, 1], [10, "T", 3, 0.9], [13, "N", 3, 0.8]]},
+    {"nome": "Com quinta e oitava", "notas": [[0, "T", 2, 1], [7, "T", 2, 0.8], [10, "5", 2, 0.8], [13, "8", 2, 0.7]]}
+   ]
+  },
+  "house": {
+   "bateria": [
+    {"nome": "Quatro no chão", "bumbo": "X...X...X...X...", "palma": "....X.......X...", "chimbal_aberto": "..x...x...x...x.", "shaker": "oxoxoxoxoxoxoxox"},
+    {"nome": "Quatro no chão com caixa", "bumbo": "X...X...X...X...", "caixa": "....X.......X...", "chimbal": "x.x.x.x.x.x.x.x.", "chimbal_aberto": "..x...x...x...x."},
+    {"nome": "Quatro no chão cheio", "bumbo": "X...X...X...X...", "palma": "....X.......X..o", "chimbal": "oxoxoxoxoxoxoxox", "chimbal_aberto": "..x...x...x...x."}
+   ],
+   "baixo": [
+    {"nome": "Baixo no contratempo", "notas": [[2, "T", 2, 0.9], [6, "T", 2, 0.9], [10, "T", 2, 0.9], [14, "T", 2, 0.9]]},
+    {"nome": "Contratempo com oitava", "notas": [[2, "T", 1, 0.9], [3, "8", 1, 0.7], [6, "T", 1, 0.9], [7, "8", 1, 0.7], [10, "T", 1, 0.9], [11, "8", 1, 0.7], [14, "5", 1, 0.9], [15, "8", 1, 0.7]]},
+    {"nome": "Sincopado", "notas": [[0, "T", 1, 0.8], [3, "T", 2, 0.9], [6, "5", 1, 0.7], [8, "T", 1, 0.8], [11, "T", 2, 0.9], [14, "8", 2, 0.8]]}
+   ]
+  },
+  "waacking": {
+   "bateria": [
+    {"nome": "Disco", "bumbo": "X...X...X...X...", "caixa": "....X.......X...", "chimbal": "x...x...x...x...", "chimbal_aberto": "..x...x...x...x."},
+    {"nome": "Disco com virada", "bumbo": "X...X...X...X...", "caixa": "....X.......X.......X.......XoXX", "chimbal": "x...x...x...x...", "chimbal_aberto": "..x...x...x...x."},
+    {"nome": "Disco com palmas", "bumbo": "X...X...X...X...", "palma": "....X.......X...", "chimbal": "xoxoxoxoxoxoxoxo"}
+   ],
+   "baixo": [
+    {"nome": "Oitavas de disco", "notas": [[0, "T", 1, 1], [2, "8", 1, 0.8], [4, "T", 1, 0.9], [6, "8", 1, 0.8], [8, "T", 1, 1], [10, "8", 1, 0.8], [12, "T", 1, 0.9], [14, "8", 1, 0.8]]},
+    {"nome": "Disco caminhando", "notas": [[0, "T", 2, 1], [2, "8", 2, 0.8], [4, "T", 2, 0.9], [6, "8", 1, 0.8], [7, "5", 1, 0.7], [8, "T", 2, 1], [10, "8", 2, 0.8], [12, "5", 2, 0.9], [14, "8", 1, 0.8], [15, "A", 1, 0.7]]},
+    {"nome": "Disco aberto", "notas": [[0, "T", 3, 1], [3, "8", 1, 0.7], [6, "T", 2, 0.8], [8, "5", 3, 0.9], [11, "8", 1, 0.7], [14, "T", 2, 0.8]]}
+   ]
+  },
+  "vogue": {
+   "bateria": [
+    {"nome": "Ballroom", "bumbo": "X...X...X...X...", "palma": "....X.......X...", "ha": ".......................X........"},
+    {"nome": "Ballroom com 'ha' no 1", "bumbo": "X...X...X..XX...", "palma": "....X.......X...", "ha": "X..............................."},
+    {"nome": "Ballroom com palmas extras", "bumbo": "X...X...X...X...", "palma": "....X..X....X...", "ha": "............X...............X..."}
+   ],
+   "baixo": [
+    {"nome": "Longo", "notas": [[0, "T", 4, 1], [8, "T", 4, 0.9]]},
+    {"nome": "Pulsado", "notas": [[0, "T", 2, 1], [6, "T", 2, 0.8], [8, "8", 2, 0.9], [14, "T", 2, 0.8]]},
+    {"nome": "Seco", "notas": [[0, "T", 1, 1], [3, "T", 1, 0.8], [8, "T", 1, 1], [11, "5", 1, 0.8], [14, "8", 2, 0.7]]}
+   ]
+  },
+  "krump": {
+   "bateria": [
+    {"nome": "Pesado em meio tempo", "bumbo": "X.........X.....", "caixa": "........X.......", "impacto": "X..............................."},
+    {"nome": "Pesado com repique", "bumbo": "X..X......X..X..", "caixa": "........X.......", "impacto": "X...............X..............."},
+    {"nome": "Pesado com fantasma", "bumbo": "X.X.......X.X...", "caixa": "........X.....o.", "impacto": "X..............................."}
+   ],
+   "baixo": [
+    {"nome": "808 longo", "notas": [[0, "T", 8, 1], [10, "T", 6, 0.9]]},
+    {"nome": "808 com aproximação", "notas": [[0, "T", 6, 1], [8, "T", 4, 0.9], [13, "A", 3, 0.8]]},
+    {"nome": "808 com quinta", "notas": [[0, "T", 3, 1], [3, "T", 3, 0.9], [10, "5", 6, 0.8]]}
+   ]
+  },
+  "passinho": {
+   "bateria": [
+    {"nome": "Tamborzão", "bumbo": "X.......X.......", "caixa": "....X.......X...", "tambor": "X..X..X...X..X.."},
+    {"nome": "Funk 150", "bumbo": "X..X...X..X..X..", "caixa": "....X.......X...", "tambor": "..X...X...X...X."},
+    {"nome": "Tamborzão cheio", "bumbo": "X......X..X.....", "caixa": "....X.......X...", "tambor": "X..X..X.X..X..X."}
+   ],
+   "baixo": [
+    {"nome": "Grave do tamborzão", "notas": [[0, "T", 2, 1], [3, "T", 2, 0.8], [6, "T", 2, 0.9], [10, "T", 2, 0.8], [13, "5", 2, 0.8]]},
+    {"nome": "Com oitava", "notas": [[0, "T", 3, 1], [3, "8", 2, 0.8], [6, "T", 2, 0.9], [10, "5", 2, 0.8], [13, "T", 2, 0.8]]},
+    {"nome": "Longo", "notas": [[0, "T", 4, 1], [7, "T", 2, 0.8], [10, "T", 3, 0.9], [14, "A", 2, 0.7]]}
+   ]
+  },
+  "dancehall": {
+   "bateria": [
+    {"nome": "Dembow", "bumbo": "X.......X.......", "caixa": "...X..X....X..X.", "chimbal": "x.x.x.x.x.x.x.x."},
+    {"nome": "Bumbo 3+3+2", "bumbo": "X..X..X.X..X..X.", "caixa": "....X.......X...", "chimbal": "x.x.x.x.x.x.x.x."},
+    {"nome": "Dembow com semicolcheias", "bumbo": "X.......X.......", "caixa": "...X..X....X..X.", "chimbal": "xoxoxoxoxoxoxoxo"}
+   ],
+   "baixo": [
+    {"nome": "3+3+2", "notas": [[0, "T", 3, 1], [3, "T", 3, 0.9], [6, "5", 2, 0.8], [8, "T", 3, 1], [11, "T", 3, 0.9], [14, "8", 2, 0.8]]},
+    {"nome": "Riddim", "notas": [[0, "T", 2, 1], [3, "T", 2, 0.8], [6, "T", 2, 0.9], [10, "5", 2, 0.8], [14, "T", 2, 0.8]]},
+    {"nome": "Longo", "notas": [[0, "T", 6, 1], [6, "5", 2, 0.8], [8, "T", 6, 0.9], [14, "A", 2, 0.7]]}
+   ]
+  },
+  "afro": {
+   "bateria": [
+    {"nome": "Amapiano", "bumbo": "X...X...X...X...", "palma": "....X.......X...", "shaker": "oxoxoxoxoxoxoxox", "log_drum": "...X..X....X.X.."},
+    {"nome": "Afrobeats", "bumbo": "X.....X...X.....", "palma": "....X.......X...", "shaker": "oxoxoxoxoxoxoxox"},
+    {"nome": "Amapiano com palma deslocada", "bumbo": "X...X...X...X...", "palma": "......X.......X.", "shaker": "oxxoxxoxoxxoxxox"}
+   ],
+   "baixo": [
+    {"nome": "Log drum", "notas": [[3, "T", 2, 1], [6, "T", 1, 0.8], [11, "8", 2, 0.9], [13, "5", 2, 0.8]]},
+    {"nome": "Afro caminhando", "notas": [[0, "T", 2, 1], [3, "5", 2, 0.8], [7, "T", 2, 0.9], [10, "8", 3, 0.9], [14, "T", 2, 0.7]]},
+    {"nome": "Segue a música", "notas": [[2, "T", 2, 0.9], [6, "N", 2, 0.8], [10, "T", 2, 0.9], [13, "A", 3, 0.7]]}
+   ]
+  }
+ }
+}

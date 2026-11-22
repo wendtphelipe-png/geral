@@ -48,9 +48,11 @@ O Lyria é pago por uso. Tudo o que ele gera fica guardado em `audio-remix\dados
 Selecione oitos e clique em **Trocar estilo** (o primeiro botão embaixo do campo de pedido). Na janela:
 1. escolha o **estilo**;
 2. marque os **instrumentos do estilo** que entram: bateria, baixo e/ou outros instrumentos. A faixa original de cada instrumento marcado fica em 25%;
-3. escolha **Lyria, 3 opções** (pago, cerca de 30 s) ou **bateria sintetizada** (grátis, só bateria) e clique em **Criar opções**;
+3. escolha **No PC, grátis** (o padrão) ou **Lyria, 3 opções** (pago) e clique em **Criar opções**. No PC, uma das opções pode ser composta pelo Claude (caixa marcada); escreva um pedido para ele se quiser, por exemplo "mais sincopado, com fantasmas na caixa";
 4. clique em **Ouvir** em cada opção (e em "Sem estilo", para comparar). Os instrumentos marcados podem ser trocados e ouvidos de novo sem criar outra vez;
 5. clique em **Usar esta** na melhor. Cada instrumento entra numa camada própria, com volume, M e S. Ctrl+Z desfaz.
+
+**Motor do PC (grátis):** toca padrões de bateria e baixo de cada estilo com os sons da própria música: o bumbo, a caixa e o chimbal são recortados da bateria separada, e as notas do baixo vêm do baixo separado. O baixo dos padrões é escrito em funções (tônica, quinta, oitava, nota da música...) e o motor escolhe as notas pela harmonia de cada tempo da música, então fica afinado. Tudo cai em cima das batidas reais da música. Os padrões ficam em `biblioteca/padroes.json` (3 de bateria e 3 de baixo por estilo); o Claude compõe padrões novos no mesmo formato, pela cota da assinatura. Na primeira vez numa música, o motor leva uns 15 s para analisar a harmonia e montar o kit (fica guardado).
 
 O groove do Lyria é separado em instrumentos pelo mesmo separador das músicas, porque o Lyria devolve o groove completo (com teclados e efeitos) mesmo quando o pedido é só bateria e baixo. O Lyria também ignora o tom pedido, então o baixo e os outros instrumentos de cada opção são transpostos para as notas do trecho selecionado (a opção mostra quantos semitons subiram ou desceram).
 
