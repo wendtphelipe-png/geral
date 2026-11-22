@@ -211,6 +211,7 @@ select.estrutura{background:var(--pista);border:1px solid #6B5A1E;color:#FFE08A;
 .resposta{font-size:12.5px;color:var(--apagado);min-height:17px}
 .resposta b{color:var(--tinta)}
 .resposta.aviso{color:#FFC27A}
+.resposta .claude{color:var(--fraco)}
 .sep{width:1px;height:18px;background:var(--borda2);margin:0 4px}
 
 /* ---------- música original */
@@ -1088,10 +1089,48 @@ function executar(texto) {
   if (pedidoIa) return trechoIa(pedidoIa[1].trim(), l);
   const r = Comandos.entender(texto);
   if (!r.acoes.length) {
+    if (claudeInstalado && !r.vazio) return perguntarClaude(texto, l);
     const falta = r.faltando.length ? `Ainda não sei fazer <b>${r.faltando.join(", ")}</b>. ` : "Não entendi. ";
     responder(falta + "Para a IA criar algo, comece com \"ia:\" (ex.: ia: metais de funk animados). Hoje eu entendo: tirar ou deixar só uma faixa, volume (com %), eco, reverb, distante, rádio, abafado, paradas (\"parada no 5\"), trazer a voz de outro oito, fade in e out, dividir ao meio, meio tempo, tempo dobrado, repetir e apagar.", true);
     return;
   }
+  aplicarEntendido(r, l, "");
+}
+
+// Pedidos que as regras não entendem vão para o Claude da assinatura (Claude Code do PC),
+// que devolve as mesmas ações das regras. Sem custo de API: sai da cota da assinatura.
+let claudeInstalado = false;
+api("claude").then(r => r.json()).then(d => { claudeInstalado = !!d.instalado; }).catch(() => {});
+const esc = t => String(t).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;"}[c]));
+function contextoClaude(l) {
+  return {
+    bpm: proj.analise.bpm,
+    oitos_na_musica_original: proj.analise.unidades.filter(u => u.tipo === "oito").length,
+    blocos_selecionados: l.map(i => {
+      const b = tl[i], u = unid[b.u];
+      return {oito_original: nomeUnid(u), parte: u.parte || null, papel: b.papel || null, faixas: b.faixas, vel: b.vel,
+              fx: b.fx || null, paradas: b.paradas || null};
+    }),
+  };
+}
+async function perguntarClaude(texto, l) {
+  const antes = JSON.stringify(l.map(i => tl[i]));
+  responder(`As regras não entenderam; perguntando ao Claude: <b>${esc(texto)}</b>... (alguns segundos)`);
+  let d;
+  try {
+    d = await (await api("claude", json("POST", {pedido: texto, contexto: contextoClaude(l)}))).json();
+  } catch (e) { responder("Não entendi pelas regras, e o Claude não pôde ajudar: " + esc(e.message) + ".", true); return; }
+  // se os blocos mudaram enquanto o Claude pensava, não aplica em cima de outra coisa
+  if (l.some(i => i >= tl.length) || JSON.stringify(l.map(i => tl[i])) !== antes) {
+    responder("A seleção mudou enquanto o Claude pensava. Selecione de novo e repita o pedido.", true); return;
+  }
+  if (!d.acoes.length) {
+    responder("O Claude entendeu, mas o editor ainda não faz isso" + (d.explicacao ? ": " + esc(d.explicacao) : "."), true); return;
+  }
+  aplicarEntendido({acoes: d.acoes, frases: d.frases.length ? d.frases : ["pedido aplicado"], faltando: []}, l, " <span class=\"claude\">(entendido pelo Claude)</span>");
+}
+
+function aplicarEntendido(r, l, sufixo) {
   const trazer = r.acoes.find(a => a.tipo === "trazer");
   if (trazer) {
     const u = proj.analise.unidades.find(x => x.tipo === "oito" && x.rotulo === String(trazer.oito));
@@ -1107,11 +1146,11 @@ function executar(texto) {
         c.clipes.push(clipe);
       }
     });
-    responder(`<b>Feito:</b> ${r.frases[0]}. A camada nova está embaixo das faixas; arraste o clipe se quiser mudar o ponto.`);
+    responder(`<b>Feito:</b> ${esc(r.frases[0])}.${sufixo} A camada nova está embaixo das faixas; arraste o clipe se quiser mudar o ponto.`);
     return;
   }
   mudar(() => { sel = new Set(Comandos.aplicar(tl, l, r.acoes, {dur: durBloco, tempo: tempo()})); });
-  let msg = `<b>Feito:</b> ${r.frases.join(", ")}.`;
+  let msg = `<b>Feito:</b> ${r.frases.map(esc).join(", ")}.${sufixo}`;
   if (r.faltando.length) msg += ` Ainda não sei fazer ${r.faltando.join(", ")}.`;
   responder(msg, r.faltando.length > 0);
 }

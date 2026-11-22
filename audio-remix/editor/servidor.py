@@ -16,6 +16,7 @@ import numpy as np
 
 import arranjador
 import bateria
+import claude_local
 import efeitos
 import ia
 import motor
@@ -216,6 +217,23 @@ class Pedido(BaseHTTPRequestHandler):
                     return self.enviar(ia.testar())
                 except Exception as erro:
                     return self.erro(400, f"o Google recusou: {str(erro)[:300]}")
+
+        if partes[:2] == ["api", "claude"]:
+            # pedido livre que as regras não entenderam -> Claude da assinatura (Claude Code do PC)
+            if metodo == "GET":
+                return self.enviar({"instalado": bool(claude_local.executavel())})
+            if metodo == "POST":
+                dados = self.corpo_json()
+                pedido = str(dados.get("pedido") or "").strip()[:500]
+                if not pedido:
+                    return self.erro(400, "escreva o pedido")
+                contexto = dados.get("contexto") if isinstance(dados.get("contexto"), dict) else {}
+                if len(json.dumps(contexto)) > 8000:
+                    contexto = {k: v for k, v in contexto.items() if k != "blocos"}
+                try:
+                    return self.enviar(claude_local.traduzir(pedido, contexto))
+                except (RuntimeError, ValueError) as erro:
+                    return self.erro(400, str(erro))
 
         if partes[:2] == ["api", "estruturas"]:
             if metodo == "GET":

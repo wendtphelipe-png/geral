@@ -44,6 +44,12 @@ Botão com a varinha, no alto à direita (o ponto fica verde quando está conect
 
 O Lyria é pago por uso. Tudo o que ele gera fica guardado em `audio-remix\dados\ia-cache\`, e um pedido igual não é pago de novo.
 
+### Pedidos livres com o Claude da sua assinatura
+Os pedidos comuns ("tira a voz", "parada no 5") são entendidos na hora por regras. Quando as regras não entendem (por exemplo "deixa esse trecho mais pesado" ou "dá um respiro aqui"), o editor pergunta ao **Claude Code instalado no PC**, usando a sua assinatura do Claude, sem cobrança de API. A resposta aparece com "(entendido pelo Claude)" e pode ser desfeita com Ctrl+Z, como qualquer mudança.
+- Precisa estar logado uma vez: abra um terminal, rode `claude` e entre na sua conta.
+- Leva alguns segundos por pedido e conta na cota da assinatura (a mesma das conversas).
+- O Claude só traduz o pedido em ações do editor; ele roda sem nenhuma ferramenta e não mexe em arquivos.
+
 ### Estruturas: montar a sua
 Botão **Estruturas**, aba **Montar estrutura**:
 - arraste os modos da esquerda para a sequência, ou clique para pôr no fim, e arraste os passos para mudar a ordem;
