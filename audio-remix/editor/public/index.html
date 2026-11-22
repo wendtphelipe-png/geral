@@ -50,6 +50,7 @@ select.musica{background:var(--pista);border:1px solid var(--borda);border-radiu
 .botao{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 12px;border-radius:8px;border:1px solid var(--borda);background:var(--pista);white-space:nowrap}
 .botao:hover{border-color:var(--borda2)}
 .botao.prim{background:var(--sel);border-color:var(--sel);color:#04101B;font-weight:700}
+.botao.mini{height:24px;padding:0 9px;font-size:12px;color:var(--tinta);vertical-align:middle;margin:0 4px}
 
 /* ---------- palco: régua + faixas, rolagem horizontal */
 .palco{position:relative;overflow:auto;background:var(--noite)}
@@ -534,10 +535,15 @@ async function listarProjetos(escolher) {
   const lista = await (await api("projetos")).json();
   const s = $("#projetos");
   s.innerHTML = lista.length ? "" : "<option value=''>Nenhuma música</option>";
+  // a mesma música importada mais de uma vez: a data diferencia (antes eram nomes iguais)
+  const vezes = {};
+  for (const p of lista) vezes[p.titulo] = (vezes[p.titulo] || 0) + 1;
   for (const p of lista) {
     const o = document.createElement("option");
     o.value = p.id;
-    o.textContent = p.titulo + (p.estado === "pronto" ? "" : p.estado === "preparando" ? " (preparando)" : " (incompleta)");
+    const data = p.criado ? ` · ${p.criado.slice(8, 10)}/${p.criado.slice(5, 7)} ${p.criado.slice(11, 16)}` : "";
+    o.textContent = p.titulo + (vezes[p.titulo] > 1 ? data : "") + (p.estado === "pronto" ? (p.contagem_antiga ? " (contagem antiga)" : "")
+      : p.estado === "preparando" ? " (preparando)" : " (incompleta)");
     s.appendChild(o);
   }
   let alvo = escolher;
@@ -568,6 +574,24 @@ async function abrir(id) {
   $("#avisoSimples").classList.toggle("hidden", !d.separacao_simples);
   montarFaixas(); desenharFita(); desenhar(); atualizarAudio(true);
   $("#palco").scrollLeft = 0;
+  if (d.contagem_antiga) avisarContagemAntiga(id);
+  else responder("");
+}
+
+// Músicas contadas pelo método antigo podem ter os oitos fora do lugar (em Ladies' Choice, 2 tempos)
+function avisarContagemAntiga(id) {
+  responder(`<b>Esta música foi contada pelo método antigo</b> e os oitos podem estar fora do tempo da música. ` +
+    `<button class="botao mini" id="recontar">Recontar agora</button> ` +
+    `(a contagem é refeita e o mix desta música volta ao original; leva cerca de 1 minuto)`, true);
+  $("#recontar").onclick = async () => {
+    if (!confirm("Recontar esta música? O mix e as camadas desta música voltam ao original (as outras músicas não mudam).")) return;
+    responder("Recontando os oitos... (cerca de 1 minuto)");
+    try {
+      await api(`projetos/${id}/recontar`, {method: "POST"});
+      await listarProjetos(id);
+      responder(`<b>Pronto:</b> contagem refeita com o método novo (${proj.analise.bpm.toFixed(1)} BPM). Confira com o botão Contagem (o metrônomo) ou a tecla K.`);
+    } catch (e) { responder("Não consegui recontar: " + e.message, true); }
+  };
 }
 
 // ---------------------------------------------------------------- faixas fixas (voz, bateria, baixo, outros)

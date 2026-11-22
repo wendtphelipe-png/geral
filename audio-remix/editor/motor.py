@@ -267,6 +267,12 @@ def batidas_beat_this(arquivo):
         return None
 
 
+# Versão do método de contagem gravada em analise.json. Músicas contadas antes desta versão
+# (sem o Beat This!, ou com o passo pela mediana) podem estar fora do tempo: a tela avisa e
+# oferece "Recontar". 2 = Beat This! + passo pelos compassos (22/11/2026).
+METODO_CONTAGEM = 2
+
+
 def analisar_projeto(pasta, deslocamento=None):
     faixas = pasta / "faixas"
     if deslocamento is None:
@@ -281,9 +287,11 @@ def analisar_projeto(pasta, deslocamento=None):
             batidas, compassos = librosa.frames_to_time(quadros, sr=SR_ANALISE, hop_length=HOP), None
         batidas = batidas_regulares(batidas, len(bateria) / SR_ANALISE, compassos)
         deslocamento = achar_o_um(oenv, batidas, bateria + baixo, compassos)
+        metodo = METODO_CONTAGEM if compassos is not None else 0
     else:
         antiga = ler_json(pasta / "analise.json")
         batidas = np.array(antiga["batidas"])
+        metodo = antiga.get("metodo_contagem", 0)
 
     duracao = sf.info(str(faixas / "voz.wav")).duration
     amostras = [int(round(t * SR)) for t in batidas]
@@ -309,6 +317,7 @@ def analisar_projeto(pasta, deslocamento=None):
         "bpm": round(bpm, 1), "duracao": round(duracao, 2), "deslocamento": deslocamento,
         "batidas": [round(float(t), 4) for t in batidas], "unidades": unidades,
         "versao": hashlib.md5(f"{deslocamento}-{len(batidas)}-{duracao}".encode()).hexdigest()[:8],
+        "metodo_contagem": metodo,
     })
 
 

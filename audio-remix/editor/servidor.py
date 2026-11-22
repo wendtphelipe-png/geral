@@ -137,7 +137,8 @@ def resumo_projeto(pid):
         estado = "incompleto"  # o servidor foi fechado no meio da preparação
     return {"id": pid, "titulo": meta.get("titulo") or pid, "estado": estado,
             "etapa": t["etapa"] if t else None, "erro": t["erro"] if t else None,
-            "criado": meta.get("criado"), "separacao_simples": meta.get("separacao_simples", False)}
+            "criado": meta.get("criado"), "separacao_simples": meta.get("separacao_simples", False),
+            "contagem_antiga": bool(analise) and analise.get("metodo_contagem", 0) < motor.METODO_CONTAGEM}
 
 
 class Pedido(BaseHTTPRequestHandler):
@@ -314,6 +315,18 @@ class Pedido(BaseHTTPRequestHandler):
                 meta["alvo"] = max(10, min(900, float(dados["alvo"])))
             motor.gravar_json(p / "projeto.json", meta)
             return self.enviar({"ok": True, "duracao_mix": round(proj.duracao(timeline, meta.get("camadas")), 2)})
+
+        if metodo == "POST" and acao == "recontar":
+            # contagem inteira de novo (batidas, compassos e o 1) com o método atual; a linha do tempo
+            # volta à música original, porque os oitos antigos não valem mais
+            motor.analisar_projeto(p)
+            meta = motor.ler_json(p / "projeto.json")
+            meta["timeline"] = motor.timeline_inicial(motor.ler_json(p / "analise.json"))
+            meta["camadas"] = []
+            motor.gravar_json(p / "projeto.json", meta)
+            with trava_abertos:
+                abertos.pop(pid, None)
+            return self.enviar({"ok": True})
 
         if metodo == "POST" and acao == "contagem":
             dados = self.corpo_json()
