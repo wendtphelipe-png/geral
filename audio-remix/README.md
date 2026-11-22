@@ -44,8 +44,17 @@ Botão com a varinha, no alto à direita (o ponto fica verde quando está conect
 
 O Lyria é pago por uso. Tudo o que ele gera fica guardado em `audio-remix\dados\ia-cache\`, e um pedido igual não é pago de novo.
 
-### Trocar o ritmo de um trecho (estilos)
-Selecione oitos e escreva, por exemplo, **transforma em house**, **ritmo de krump** ou **batida de hip hop**. A bateria original desses oitos fica em 25% e a bateria do estilo entra numa camada por cima, no BPM da música e no mesmo volume da bateria original. Com **Lyria** marcado, a bateria do estilo é criada pelo Lyria no tempo e no tom da música (pago por uso); sem ele, é a bateria sintetizada da biblioteca (gratuita). A camada pode ter o volume mudado, ser movida ou apagada, e Ctrl+Z desfaz tudo.
+### Trocar o estilo de um trecho
+Selecione oitos e clique em **Trocar estilo** (o primeiro botão embaixo do campo de pedido). Na janela:
+1. escolha o **estilo**;
+2. marque os **instrumentos do estilo** que entram: bateria, baixo e/ou outros instrumentos. A faixa original de cada instrumento marcado fica em 25%;
+3. escolha **Lyria, 3 opções** (pago, cerca de 30 s) ou **bateria sintetizada** (grátis, só bateria) e clique em **Criar opções**;
+4. clique em **Ouvir** em cada opção (e em "Sem estilo", para comparar). Os instrumentos marcados podem ser trocados e ouvidos de novo sem criar outra vez;
+5. clique em **Usar esta** na melhor. Cada instrumento entra numa camada própria, com volume, M e S. Ctrl+Z desfaz.
+
+O groove do Lyria é separado em instrumentos pelo mesmo separador das músicas, porque o Lyria devolve o groove completo (com teclados e efeitos) mesmo quando o pedido é só bateria e baixo.
+
+Pelo texto também funciona: **transforma em house**, **ritmo de krump**, **batida de hip hop**. Nesse caso vem uma opção só e só a bateria do estilo (do Lyria, se **Lyria** estiver marcado ao lado das estruturas; senão, a sintetizada).
 Estilos: house, breaking, locking, popping, hip-hop, waacking, vogue, krump, passinho (funk carioca), dancehall e afro/amapiano. Para outros (trap, reggaeton), o Claude escolhe o mais próximo e avisa que é uma aproximação.
 
 ### Pedidos livres com o Claude da sua assinatura

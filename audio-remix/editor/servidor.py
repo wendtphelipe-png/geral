@@ -17,6 +17,7 @@ import numpy as np
 import arranjador
 import bateria
 import claude_local
+import estilo
 import efeitos
 import ia
 import motor
@@ -387,33 +388,26 @@ class Pedido(BaseHTTPRequestHandler):
                                 "importados": novos})
 
         if metodo == "POST" and acao == "estilo":
-            # "transforma em house": a bateria do estilo para os oitos selecionados (a tela abaixa a
-            # bateria original e põe esta numa camada por cima, como os blocos do mix automático)
+            # trocar o estilo dos oitos selecionados: opções de groove separadas por instrumento
+            # (a tela escolhe quais instrumentos entram e abaixa as faixas originais correspondentes)
             dados = self.corpo_json()
-            estilo = str(dados.get("estilo") or "")
-            if estilo not in bateria.estilos():
-                return self.erro(400, f"estilo desconhecido: {estilo}")
+            nome_estilo = str(dados.get("estilo") or "")
+            if nome_estilo not in bateria.estilos():
+                return self.erro(400, f"estilo desconhecido: {nome_estilo}")
             proj = abrir(pid)
             unidades = [u for u in (dados.get("unidades") or []) if u in proj.unidades][:64]
             if not unidades:
                 return self.erro(400, "selecione os oitos primeiro")
             bpm = proj.analise.get("bpm") or 120
             dur = numero(dados.get("dur"), 0.5, 600, 8 * 60 / bpm)
-            batidas = max(1, int(round(dur / (60.0 / bpm))))
-            nome = f"Bateria {bateria.estilos()[estilo]['nome']}"
-            fonte, importado, aviso = {"tipo": "estilo", "estilo": estilo, "bpm": bpm, "batidas": batidas}, None, ""
-            if dados.get("usar_ia") and ia.chave():
-                try:
-                    tom = motor.tom_do_projeto(p)
-                    arquivo, _, modelo = ia.gerar(ia.prompt_estilo(estilo, bpm, tom), "clip")
-                    importado = motor.salvar_importado(p, ia.encaixar(arquivo, bpm, batidas), f"{nome} (Lyria)")
-                    fonte, nome = {"tipo": "importado", "id": importado["id"]}, f"{nome} (Lyria)"
-                    aviso = f"criada pelo Lyria ({modelo}) no BPM {round(bpm)} e tom {tom} da música"
-                except Exception as erro:
-                    traceback.print_exc()
-                    aviso = f"o Lyria falhou ({str(erro)[:120]}); usei a bateria sintetizada"
-            return self.enviar({"fonte": fonte, "nome": nome, "dur": round(dur, 4), "importado": importado, "aviso": aviso,
-                                "ganho": ganho_como_bateria(proj, unidades, fonte)})
+            usar_lyria = bool(dados.get("usar_ia")) and bool(ia.chave())
+            quantas = int(numero(dados.get("opcoes"), 1, 3, 1))
+            try:
+                lista, aviso = estilo.opcoes(p, proj, nome_estilo, unidades, dur, usar_lyria, quantas)
+            except RuntimeError as erro:  # o Lyria falhou em todas: fica a bateria sintetizada
+                lista, _ = estilo.opcoes(p, proj, nome_estilo, unidades, dur, False, 1)
+                aviso = f"{erro}; usei a bateria sintetizada"
+            return self.enviar({"opcoes": lista, "dur": round(dur, 4), "aviso": aviso, "lyria": usar_lyria and not aviso.endswith("sintetizada")})
 
         if metodo == "POST" and acao == "ia-trecho":
             dados = self.corpo_json()
@@ -497,14 +491,7 @@ class Pedido(BaseHTTPRequestHandler):
 
 def ganho_como_bateria(proj, unidades, fonte):
     """Ganho para a bateria de estilo soar no mesmo volume da bateria original naqueles oitos."""
-    try:
-        ref = [proj.faixas["bateria"][:, proj.unidades[u]["ini"]:proj.unidades[u]["fim"]] for u in unidades]
-        alvo_rms = float(np.sqrt(np.mean(np.concatenate(ref, axis=1) ** 2))) if ref else 0.1
-        rms = float(np.sqrt(np.mean(proj.fonte_clipe(fonte) ** 2))) or 1.0
-        return round(max(0.15, min(2.0, alvo_rms / rms)), 3)
-    except Exception:
-        traceback.print_exc()
-        return 1.0
+    return estilo.ganho_como_faixa(proj, unidades, fonte, "bateria")
 
 
 def mixer_padrao():

@@ -209,6 +209,31 @@ select.estrutura{background:var(--pista);border:1px solid #6B5A1E;color:#FFE08A;
 .rapido{height:26px;padding:0 10px;border-radius:13px;border:1px solid var(--borda2);background:none;font-size:12px;color:var(--apagado)}
 .rapido:hover{color:var(--tinta);border-color:var(--fraco)}
 .rapido:disabled{opacity:.4;cursor:default}
+.rapido.destaque{display:inline-flex;align-items:center;gap:5px;color:var(--tinta);border-color:var(--sel)}
+.rapido.destaque svg{width:13px;height:13px}
+/* janela "Trocar o estilo" */
+.janela.media{width:min(660px,100%);max-height:calc(100vh - 40px);overflow:auto}
+.topo-est{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.topo-est h2{margin:0}
+.secao-est{margin-top:16px}
+.rot-est{display:block;font-size:12px;color:var(--fraco);margin-bottom:7px}
+.escolhas{display:flex;flex-wrap:wrap;gap:6px}
+.escolha{height:30px;padding:0 12px;border-radius:15px;border:1px solid var(--borda2);background:none;color:var(--apagado);font-size:13px}
+.escolha:hover{color:var(--tinta);border-color:var(--fraco)}
+.escolha.on{background:var(--sel);border-color:var(--sel);color:#04101B;font-weight:700}
+.opc{display:inline-flex;align-items:center;gap:7px;min-height:32px;padding:0 12px;border-radius:8px;border:1px solid var(--borda2);font-size:13px;cursor:pointer}
+.opc[style]{border-left:3px solid var(--cor)}
+.opc input{accent-color:var(--sel);margin:0}
+.opc small{color:var(--fraco)}
+.nota-est{display:block;font-size:12px;color:var(--fraco);margin-top:7px}
+.acoes-est{display:flex;justify-content:flex-end;margin-top:18px}
+.lista-op{display:flex;flex-direction:column;gap:6px;margin-top:14px}
+.op{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--borda);border-radius:9px;background:var(--pista)}
+.op.tocando{border-color:var(--sel)}
+.op b{font-size:13px;white-space:nowrap}
+.op .tags{font-size:12px;color:var(--fraco);flex:1;min-width:0}
+.op .botao{height:28px;padding:0 10px;font-size:12.5px}
+.op .botao svg{width:13px;height:13px}
 .resposta{font-size:12.5px;color:var(--apagado);min-height:17px}
 .resposta b{color:var(--tinta)}
 .resposta.aviso{color:#FFC27A}
@@ -369,6 +394,7 @@ select.estrutura{background:var(--pista);border:1px solid #6B5A1E;color:#FFE08A;
         <button class="botao prim" id="aplicar" disabled><svg><use href="#i-enviar"/></svg>Aplicar</button>
       </div>
       <div class="rapidos" id="rapidos">
+        <button class="rapido destaque" id="btEstilo" title="Trocar o ritmo da seleção por outro estilo (house, krump, passinho...), escolhendo os instrumentos e comparando opções"><svg><use href="#i-musica"/></svg>Trocar estilo</button>
         <button class="rapido" data-t="tira a voz">Tirar a voz</button>
         <button class="rapido" data-t="só a voz">Só a voz</button>
         <button class="rapido" data-t="tira o baixo">Tirar o grave</button>
@@ -471,6 +497,31 @@ select.estrutura{background:var(--pista);border:1px solid #6B5A1E;color:#FFE08A;
     <div class="campo"><input id="chaveIa" type="password" autocomplete="off" placeholder="Cole aqui a chave do Google AI Studio"><button class="botao prim" id="salvarIa">Salvar e testar</button></div>
     <p style="font-size:12.5px;margin-top:10px">A chave é criada em aistudio.google.com, em "Get API key". Ela fica só no seu PC, no arquivo audio-remix\dados\chave-google.txt, que não vai para o GitHub.</p>
     <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px"><button class="botao" id="testarIa">Testar conexão</button><button class="botao" onclick="$('#janelaIa').classList.add('hidden')">Fechar</button></div>
+  </div>
+</div>
+
+<div class="fundo hidden" id="janelaEstilo">
+  <div class="janela media">
+    <div class="topo-est"><h2>Trocar o estilo</h2><button class="bt" id="fecharEstilo" aria-label="Fechar"><svg><use href="#i-x"/></svg></button></div>
+    <p id="estiloQual"></p>
+    <div class="secao-est"><span class="rot-est">Estilo</span><div class="escolhas" id="escolhaEstilo"></div></div>
+    <div class="secao-est"><span class="rot-est">Instrumentos do estilo que entram</span>
+      <div class="escolhas" id="escolhaInst">
+        <label class="opc" style="--cor:var(--bateria)"><input type="checkbox" value="bateria" checked>Bateria</label>
+        <label class="opc" style="--cor:var(--baixo)"><input type="checkbox" value="baixo">Baixo</label>
+        <label class="opc" style="--cor:var(--outros)"><input type="checkbox" value="outros">Outros instrumentos</label>
+      </div>
+      <span class="nota-est">A faixa original de cada instrumento marcado fica em 25%. Dá para mudar depois de criar as opções.</span>
+    </div>
+    <div class="secao-est"><span class="rot-est">Criar com</span>
+      <div class="escolhas">
+        <label class="opc"><input type="radio" name="fonteEst" value="lyria" checked>Lyria, 3 opções <small>pago, cerca de 30 s</small></label>
+        <label class="opc"><input type="radio" name="fonteEst" value="sint">Bateria sintetizada <small>grátis, só bateria</small></label>
+      </div>
+    </div>
+    <div class="acoes-est"><button class="botao prim" id="criarOpcoes"><svg><use href="#i-varinha"/></svg>Criar opções</button></div>
+    <div class="andamento hidden" id="andamentoEst"><div class="girando"></div><span id="etapaEst"></span></div>
+    <div class="lista-op" id="listaOpcoes"></div>
   </div>
 </div>
 
@@ -1178,28 +1229,26 @@ async function perguntarClaude(texto, l) {
 
 // "transforma em house": a bateria original da seleção fica em 25% e a bateria do estilo entra numa
 // camada por cima, no BPM da música e no volume da bateria original (com Lyria marcado, criada pelo Lyria)
-async function aplicarEstilo(estilo, l, frases, sufixo) {
+// Pelo texto vem uma opção só, com só a bateria do estilo (o groove inteiro do Lyria brigava com a
+// música). Para escolher instrumentos e comparar opções, existe o botão "Trocar estilo".
+async function aplicarEstilo(nomeEst, l, frases, sufixo) {
   if (!l.length) { responder("Selecione os oitos primeiro.", true); return; }
-  const ini = posicoes[l[0]][0], dur = l.reduce((t, i) => t + posicoes[i][1], 0);
+  selEst = l; iniEst = posicoes[l[0]][0]; durEst = l.reduce((t, i) => t + posicoes[i][1], 0);
+  antesEst = JSON.stringify(l.map(i => tl[i])); estiloEst = nomeEst;
   const usar_ia = $("#usarIa").checked && iaPronta;
-  const antes = JSON.stringify(l.map(i => tl[i]));
-  responder(`Criando o ritmo de <b>${esc(estilo)}</b>${usar_ia ? " com o Lyria (até 1 minuto)" : ""}...`);
+  responder(`Criando o ritmo de <b>${esc(nomeEstilo(nomeEst))}</b>${usar_ia ? " com o Lyria (cerca de 20 s)" : ""}...`);
   let d;
-  try {
-    d = await (await api(`projetos/${proj.id}/estilo`, json("POST", {estilo, unidades: l.map(i => tl[i].u), dur, usar_ia}))).json();
-  } catch (e) { responder("Não consegui criar o ritmo: " + esc(e.message) + ".", true); return; }
-  if (l.some(i => i >= tl.length) || JSON.stringify(l.map(i => tl[i])) !== antes) {
-    responder("A seleção mudou enquanto o ritmo era criado. Selecione de novo e repita o pedido.", true); return;
-  }
-  if (d.importado) importados[d.importado.id] = d.importado;
+  try { d = await pedirOpcoes(nomeEst, l, durEst, usar_ia, 1); }
+  catch (e) { responder("Não consegui criar o ritmo: " + esc(e.message) + ".", true); return; }
+  if (selecaoMudou()) { responder("A seleção mudou enquanto o ritmo era criado. Selecione de novo e repita o pedido.", true); return; }
+  const o = d.opcoes[0], {usados, clipes} = comEstilo(o, l, ["bateria"], iniEst);
+  if (!usados.length) { responder("O groove criado não tinha bateria. Tente o botão Trocar estilo para escolher outra opção.", true); return; }
   mudar(() => {
     for (const i of l) tl[i].faixas.bateria = Math.min(tl[i].faixas.bateria ?? 1, 0.25);
-    const c = novaCamada(d.nome);
-    c.clipes.push({id: novoId("k"), fonte: d.fonte, pos: ini, ini: 0, dur: d.dur, ganho: d.ganho, nome: d.nome});
+    for (const c of clipes) { delete c.inst; novaCamada(`${nomeEstilo(nomeEst)} · Bateria`, [c]); }
   });
-  const falhou = d.aviso.startsWith("o Lyria falhou");
   responder(`<b>Feito:</b> ${frases.map(esc).join(", ")}.${sufixo}` + (d.aviso ? ` ${esc(d.aviso[0].toUpperCase() + d.aviso.slice(1))}.` : "") +
-    " A bateria nova está numa camada embaixo das faixas: dá para mudar o volume, mover ou apagar.", falhou);
+    " Veio só a bateria do estilo, numa camada embaixo das faixas. Para escolher outros instrumentos e comparar 3 opções, use o botão <b>Trocar estilo</b>.", !!d.aviso);
 }
 
 function aplicarEntendido(r, l, sufixo) {
@@ -1259,7 +1308,7 @@ function executarNoClipe(texto, {cam, clipe}) {
 }
 $("#aplicar").onclick = () => { executar($("#pedido").value); $("#pedido").value = ""; };
 $("#pedido").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); $("#aplicar").click(); } if (e.key === "Escape") e.target.blur(); });
-document.querySelectorAll(".rapido").forEach(b => b.onclick = () => executar(b.dataset.t));
+document.querySelectorAll(".rapido[data-t]").forEach(b => b.onclick = () => executar(b.dataset.t));
 
 $("#alvo").onchange = () => {
   const s = lerMmss($("#alvo").value);
@@ -1748,6 +1797,110 @@ async function trechoIa(pedido, l) {
   } catch (e) { responder("O Lyria não conseguiu: " + e.message, true); }
 }
 estadoIa();
+
+// ---------------------------------------------------------------- trocar o estilo (janela)
+// O groove de cada opção vem separado em bateria, baixo e outros: o Lyria devolve um groove
+// completo, e trazer tudo junto não soava orgânico. Cada instrumento marcado entra numa camada
+// própria e a faixa original correspondente fica em 25%.
+let estiloEst = null, opcoesEst = [], selEst = [], durEst = 0, iniEst = 0, antesEst = "";
+const instMarcados = () => [...document.querySelectorAll("#escolhaInst input:checked")].map(i => i.value);
+const nomeInst = {bateria: "bateria", baixo: "baixo", outros: "outros instrumentos"};
+
+async function pedirOpcoes(nomeEst, l, dur, usar_ia, quantas) {
+  const d = await (await api(`projetos/${proj.id}/estilo`, json("POST", {estilo: nomeEst, unidades: l.map(i => tl[i].u), dur, usar_ia, opcoes: quantas}))).json();
+  for (const o of d.opcoes) for (const f of Object.values(o.faixas)) if (f.importado) importados[f.importado.id] = f.importado;
+  return d;
+}
+// a seleção com a opção aplicada: blocos com as faixas trocadas em 25% e uma camada por instrumento
+function comEstilo(o, l, inst, pos) {
+  const usados = o ? inst.filter(f => o.faixas[f]) : [];
+  const blocos = l.map(i => { const b = copia(tl[i]); for (const f of usados) b.faixas[f] = Math.min(b.faixas[f] ?? 1, 0.25); return b; });
+  const clipes = usados.map(f => ({id: novoId("k"), fonte: o.faixas[f].fonte, pos, ini: 0, dur: durEst, ganho: o.faixas[f].ganho,
+                                   nome: `${nomeEstilo(estiloEst)} · ${NOME[f]}`, inst: f}));
+  return {usados, blocos, clipes};
+}
+const selecaoMudou = () => selEst.some(i => i >= tl.length) || JSON.stringify(selEst.map(i => tl[i])) !== antesEst;
+
+function abrirEstilo(pre) {
+  const l = alvos();
+  if (!l.length) { responder("Selecione os oitos que vão mudar de estilo primeiro.", true); return; }
+  selEst = l; iniEst = posicoes[l[0]][0]; durEst = l.reduce((t, i) => t + posicoes[i][1], 0);
+  antesEst = JSON.stringify(l.map(i => tl[i]));
+  $("#estiloQual").textContent = `${l.length === 1 ? "1 oito selecionado" : l.length + " oitos selecionados"} ` +
+    `(blocos ${l[0] + 1}${l.length > 1 ? " a " + (l.at(-1) + 1) : ""}), ${durEst.toFixed(1)} s, ${Math.round(proj.analise.bpm)} BPM. ` +
+    "Escolha o estilo e os instrumentos, crie as opções, ouça e use a que ficar melhor.";
+  const lista = (estrInfo && estrInfo.estilos) || [];
+  estiloEst = pre || estiloEst || (lista[0] && lista[0].id);
+  $("#escolhaEstilo").innerHTML = lista.map(e => `<button class="escolha${e.id === estiloEst ? " on" : ""}" data-e="${e.id}" ` +
+    `title="Andamento típico: ${e.bpm.join(" a ")} BPM">${esc(e.nome)}</button>`).join("");
+  $("#escolhaEstilo").querySelectorAll(".escolha").forEach(b => b.onclick = () => {
+    estiloEst = b.dataset.e; opcoesEst = []; $("#listaOpcoes").innerHTML = "";
+    $("#escolhaEstilo").querySelectorAll(".escolha").forEach(x => x.classList.toggle("on", x === b));
+  });
+  const lyria = $("input[name=fonteEst][value=lyria]");
+  lyria.disabled = !iaPronta;
+  if (!iaPronta) $("input[name=fonteEst][value=sint]").checked = true;
+  opcoesEst = []; $("#listaOpcoes").innerHTML = ""; $("#andamentoEst").classList.add("hidden");
+  $("#janelaEstilo").classList.remove("hidden");
+}
+function fecharEstilo() { previa.pause(); $("#janelaEstilo").classList.add("hidden"); }
+$("#btEstilo").onclick = () => abrirEstilo();
+$("#fecharEstilo").onclick = fecharEstilo;
+$("#janelaEstilo").addEventListener("click", e => { if (e.target.id === "janelaEstilo") fecharEstilo(); });
+
+$("#criarOpcoes").onclick = async () => {
+  const usar_ia = $("input[name=fonteEst]:checked").value === "lyria" && iaPronta;
+  $("#criarOpcoes").disabled = true; $("#listaOpcoes").innerHTML = ""; previa.pause();
+  $("#andamentoEst").classList.remove("hidden");
+  $("#etapaEst").textContent = usar_ia ? "O Lyria está criando 3 opções, e cada uma está sendo separada em instrumentos (cerca de 30 s)..."
+                                       : "Criando a bateria sintetizada...";
+  try {
+    const d = await pedirOpcoes(estiloEst, selEst, durEst, usar_ia, usar_ia ? 3 : 1);
+    opcoesEst = d.opcoes; desenharOpcoes(d.aviso);
+  } catch (e) { $("#listaOpcoes").innerHTML = `<p class="nota-est" style="color:#FFC27A">Não consegui criar: ${esc(e.message)}.</p>`; }
+  finally { $("#criarOpcoes").disabled = false; $("#andamentoEst").classList.add("hidden"); }
+};
+
+function desenharOpcoes(aviso) {
+  const linha = (i, titulo, tags, usar) => `<div class="op" data-i="${i}"><b>${titulo}</b><span class="tags">${tags}</span>` +
+    `<button class="botao" data-ouvir="${i}"><svg><use href="#i-play"/></svg>Ouvir</button>` +
+    (usar ? `<button class="botao prim" data-usar="${i}">Usar esta</button>` : "") + "</div>";
+  $("#listaOpcoes").innerHTML = (aviso ? `<p class="nota-est" style="color:#FFC27A">${esc(aviso[0].toUpperCase() + aviso.slice(1))}.</p>` : "") +
+    linha(-1, "Sem estilo", "a seleção como está agora, para comparar", false) +
+    opcoesEst.map((o, i) => linha(i, `Opção ${o.n}`, `${o.modelo ? "Lyria" : "sintetizada"} · tem ${Object.keys(o.faixas).map(f => nomeInst[f]).join(", ")}`, true)).join("");
+  $("#listaOpcoes").querySelectorAll("[data-ouvir]").forEach(b => b.onclick = () => ouvirOpcao(+b.dataset.ouvir));
+  $("#listaOpcoes").querySelectorAll("[data-usar]").forEach(b => b.onclick = () => usarOpcao(+b.dataset.usar));
+}
+
+async function ouvirOpcao(i) {
+  const marcar = on => $("#listaOpcoes").querySelectorAll(".op").forEach(x => x.classList.toggle("tocando", on && +x.dataset.i === i));
+  if (!previa.paused && previa.dataset.op === String(i)) { previa.pause(); return; }
+  if (selecaoMudou()) { $("#etapaEst").textContent = ""; responder("A seleção mudou. Feche a janela e abra de novo.", true); return; }
+  const {usados, blocos, clipes} = comEstilo(i < 0 ? null : opcoesEst[i], selEst, instMarcados(), 0);
+  if (i >= 0 && !usados.length) { alert("Marque pelo menos um instrumento do estilo para ouvir."); return; }
+  const solo = algumSolo();
+  const efetivos = blocos.map(b => Object.assign(b, {faixas: Object.fromEntries(FAIXAS.map(f => {
+    const m = mixer[f]; return [f, m.mudo || (solo && !m.solo) ? 0 : Math.round(b.faixas[f] * m.ganho * 100) / 100];
+  }))}));
+  try {
+    const r = await api(`projetos/${proj.id}/audio`, json("POST", {timeline: efetivos, camadas: clipes.length ? [{id: "previa", nome: "previa", ganho: 1, clipes}] : []}));
+    audio.pause(); previa.src = URL.createObjectURL(await r.blob()); previa.dataset.op = String(i); delete previa.dataset.u;
+    marcar(true); previa.onended = previa.onpause = () => marcar(false); previa.play();
+  } catch (e) { alert("Não consegui tocar a opção: " + e.message); }
+}
+
+function usarOpcao(i) {
+  const o = opcoesEst[i], {usados, clipes} = comEstilo(o, selEst, instMarcados(), iniEst);
+  if (!usados.length) { alert("Marque pelo menos um instrumento do estilo."); return; }
+  if (selecaoMudou()) { fecharEstilo(); responder("A seleção mudou enquanto as opções eram criadas. Selecione de novo.", true); return; }
+  mudar(() => {
+    for (const idx of selEst) for (const f of usados) tl[idx].faixas[f] = Math.min(tl[idx].faixas[f] ?? 1, 0.25);
+    for (const c of clipes) { const inst = c.inst; delete c.inst; novaCamada(`${nomeEstilo(estiloEst)} ${o.n} · ${NOME[inst]}`, [c]); }
+  });
+  fecharEstilo();
+  responder(`<b>Feito:</b> ${esc(nomeEstilo(estiloEst))}, opção ${o.n}, com ${usados.map(f => nomeInst[f]).join(", ")}. ` +
+    "Cada instrumento do estilo está numa camada própria embaixo das faixas, com volume, M e S. Ctrl+Z desfaz.");
+}
 
 ligarRegua();
 carregarEstruturas().catch(e => responder("Não consegui ler as estruturas: " + e.message, true));
