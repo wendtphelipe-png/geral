@@ -55,9 +55,13 @@ def cliente():
     if _cliente is None or _cliente_chave != k:
         try:
             from google import genai
+            from google.genai import types
         except ImportError:
             raise RuntimeError("falta instalar a biblioteca do Google: rode PREPARAR-ANALISADOR.bat de novo")
-        _cliente, _cliente_chave = genai.Client(api_key=k), k
+        # Os modelos Lyria só existem na API v1beta; a biblioteca 3.x usa a v1 por padrão,
+        # onde a lista volta sem nenhum Lyria e a geração dá "404 not found".
+        _cliente = genai.Client(api_key=k, http_options=types.HttpOptions(api_version="v1beta"))
+        _cliente_chave = k
     return _cliente
 
 
@@ -140,6 +144,9 @@ def encaixar(arquivo, bpm, batidas):
     y = np.atleast_2d(y)
     if y.shape[0] == 1:
         y = np.repeat(y, 2, axis=0)
+    pronto = _encaixar_beat_this(arquivo, y, bpm, batidas)
+    if pronto is not None:
+        return pronto
     mono = y.mean(axis=0)
     oenv = librosa.onset.onset_strength(y=mono, sr=SR)
     tempo, quadros = librosa.beat.beat_track(onset_envelope=oenv, sr=SR)
@@ -157,7 +164,39 @@ def encaixar(arquivo, bpm, batidas):
     candidatos = [t for t in tempos if t >= 0.5][:8] or [0.0]
     forca = [oenv[min(len(oenv) - 1, librosa.time_to_frames(t, sr=SR))] for t in candidatos]
     inicio = int(candidatos[int(np.argmax(forca))] * SR)
-    corpo = y[:, inicio:]
+    return _montar_batidas(y[:, inicio:], bpm, batidas)
+
+
+def _encaixar_beat_this(arquivo, y, bpm, batidas):
+    """Encaixe pelo Beat This! (o mesmo detector da contagem). Com o detector simples, o bloco
+    do Lyria saía 160 ms atrasado em relação à batida (um terço de tempo a 130 BPM): a bateria
+    de estilo soava atravessada em cima da música. None se o Beat This! não estiver instalado."""
+    import motor
+    achado = motor.batidas_beat_this(arquivo)
+    if achado is None or len(achado[0]) < 8:
+        return None
+    marcas, compassos = achado
+    # cada intervalo é levado ao nível do BPM pedido antes da mediana: o Lyria às vezes faz em
+    # meio tempo e o detector alterna os níveis (no krump, 65 e 130 misturados davam 139 BPM
+    # na média e o bloco era esticado errado)
+    # (a mediana só diz o nível; a medida fina é a reta por todas as batidas, numeradas no nível
+    # pedido, porque o detector mede em degraus de 20 ms)
+    alvo = 60.0 / bpm
+    intervalos = np.diff(marcas)
+    passo = float(np.median([d * 2.0 ** round(np.log2(alvo / d)) for d in intervalos if d > 0]))
+    numero = np.concatenate([[0], np.cumsum([max(1, int(round(d / passo))) for d in intervalos])])
+    bpm_real = 60.0 / float(np.polyfit(numero, marcas, 1)[0])
+    taxa = bpm / bpm_real
+    if abs(taxa - 1) > 0.001:
+        y = np.stack([librosa.effects.time_stretch(c, rate=taxa) for c in y])
+    # começa no 1 de um compasso, depois de pular a entrada; 5 ms antes, para não cortar o ataque
+    fortes = [t for t in (compassos if len(compassos) else marcas) if t >= 0.3] or [float(marcas[0])]
+    inicio = max(0, int((fortes[0] / taxa - 0.005) * SR))
+    return _montar_batidas(y[:, inicio:], bpm, batidas)
+
+
+def _montar_batidas(corpo, bpm, batidas):
+    """Exatamente `batidas` batidas, repetindo compassos inteiros se o trecho for curto."""
     precisa = int(round(batidas * 60.0 / bpm * SR))
     um_compasso = int(round(4 * 60.0 / bpm * SR))
     utilizavel = max(um_compasso, (corpo.shape[1] // um_compasso) * um_compasso)  # só compassos inteiros
