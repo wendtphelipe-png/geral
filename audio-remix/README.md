@@ -52,7 +52,14 @@ Selecione oitos e clique em **Trocar estilo** (o primeiro botão embaixo do camp
 4. clique em **Ouvir** em cada opção (e em "Sem estilo", para comparar). Os instrumentos marcados podem ser trocados e ouvidos de novo sem criar outra vez;
 5. clique em **Usar esta** na melhor. Cada instrumento entra numa camada própria, com volume, M e S. Ctrl+Z desfaz.
 
-O groove do Lyria é separado em instrumentos pelo mesmo separador das músicas, porque o Lyria devolve o groove completo (com teclados e efeitos) mesmo quando o pedido é só bateria e baixo.
+O groove do Lyria é separado em instrumentos pelo mesmo separador das músicas, porque o Lyria devolve o groove completo (com teclados e efeitos) mesmo quando o pedido é só bateria e baixo. O Lyria também ignora o tom pedido, então o baixo e os outros instrumentos de cada opção são transpostos para as notas do trecho selecionado (a opção mostra quantos semitons subiram ou desceram).
+
+### Quanto custa o Lyria
+O Lyria é cobrado pelo Google na conta de cobrança (Google Cloud) ligada à chave do Google AI Studio. Não faz parte da assinatura Google AI Pro e não tem faixa gratuita. Preços da página oficial (aistudio.google.com/docs/pricing, conferidos em 22/11/2026):
+- trecho de 30 s (Lyria 3 Clip): **US$ 0,04**. Cada opção de "Trocar estilo", cada bloco de estilo do mix automático e cada pedido "ia:";
+- música inteira (Lyria 3.5 ou 3 Pro): **US$ 0,08**. "Criar com IA" em Nova música.
+
+"Trocar estilo" com o Lyria custa US$ 0,12 (3 opções). Um pedido igual a um já feito vem do que ficou guardado em `dados\ia-cache\` e não é cobrado de novo. Para ver os gastos: aistudio.google.com, em "Usage" e "Billing".
 
 Pelo texto também funciona: **transforma em house**, **ritmo de krump**, **batida de hip hop**. Nesse caso vem uma opção só e só a bateria do estilo (do Lyria, se **Lyria** estiver marcado ao lado das estruturas; senão, a sintetizada).
 Estilos: house, breaking, locking, popping, hip-hop, waacking, vogue, krump, passinho (funk carioca), dancehall e afro/amapiano. Para outros (trap, reggaeton), o Claude escolhe o mais próximo e avisa que é uma aproximação.

@@ -40,6 +40,42 @@ def ganho_como_faixa(proj, unidades, fonte, faixa):
         return 1.0
 
 
+SR_TOM = 22050
+
+
+def _perfil(y, sr):
+    """Quanto de cada uma das 12 notas há no som (normalizado)."""
+    import librosa
+    c = librosa.feature.chroma_cqt(y=librosa.resample(y, orig_sr=sr, target_sr=SR_TOM), sr=SR_TOM, hop_length=512).mean(axis=1)
+    return c / (np.linalg.norm(c) + 1e-9)
+
+
+def perfil_do_trecho(proj, unidades):
+    """Notas do baixo e dos outros instrumentos da música nos oitos selecionados (o tom que vale ali)."""
+    partes = [(proj.faixas["baixo"] + proj.faixas["outros"])[:, proj.unidades[u]["ini"]:proj.unidades[u]["fim"]].mean(axis=0)
+              for u in unidades]
+    return _perfil(np.concatenate(partes), motor.SR)
+
+
+def transposicao(alvo, partes):
+    """Semitons (-6 a +5) que levam o baixo e os outros do groove para as notas do trecho.
+    O Lyria ignora o tom pedido: em Ladies' Choice (ré) os baixos vieram em dó, lá# e fá."""
+    som = 2 * partes["baixo"].mean(axis=0) + partes["outros"].mean(axis=0)  # o baixo pesa mais: é ele que desafina
+    if float(np.abs(som).max()) < 1e-4:
+        return 0
+    c = _perfil(som, motor.SR)
+    notas = {k: float(alvo @ np.roll(c, k)) for k in range(-6, 6)}
+    melhor = max(notas, key=notas.get)
+    return melhor if notas[melhor] - notas[0] > 0.01 else 0
+
+
+def transpor(som, semitons):
+    import librosa
+    if not semitons or float(np.abs(som).max()) < 1e-4:
+        return som
+    return np.stack([librosa.effects.pitch_shift(c, sr=motor.SR, n_steps=semitons) for c in som]).astype(np.float32)
+
+
 def _separar(pasta, audio, nome):
     """Separa um groove (2, n) em bateria, baixo e outros. Devolve {instrumento: (2, n)} ou None."""
     from analisar import separar
@@ -87,6 +123,7 @@ def opcoes(pasta, proj, estilo, unidades, dur, usar_lyria, quantas):
     with ThreadPoolExecutor(max_workers=quantas) as fila:  # o Lyria responde em paralelo
         gerados = list(fila.map(gerar, range(quantas)))
 
+    alvo = perfil_do_trecho(proj, unidades)
     lista, erros = [], []
     for k, audio, modelo, erro in gerados:
         if audio is None:
@@ -95,6 +132,10 @@ def opcoes(pasta, proj, estilo, unidades, dur, usar_lyria, quantas):
         partes = _separar(pasta, audio, f"{estilo}-{k + 1}")
         if partes is None:  # sem o separador: o groove inteiro vira "outros", para não perder a opção
             partes = {"bateria": np.zeros_like(audio), "baixo": np.zeros_like(audio), "outros": audio}
+        # o Lyria ignora o tom pedido: baixo e outros vão para as notas do trecho (a bateria não tem tom)
+        semitons = transposicao(alvo, partes)
+        for inst in ("baixo", "outros"):
+            partes[inst] = transpor(partes[inst], semitons)
         faixas = {}
         for inst in INSTRUMENTOS:
             som = partes[inst]
@@ -103,7 +144,8 @@ def opcoes(pasta, proj, estilo, unidades, dur, usar_lyria, quantas):
             info = motor.salvar_importado(pasta, som, f"{nome_estilo} {k + 1} · {inst}")
             fonte = {"tipo": "importado", "id": info["id"]}
             faixas[inst] = {"fonte": fonte, "importado": info, "ganho": ganho_como_faixa(proj, unidades, fonte, inst)}
-        lista.append({"n": k + 1, "nome": f"{nome_estilo} · opção {k + 1}", "modelo": modelo, "faixas": faixas})
+        lista.append({"n": k + 1, "nome": f"{nome_estilo} · opção {k + 1}", "modelo": modelo, "faixas": faixas,
+                      "semitons": semitons})
     aviso = ""
     if erros and lista:
         aviso = f"{len(erros)} opção(ões) do Lyria falharam ({erros[0]})"
