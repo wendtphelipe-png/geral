@@ -161,7 +161,29 @@ def separar_faixas(pasta, fonte):
 BPM_MINIMO_CONTAGEM = 80  # abaixo disso, a contagem dos dançarinos vai no dobro (trap a 65 vira 130)
 
 
-def batidas_regulares(tempos, duracao):
+BPM_MAXIMO_CONTAGEM = 170  # acima disso, a contagem vai na metade
+
+
+def passo_da_contagem(tempos, compassos=None):
+    """Duração de um tempo da contagem. O detector às vezes alterna os níveis no meio da música
+    (em Ladies' Choice, 116 e 232 BPM; em MOVE, 130 e 65), e a mediana dos intervalos cai no
+    nível errado. Os inícios de compasso não oscilam: quando existem, o passo é compasso / 4."""
+    passo = None
+    if compassos is not None and len(compassos) >= 4:
+        barras = np.diff(np.asarray(compassos, float))
+        barra = float(np.median(barras))
+        if barra > 0:
+            passo = barra / 4
+    if passo is None:
+        passo = float(np.median(np.diff(tempos)))
+    while 60.0 / passo < BPM_MINIMO_CONTAGEM:
+        passo /= 2
+    while 60.0 / passo > BPM_MAXIMO_CONTAGEM:
+        passo *= 2
+    return passo
+
+
+def batidas_regulares(tempos, duracao, compassos=None):
     """Deixa a grade de batidas com passo constante: preenche batidas perdidas, tira batidas
     falsas coladas na anterior e estende a grade até o começo e o fim da música (o detector
     costuma ignorar as primeiras batidas).
@@ -172,9 +194,7 @@ def batidas_regulares(tempos, duracao):
     pela metade."""
     if len(tempos) < 4:
         return np.asarray(tempos)
-    passo = float(np.median(np.diff(tempos)))
-    if 60.0 / passo < BPM_MINIMO_CONTAGEM:
-        passo /= 2
+    passo = passo_da_contagem(tempos, compassos)
     saida = [tempos[0]]
     for t in tempos[1:]:
         d = t - saida[-1]
@@ -259,7 +279,7 @@ def analisar_projeto(pasta, deslocamento=None):
         else:
             tempo, quadros = librosa.beat.beat_track(onset_envelope=oenv, sr=SR_ANALISE, hop_length=HOP)
             batidas, compassos = librosa.frames_to_time(quadros, sr=SR_ANALISE, hop_length=HOP), None
-        batidas = batidas_regulares(batidas, len(bateria) / SR_ANALISE)
+        batidas = batidas_regulares(batidas, len(bateria) / SR_ANALISE, compassos)
         deslocamento = achar_o_um(oenv, batidas, bateria + baixo, compassos)
     else:
         antiga = ler_json(pasta / "analise.json")
