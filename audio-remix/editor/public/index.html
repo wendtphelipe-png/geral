@@ -553,8 +553,22 @@ async function listarProjetos(escolher) {
 }
 $("#projetos").onchange = e => abrir(e.target.value);
 
+// Só vale a última música pedida: se outra for escolhida enquanto esta carrega, a resposta
+// atrasada é ignorada (antes ela abria a música errada com o nome da certa na lista)
+let pedidoAbrir = 0;
 async function abrir(id) {
-  const d = await (await api("projetos/" + id)).json();
+  const meu = ++pedidoAbrir;
+  let d;
+  try { d = await (await api("projetos/" + id)).json(); }
+  catch (e) {
+    // a lista não pode mostrar uma música enquanto a tela continua em outra
+    if (meu === pedidoAbrir) {
+      if (proj) $("#projetos").value = proj.id;
+      responder("Não consegui abrir esta música: " + esc(e.message) + ". Tente importá-la de novo.", true);
+    }
+    return;
+  }
+  if (meu !== pedidoAbrir) return;
   if (d.estado !== "pronto") {
     if (d.estado === "preparando") { abrirJanela(); acompanhar(id); }
     else alert("Esta música não terminou de ser preparada" + (d.erro ? ": " + d.erro : ". Importe de novo."));
@@ -1121,7 +1135,7 @@ function executar(texto) {
   if (!r.acoes.length) {
     if (claudeInstalado && !r.vazio) return perguntarClaude(texto, l);
     const falta = r.faltando.length ? `Ainda não sei fazer <b>${r.faltando.join(", ")}</b>. ` : "Não entendi. ";
-    responder(falta + "Para a IA criar algo, comece com \"ia:\" (ex.: ia: metais de funk animados). Hoje eu entendo: tirar ou deixar só uma faixa, volume (com %), eco, reverb, distante, rádio, abafado, paradas (\"parada no 5\"), trazer a voz de outro oito, fade in e out, dividir ao meio, meio tempo, tempo dobrado, repetir e apagar.", true);
+    responder(falta + "Para a IA criar algo, comece com \"ia:\" (ex.: ia: metais de funk animados). Hoje eu entendo: tirar ou deixar só uma faixa, volume (com %), eco, reverb, distante, rádio, abafado, paradas (\"parada no 5\"), trazer a voz de outro oito, fade in e out, dividir ao meio, meio tempo, tempo dobrado, repetir, apagar e trocar o ritmo (\"transforma em house\": house, breaking, locking, popping, hip-hop, waacking, vogue, krump, passinho, dancehall, afro).", true);
     return;
   }
   aplicarEntendido(r, l, "");
@@ -1162,6 +1176,32 @@ async function perguntarClaude(texto, l) {
   aplicarEntendido({acoes: d.acoes, frases: frases.length ? frases : ["pedido aplicado"], faltando: []}, l, " <span class=\"claude\">(entendido pelo Claude)</span>");
 }
 
+// "transforma em house": a bateria original da seleção fica em 25% e a bateria do estilo entra numa
+// camada por cima, no BPM da música e no volume da bateria original (com Lyria marcado, criada pelo Lyria)
+async function aplicarEstilo(estilo, l, frases, sufixo) {
+  if (!l.length) { responder("Selecione os oitos primeiro.", true); return; }
+  const ini = posicoes[l[0]][0], dur = l.reduce((t, i) => t + posicoes[i][1], 0);
+  const usar_ia = $("#usarIa").checked && iaPronta;
+  const antes = JSON.stringify(l.map(i => tl[i]));
+  responder(`Criando o ritmo de <b>${esc(estilo)}</b>${usar_ia ? " com o Lyria (até 1 minuto)" : ""}...`);
+  let d;
+  try {
+    d = await (await api(`projetos/${proj.id}/estilo`, json("POST", {estilo, unidades: l.map(i => tl[i].u), dur, usar_ia}))).json();
+  } catch (e) { responder("Não consegui criar o ritmo: " + esc(e.message) + ".", true); return; }
+  if (l.some(i => i >= tl.length) || JSON.stringify(l.map(i => tl[i])) !== antes) {
+    responder("A seleção mudou enquanto o ritmo era criado. Selecione de novo e repita o pedido.", true); return;
+  }
+  if (d.importado) importados[d.importado.id] = d.importado;
+  mudar(() => {
+    for (const i of l) tl[i].faixas.bateria = Math.min(tl[i].faixas.bateria ?? 1, 0.25);
+    const c = novaCamada(d.nome);
+    c.clipes.push({id: novoId("k"), fonte: d.fonte, pos: ini, ini: 0, dur: d.dur, ganho: d.ganho, nome: d.nome});
+  });
+  const falhou = d.aviso.startsWith("o Lyria falhou");
+  responder(`<b>Feito:</b> ${frases.map(esc).join(", ")}.${sufixo}` + (d.aviso ? ` ${esc(d.aviso[0].toUpperCase() + d.aviso.slice(1))}.` : "") +
+    " A bateria nova está numa camada embaixo das faixas: dá para mudar o volume, mover ou apagar.", falhou);
+}
+
 function aplicarEntendido(r, l, sufixo) {
   const trazer = r.acoes.find(a => a.tipo === "trazer");
   if (trazer) {
@@ -1180,6 +1220,11 @@ function aplicarEntendido(r, l, sufixo) {
     });
     responder(`<b>Feito:</b> ${esc(r.frases[0])}.${sufixo} A camada nova está embaixo das faixas; arraste o clipe se quiser mudar o ponto.`);
     return;
+  }
+  const est = r.acoes.find(a => a.tipo === "estilo"), outras = r.acoes.filter(a => a.tipo !== "estilo");
+  if (est) {
+    if (outras.length) mudar(() => { sel = new Set(Comandos.aplicar(tl, l, outras, {dur: durBloco, tempo: tempo()})); });
+    return aplicarEstilo(est.estilo, outras.length ? [...sel].sort((a, b) => a - b) : l, r.frases, sufixo);
   }
   mudar(() => { sel = new Set(Comandos.aplicar(tl, l, r.acoes, {dur: durBloco, tempo: tempo()})); });
   let msg = `<b>Feito:</b> ${r.frases.map(esc).join(", ")}.${sufixo}`;

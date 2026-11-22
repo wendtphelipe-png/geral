@@ -378,21 +378,42 @@ class Pedido(BaseHTTPRequestHandler):
                                     "fonte": {"tipo": "importado", "id": c["importado"]["id"]} if c.get("importado") else
                                     {"tipo": "estilo", "estilo": c["estilo"], "bpm": bpm, "batidas": c["batidas"]}}]}
                        for n, c in enumerate(estilos)]
-            # volume da bateria de estilo igual ao da bateria original naqueles oitos
             proj = abrir(pid)
             for c, cam in zip(estilos, camadas):
-                try:
-                    ref = [proj.faixas["bateria"][:, proj.unidades[u]["ini"]:proj.unidades[u]["fim"]] for u in c["unidades"]]
-                    alvo_rms = float(np.sqrt(np.mean(np.concatenate(ref, axis=1) ** 2))) if ref else 0.1
-                    camada_audio = proj.fonte_clipe(cam["clipes"][0]["fonte"])
-                    rms = float(np.sqrt(np.mean(camada_audio ** 2))) or 1.0
-                    cam["clipes"][0]["ganho"] = round(max(0.15, min(2.0, alvo_rms / rms)), 3)
-                    cam["ganho"] = 1.0
-                except Exception:
-                    traceback.print_exc()
+                cam["clipes"][0]["ganho"] = ganho_como_bateria(proj, c["unidades"], cam["clipes"][0]["fonte"])
+                cam["ganho"] = 1.0
             novos = [c["importado"] for c in estilos if c.get("importado")]
             return self.enviar({"timeline": validar_timeline(timeline, abrir(pid)), "camadas": camadas, "roteiro": roteiro,
                                 "importados": novos})
+
+        if metodo == "POST" and acao == "estilo":
+            # "transforma em house": a bateria do estilo para os oitos selecionados (a tela abaixa a
+            # bateria original e põe esta numa camada por cima, como os blocos do mix automático)
+            dados = self.corpo_json()
+            estilo = str(dados.get("estilo") or "")
+            if estilo not in bateria.estilos():
+                return self.erro(400, f"estilo desconhecido: {estilo}")
+            proj = abrir(pid)
+            unidades = [u for u in (dados.get("unidades") or []) if u in proj.unidades][:64]
+            if not unidades:
+                return self.erro(400, "selecione os oitos primeiro")
+            bpm = proj.analise.get("bpm") or 120
+            dur = numero(dados.get("dur"), 0.5, 600, 8 * 60 / bpm)
+            batidas = max(1, int(round(dur / (60.0 / bpm))))
+            nome = f"Bateria {bateria.estilos()[estilo]['nome']}"
+            fonte, importado, aviso = {"tipo": "estilo", "estilo": estilo, "bpm": bpm, "batidas": batidas}, None, ""
+            if dados.get("usar_ia") and ia.chave():
+                try:
+                    tom = motor.tom_do_projeto(p)
+                    arquivo, _, modelo = ia.gerar(ia.prompt_estilo(estilo, bpm, tom), "clip")
+                    importado = motor.salvar_importado(p, ia.encaixar(arquivo, bpm, batidas), f"{nome} (Lyria)")
+                    fonte, nome = {"tipo": "importado", "id": importado["id"]}, f"{nome} (Lyria)"
+                    aviso = f"criada pelo Lyria ({modelo}) no BPM {round(bpm)} e tom {tom} da música"
+                except Exception as erro:
+                    traceback.print_exc()
+                    aviso = f"o Lyria falhou ({str(erro)[:120]}); usei a bateria sintetizada"
+            return self.enviar({"fonte": fonte, "nome": nome, "dur": round(dur, 4), "importado": importado, "aviso": aviso,
+                                "ganho": ganho_como_bateria(proj, unidades, fonte)})
 
         if metodo == "POST" and acao == "ia-trecho":
             dados = self.corpo_json()
@@ -472,6 +493,18 @@ class Pedido(BaseHTTPRequestHandler):
             self.receber_arquivo(arquivo, n)
             iniciar_trabalho(pid, {"arquivo": str(arquivo), "nome": nome})
         return self.enviar({"id": pid})
+
+
+def ganho_como_bateria(proj, unidades, fonte):
+    """Ganho para a bateria de estilo soar no mesmo volume da bateria original naqueles oitos."""
+    try:
+        ref = [proj.faixas["bateria"][:, proj.unidades[u]["ini"]:proj.unidades[u]["fim"]] for u in unidades]
+        alvo_rms = float(np.sqrt(np.mean(np.concatenate(ref, axis=1) ** 2))) if ref else 0.1
+        rms = float(np.sqrt(np.mean(proj.fonte_clipe(fonte) ** 2))) or 1.0
+        return round(max(0.15, min(2.0, alvo_rms / rms)), 3)
+    except Exception:
+        traceback.print_exc()
+        return 1.0
 
 
 def mixer_padrao():

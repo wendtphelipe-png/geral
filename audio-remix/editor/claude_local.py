@@ -21,6 +21,7 @@ MODELO = "sonnet"
 ESPERA = 90  # segundos
 
 FAIXAS = ["voz", "bateria", "baixo", "outros"]
+ESTILOS = ["house", "breaking", "locking", "popping", "hiphop", "waacking", "vogue", "krump", "passinho", "dancehall", "afro"]
 
 INSTRUCOES = """Você é o entendedor de pedidos do Audio Remix, um editor de mixes para competições de danças urbanas.
 O usuário seleciona trechos da linha do tempo (blocos; cada bloco é um "oito" da música, 8 tempos) e escreve um pedido em português.
@@ -40,6 +41,11 @@ Ações possíveis (use só estas, com estes campos):
 - {"tipo":"repetir","n":1..16}
 - {"tipo":"apagar"}  apaga os blocos selecionados.
 - {"tipo":"trazer","faixa":"voz"|"bateria"|"baixo"|"outros"|"tudo","oito":N,"fx":{...},"ganho":0..2}  copia a faixa do oito N da música original para uma camada por cima da seleção.
+- {"tipo":"estilo","estilo":"house"|"breaking"|"locking"|"popping"|"hiphop"|"waacking"|"vogue"|"krump"|"passinho"|"dancehall"|"afro"}
+  troca o ritmo da seleção: a bateria original fica baixa e a bateria do estilo entra por cima, no BPM da música.
+  "passinho" = funk carioca; "afro" = afro/amapiano; "hiphop" = hip-hop dance; "breaking" = b-boy/break.
+  Pode vir junto com outras ações (ex.: estilo + paradas). Para estilos fora desta lista (trap, reggaeton...), escolha o
+  mais próximo e diga em "frases" que foi uma aproximação; se nenhum servir, explique.
 
 Dicas de linguagem de dança e de mix:
 - "mais pesado", "mais grave", "mais pancada" = baixo e bateria mais altos (mult 1.3 a 1.5).
@@ -132,6 +138,8 @@ def validar(acoes):
             saida.append({"tipo": "vel", "valor": a["valor"]})
         elif t == "repetir":
             saida.append({"tipo": "repetir", "n": int(_numero(a.get("n"), 1, 16, 1))})
+        elif t == "estilo" and a.get("estilo") in ESTILOS:
+            saida.append({"tipo": "estilo", "estilo": a["estilo"]})
         elif t == "trazer" and (a.get("faixa") in FAIXAS + ["tudo"]) and _numero(a.get("oito"), 1, 999) is not None:
             saida.append({"tipo": "trazer", "faixa": a["faixa"], "oito": str(int(_numero(a["oito"], 1, 999))),
                           "fx": _fx(a.get("fx")), "ganho": _numero(a.get("ganho"), 0, 2, 1.0)})

@@ -72,14 +72,30 @@
     return total;
   }
 
+  // Estilos da biblioteca (biblioteca/estilos.json): "transforma em house", "ritmo de krump"
+  const ESTILOS = [
+    [/\bhouse\b/, "house", "house"], [/\b(breaking|break ?dance|b-?boy\w*|bboy\w*)\b/, "breaking", "breaking"],
+    [/\blocking\b/, "locking", "locking"], [/\bpopping\b/, "popping", "popping"], [/\bhip ?hop\b/, "hiphop", "hip-hop"],
+    [/\b(waack\w*|whack\w*)\b/, "waacking", "waacking"], [/\bvogue\b/, "vogue", "vogue"], [/\bkrump\w*\b/, "krump", "krump"],
+    [/\b(passinho|funk carioca|funk de favela)\b/, "passinho", "passinho"], [/\bdancehall\b/, "dancehall", "dancehall"],
+    [/\b(afro\w*|amapiano)\b/, "afro", "afro/amapiano"],
+  ];
+
   function entenderParte(t) {
     const acoes = [], frases = [], faltando = [];
+
+    const estilo = ESTILOS.find(([re]) => re.test(t));
+    if (estilo) {
+      acoes.push({tipo: "estilo", estilo: estilo[1]});
+      frases.push(`ritmo de ${estilo[2]} (a bateria original fica baixa e a bateria de ${estilo[2]} entra por cima)`);
+      return {acoes, frases, faltando};
+    }
 
     // Pedidos que ainda não existem no editor (ficam registrados para as próximas etapas)
     const futuros = [
       [/\b(tom|afina|pitch|mais aguda|mais grave a voz)\b/, "mudar o tom"],
       [/\b(daquele trecho|de outro trecho|que ele usa)\b/, "trazer uma faixa de outro trecho sem dizer qual (diga \"a voz do oito 5\")"],
-      [/\b(house|breaking|locking|popping|krump|waacking|vogue|passinho|funk|dancehall|amapiano|trap|boom ?bap)\b/, "injetar estilo"],
+      [/\b(funk|trap|boom ?bap|reggaeton|drill)\b/, "um estilo que ainda não está na biblioteca"],
     ];
     for (const [re, nome] of futuros) if (re.test(t)) faltando.push(nome);
     // Uma parte que depende de algo que ainda não existe não mexe em nada (evita fazer pela metade)

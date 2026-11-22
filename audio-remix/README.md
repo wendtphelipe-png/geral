@@ -44,6 +44,10 @@ Botão com a varinha, no alto à direita (o ponto fica verde quando está conect
 
 O Lyria é pago por uso. Tudo o que ele gera fica guardado em `audio-remix\dados\ia-cache\`, e um pedido igual não é pago de novo.
 
+### Trocar o ritmo de um trecho (estilos)
+Selecione oitos e escreva, por exemplo, **transforma em house**, **ritmo de krump** ou **batida de hip hop**. A bateria original desses oitos fica em 25% e a bateria do estilo entra numa camada por cima, no BPM da música e no mesmo volume da bateria original. Com **Lyria** marcado, a bateria do estilo é criada pelo Lyria no tempo e no tom da música (pago por uso); sem ele, é a bateria sintetizada da biblioteca (gratuita). A camada pode ter o volume mudado, ser movida ou apagada, e Ctrl+Z desfaz tudo.
+Estilos: house, breaking, locking, popping, hip-hop, waacking, vogue, krump, passinho (funk carioca), dancehall e afro/amapiano. Para outros (trap, reggaeton), o Claude escolhe o mais próximo e avisa que é uma aproximação.
+
 ### Pedidos livres com o Claude da sua assinatura
 Os pedidos comuns ("tira a voz", "parada no 5") são entendidos na hora por regras. Quando as regras não entendem (por exemplo "deixa esse trecho mais pesado" ou "dá um respiro aqui"), o editor pergunta ao **Claude Code instalado no PC**, usando a sua assinatura do Claude, sem cobrança de API. A resposta aparece com "(entendido pelo Claude)" e pode ser desfeita com Ctrl+Z, como qualquer mudança.
 - Quando as regras entenderem só parte do pedido (ex.: "deixa só a cantora com um ar de sonho" aplicava só a voz), comece com `claude:` para mandar o pedido inteiro direto para o Claude.
