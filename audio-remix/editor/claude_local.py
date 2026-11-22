@@ -46,7 +46,9 @@ Dicas de linguagem de dança e de mix:
 - "mais limpo", "respiro", "dar um respiro" = tirar o baixo, ou a bateria, conforme o pedido.
 - "hit", "acento", "stop", "pausa", "corte seco" = paradas. "nos tempos fortes" = 1 e 5.
 - "acapella" ou "só a voz" = voz 1, bateria 0, baixo 0, outros 0 ou 0.15.
-- "drop", "queda", "entrar com tudo" = todas as faixas em 1.
+- "drop", "queda", "entrar com tudo" = todas as faixas em 1 (bateria e baixo até 1.2), SEM parada no tempo 1:
+  o drop precisa bater cheio no 1. Se pedirem impacto, a parada vai no tempo 8.
+- Volume: prefira de 1.2 a 1.4 para "mais alto"; acima de 1.5 o mix inteiro é abaixado para não distorcer.
 - "sumindo", "terminar suave" = fade out. "entrar suave" = fade in.
 - "eco jogado", "voz voando" = eco 0.5 a 0.7 na voz.
 Se o pedido pedir algo que estas ações não fazem (mudar o tom, criar som novo, trocar o estilo), devolva "acoes": [] e explique em "explicacao", em uma frase simples. Nunca invente ações ou campos."""

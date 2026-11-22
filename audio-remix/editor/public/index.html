@@ -1087,6 +1087,12 @@ function executar(texto) {
   if (!l.length) { responder("Selecione oitos na régua de contagem, ou clique num clipe de uma camada, primeiro.", true); return; }
   const pedidoIa = texto.trim().match(/^(?:ia|lyria)\s*[:,-]\s*(.+)$/i) || texto.trim().match(/^(?:gera|gere|gerar|cria|crie|criar)\s+com\s+(?:a\s+)?(?:ia|lyria)\s*[:,-]?\s*(.+)$/i);
   if (pedidoIa) return trechoIa(pedidoIa[1].trim(), l);
+  // "claude: ..." vai direto para o Claude (quando as regras entenderiam só parte do pedido)
+  const pedidoClaude = texto.trim().match(/^claude\s*[:,-]\s*(.+)$/i);
+  if (pedidoClaude) {
+    if (!claudeInstalado) { responder("O Claude Code não está instalado neste PC.", true); return; }
+    return perguntarClaude(pedidoClaude[1].trim(), l);
+  }
   const r = Comandos.entender(texto);
   if (!r.acoes.length) {
     if (claudeInstalado && !r.vazio) return perguntarClaude(texto, l);
@@ -1127,7 +1133,9 @@ async function perguntarClaude(texto, l) {
   if (!d.acoes.length) {
     responder("O Claude entendeu, mas o editor ainda não faz isso" + (d.explicacao ? ": " + esc(d.explicacao) : "."), true); return;
   }
-  aplicarEntendido({acoes: d.acoes, frases: d.frases.length ? d.frases : ["pedido aplicado"], faltando: []}, l, " <span class=\"claude\">(entendido pelo Claude)</span>");
+  // no mesmo jeito das frases das regras: minúscula no começo, sem ponto no fim (vão juntas numa linha)
+  const frases = d.frases.map(f => f.replace(/[.\s]+$/, "")).filter(Boolean).map(f => f[0].toLowerCase() + f.slice(1));
+  aplicarEntendido({acoes: d.acoes, frases: frases.length ? frases : ["pedido aplicado"], faltando: []}, l, " <span class=\"claude\">(entendido pelo Claude)</span>");
 }
 
 function aplicarEntendido(r, l, sufixo) {
@@ -1151,6 +1159,7 @@ function aplicarEntendido(r, l, sufixo) {
   }
   mudar(() => { sel = new Set(Comandos.aplicar(tl, l, r.acoes, {dur: durBloco, tempo: tempo()})); });
   let msg = `<b>Feito:</b> ${r.frases.map(esc).join(", ")}.${sufixo}`;
+  if (!sufixo && claudeInstalado) msg += ` <span class="claude">Faltou algo? Comece o pedido com "claude:".</span>`;
   if (r.faltando.length) msg += ` Ainda não sei fazer ${r.faltando.join(", ")}.`;
   responder(msg, r.faltando.length > 0);
 }

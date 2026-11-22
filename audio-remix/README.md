@@ -46,6 +46,7 @@ O Lyria é pago por uso. Tudo o que ele gera fica guardado em `audio-remix\dados
 
 ### Pedidos livres com o Claude da sua assinatura
 Os pedidos comuns ("tira a voz", "parada no 5") são entendidos na hora por regras. Quando as regras não entendem (por exemplo "deixa esse trecho mais pesado" ou "dá um respiro aqui"), o editor pergunta ao **Claude Code instalado no PC**, usando a sua assinatura do Claude, sem cobrança de API. A resposta aparece com "(entendido pelo Claude)" e pode ser desfeita com Ctrl+Z, como qualquer mudança.
+- Quando as regras entenderem só parte do pedido (ex.: "deixa só a cantora com um ar de sonho" aplicava só a voz), comece com `claude:` para mandar o pedido inteiro direto para o Claude.
 - Precisa estar logado uma vez: abra um terminal, rode `claude` e entre na sua conta.
 - Leva alguns segundos por pedido e conta na cota da assinatura (a mesma das conversas).
 - O Claude só traduz o pedido em ações do editor; ele roda sem nenhuma ferramenta e não mexe em arquivos.
