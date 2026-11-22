@@ -58,7 +58,11 @@ def gravar_json(caminho, dados):
 
 def novo_id(nome):
     base = "".join(c if c.isalnum() else "-" for c in nome.lower())[:40].strip("-") or "musica"
-    return f"{time.strftime('%Y%m%d-%H%M%S')}-{base}"
+    pid = f"{time.strftime('%Y%m%d-%H%M%S')}-{base}"
+    n = 1
+    while (PASTA_DADOS / (pid if n == 1 else f"{pid}-{n}")).exists():  # duas importações no mesmo segundo
+        n += 1
+    return pid if n == 1 else f"{pid}-{n}"
 
 
 def preparar(projeto_id, origem, avisar):
@@ -154,16 +158,31 @@ def separar_faixas(pasta, fonte):
 
 # ---------------------------------------------------------------- análise
 
+BPM_MINIMO_CONTAGEM = 80  # abaixo disso, a contagem dos dançarinos vai no dobro (trap a 65 vira 130)
+
+
 def batidas_regulares(tempos, duracao):
-    """Preenche batidas perdidas (buracos maiores que 1,5 batida) e estende a grade
-    até o começo e o fim da música (o detector costuma ignorar as primeiras batidas)."""
+    """Deixa a grade de batidas com passo constante: preenche batidas perdidas, tira batidas
+    falsas coladas na anterior e estende a grade até o começo e o fim da música (o detector
+    costuma ignorar as primeiras batidas).
+
+    O detector às vezes troca de nível no meio da música (em MOVE, do Lecrae, alternava 130 e
+    65 BPM): com a grade misturada, os oitos saíam de tamanhos diferentes e fora do compasso.
+    Por isso o passo é um só para a música inteira, e abaixo de BPM_MINIMO_CONTAGEM ele cai
+    pela metade."""
     if len(tempos) < 4:
         return np.asarray(tempos)
     passo = float(np.median(np.diff(tempos)))
+    if 60.0 / passo < BPM_MINIMO_CONTAGEM:
+        passo /= 2
     saida = [tempos[0]]
     for t in tempos[1:]:
-        while t - saida[-1] > 1.5 * passo:
-            saida.append(saida[-1] + passo)
+        d = t - saida[-1]
+        if d < 0.6 * passo:  # batida falsa
+            continue
+        k = max(1, int(round(d / passo)))  # quantas batidas cabem neste intervalo
+        anterior = saida[-1]
+        saida.extend(anterior + d * j / k for j in range(1, k))
         saida.append(t)
     while saida[0] - passo >= 0:
         saida.insert(0, saida[0] - passo)

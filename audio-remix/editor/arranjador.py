@@ -221,6 +221,13 @@ class Montador:
             for k in range(n):
                 trechos = self.pegar_em_ordem(1, 1, 1)
                 u = trechos[0][1][0] if trechos else self.proximo_refrao()
+                tirada = {"respiro_sem_grave": "baixo", "respiro_sem_bateria": "bateria"}.get(modo)
+                if tirada and (u.get("energia") or {}).get(tirada, 0) > 0.4:
+                    # sem a faixa que domina o oito, sobraria quase silêncio (em I Want You Back,
+                    # um oito com 61% de bateria virou 2 s de quase nada): usa o oito do refrão
+                    # que menos depende dessa faixa
+                    u = min((x for x in self.oitos_refrao if x["id"] not in self.oito_fraco),
+                            key=lambda x: (x.get("energia") or {}).get(tirada, 0), default=u)
                 if modo == "respiro_sem_grave":
                     b = self.bloco(u, "Respiro sem grave", faixas={"voz": 1.0, "bateria": 1.0, "baixo": 0.0, "outros": 1.0})
                 elif modo == "respiro_sem_bateria":
