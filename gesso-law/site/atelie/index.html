@@ -59,6 +59,34 @@ h1,h2,h3{text-wrap:balance;margin:0}
 .pontinhos{display:flex;gap:3px;justify-content:center;flex-wrap:wrap}
 .pontinhos i{width:12px;height:12px;border-radius:50%;border:1px solid rgba(42,26,94,.25);display:block}
 
+/* ---------- biblioteca de cores ---------- */
+.grupo{margin-top:22px}
+.grupo h3{font-family:var(--f-titulo);font-size:17px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.grupo h3 small{font-family:var(--f-texto);font-size:16px;color:var(--caneta-suave);font-weight:400}
+.cores{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px;margin-top:8px}
+.cor-card{text-decoration:none;color:inherit;background:var(--cartao);border:2px solid var(--linha);border-radius:18px;padding:8px 6px 10px;
+  display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;transition:transform .2s,border-color .2s,box-shadow .2s}
+.cor-card:hover{transform:translateY(-3px) rotate(-1.5deg);border-color:var(--caneta);box-shadow:0 8px 0 -2px var(--amarelo)}
+.cor-card svg{width:58px;height:58px}
+.cor-card .nome{font-family:var(--f-titulo);font-size:13.5px;line-height:1.1}
+.cor-card .mini{display:flex;gap:2px;justify-content:center;flex-wrap:wrap;min-height:12px}
+.cor-card .mini i{width:9px;height:9px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:block;border:1px solid rgba(42,26,94,.2)}
+.cor-card .pote-txt{font-size:14px;color:var(--caneta-suave);line-height:1}
+.aviso{background:var(--cartao);border:2px dashed var(--rosa);border-radius:18px;padding:10px 14px;margin-top:22px;font-size:18px}
+.aviso a{color:var(--roxo)}
+/* ---------- receita de uma cor ---------- */
+.c-topo{display:flex;align-items:center;gap:14px;margin:10px 0 6px}
+.c-topo .grande svg{width:104px;height:104px}
+.c-topo h2{font-family:var(--f-titulo);font-size:clamp(30px,8vw,44px);line-height:1;color:var(--roxo)}
+.c-topo .qtd{font-family:var(--f-marca);color:var(--rosa);font-size:18px;margin-top:4px}
+.receita-card{background:var(--cartao);border:2px solid var(--linha);border-radius:22px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.receita-card h3{font-family:var(--f-titulo);font-size:18px}
+.passos-txt{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:2px}
+.uso{font-size:18px}
+.uso b{font-family:var(--f-titulo);font-weight:400;font-size:15px}
+.c-grid{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:720px){.c-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}}
+
 /* ---------- personagem ---------- */
 .voltar{text-decoration:none;display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-size:18px;color:var(--roxo);padding:4px 2px}
 .p-topo{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin:8px 0 4px}
@@ -125,8 +153,8 @@ h1,h2,h3{text-wrap:balance;margin:0}
 /* ---------- abas ---------- */
 .abas{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--caneta);
   padding:8px max(12px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
-.abas .in{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.aba{text-decoration:none;color:#fff;border-radius:14px;padding:6px 4px;display:flex;flex-direction:column;align-items:center;font-size:15px;line-height:1.1;opacity:.75}
+.abas .in{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.aba{text-decoration:none;color:#fff;border-radius:14px;padding:6px 2px;display:flex;flex-direction:column;align-items:center;font-size:14px;line-height:1.1;opacity:.75}
 .aba svg{width:26px;height:26px}
 .aba[aria-current="page"]{background:var(--rosa);opacity:1}
 .rodape{text-align:center;padding-block:30px 10px;font-family:var(--f-marca);color:var(--caneta-suave);font-size:16px}
@@ -137,24 +165,44 @@ h1,h2,h3{text-wrap:balance;margin:0}
 <div class="wrap">
   <header class="marca"><span>PALCO &amp; PINCEL <span class="by">by LAW</span></span><span class="slogan">Eu danço. Você pinta.</span></header>
 
-  <!-- ===== INÍCIO ===== -->
+  <!-- ===== INÍCIO: BIBLIOTECA DE CORES ===== -->
   <section class="view" id="v-inicio">
     <div class="hero">
       <div class="feixe" aria-hidden="true"></div>
       <svg class="holofote" viewBox="0 0 54 30" aria-hidden="true"><rect x="13" y="2" width="28" height="16" rx="5" fill="#6B3FD6"/><rect x="19" y="16" width="16" height="6" rx="2" fill="#2A1A5E"/><circle cx="20" cy="9" r="3" fill="#fff" opacity=".5"/></svg>
       <h1><span class="mt">HORA DO SHOW</span><span class="ex">!</span></h1>
       <div class="oi">Oi, estrelinha!</div>
-      <p class="pergunta">Qual personagem está na sua mão? Toque nele e eu te mostro as cores e as misturas.</p>
+      <p class="pergunta">Qual cor você quer fazer? Toque numa cor e eu te mostro a receita com as tintas do seu kit.</p>
     </div>
-    <div class="kit" id="kit-inicio" aria-label="As 6 cores do kit"></div>
-    <div class="rotulo-kit">As 6 cores que vêm no seu kit</div>
-    <h2 class="secao-titulo"><span class="mt">Escolha o personagem</span></h2>
-    <div class="grade" id="grade"></div>
+    <h2 class="secao-titulo"><span class="mt">Biblioteca de cores</span></h2>
+    <div id="biblioteca"></div>
+  </section>
+
+  <!-- ===== RECEITA DE UMA COR ===== -->
+  <section class="view" id="v-cor" hidden>
+    <a class="voltar" href="#inicio">← Todas as cores</a>
+    <div class="c-topo"><div class="grande" id="c-mancha"></div><div style="min-width:0"><h2 id="c-nome"></h2><div class="qtd" id="c-qtd"></div></div></div>
+    <div class="c-grid">
+      <div class="receita-card"><h3>Veja a mistura</h3><div class="palco-mistura" id="c-palco"></div>
+        <div class="linha-botoes" style="margin-top:0"><button class="botao" id="c-denovo">Ver de novo</button><button class="botao cheio" id="c-lab">Misturar no laboratório</button></div></div>
+      <div class="receita-card"><h3>Receita</h3><div class="receita" id="c-gotas" style="border:0;padding:0"></div>
+        <ol class="passos-txt" id="c-passos"></ol>
+        <div class="uso" id="c-uso"></div>
+        <div class="dica-box" id="c-dica"></div></div>
+    </div>
+  </section>
+
+  <!-- ===== PERSONAGENS ===== -->
+  <section class="view" id="v-personagens" hidden>
+    <h2 class="secao-titulo" style="margin-top:22px"><span class="mt">Personagens da Palco &amp; Pincel</span></h2>
+    <p style="margin:0">Se a sua peça é uma destas, toque nela para ver as cores na ordem certa e testar a pintura na tela.</p>
+    <div class="grade" id="grade" style="margin-top:12px"></div>
+    <div class="aviso">Não achou a sua peça? Tudo bem! Volte para a <a href="#inicio">Biblioteca de cores</a> e escolha as cores que você quer usar: cada uma tem a receita.</div>
   </section>
 
   <!-- ===== PERSONAGEM ===== -->
   <section class="view" id="v-personagem" hidden>
-    <a class="voltar" href="#inicio">← Todos os personagens</a>
+    <a class="voltar" href="#personagens">← Todos os personagens</a>
     <div class="p-topo"><h2 id="p-nome">Papai Noel</h2><span class="qtd" id="p-qtd"></span></div>
     <div class="p-grid">
       <div class="ensaio">
@@ -211,9 +259,10 @@ h1,h2,h3{text-wrap:balance;margin:0}
 </div>
 
 <nav class="abas" aria-label="Seções"><div class="in">
-  <a class="aba" href="#inicio" data-aba="inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.5 6 .8-4.4 4.1 1.1 6-5.3-2.9-5.3 2.9 1.1-6L3.4 9.3l6-.8z"/></svg>Personagens</a>
+  <a class="aba" href="#inicio" data-aba="inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-1 1.6-2.1-.5-1.3.4-2.6 1.8-2.6H18a3 3 0 0 0 3-3A9 9 0 0 0 12 3z"/><circle cx="7.5" cy="11" r="1.3" fill="currentColor"/><circle cx="10.5" cy="7" r="1.3" fill="currentColor"/><circle cx="15.5" cy="7.5" r="1.3" fill="currentColor"/></svg>Cores</a>
   <a class="aba" href="#laboratorio" data-aba="laboratorio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18a9 9 0 0 1-18 0z"/><path d="M8 8c0-2 2-2 2-4M13 8c0-2 2-2 2-4"/></svg>Laboratório</a>
   <a class="aba" href="#desafio" data-aba="desafio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>Desafio</a>
+  <a class="aba" href="#personagens" data-aba="personagens"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.5 6 .8-4.4 4.1 1.1 6-5.3-2.9-5.3 2.9 1.1-6L3.4 9.3l6-.8z"/></svg>Personagens</a>
 </div></nav>
 <canvas id="confete" aria-hidden="true"></canvas>
 
@@ -238,7 +287,27 @@ const MIX={
   tijolo:{n:'cor de tijolo',p:{vermelho:3,verde:1}},
   lilas:{n:'lilás',p:{branco:3,vermelho:1,azul:1}},
   marinho:{n:'azul-marinho',p:{azul:3,preto:1}},
+  verdeagua:{n:'verde-água',p:{branco:2,verde:1,azul:1}},
+  menta:{n:'verde-menta',p:{branco:3,verde:1}},
+  amareloclaro:{n:'amarelo-claro',p:{branco:2,amarelo:1}},
+  cinzaescuro:{n:'cinza-escuro',p:{branco:1,preto:1}},
+  vinho:{n:'vinho',p:{vermelho:3,azul:1,preto:1}},
+  pessego:{n:'pêssego',p:{branco:3,vermelho:1,amarelo:2}},
+  musgo:{n:'verde-musgo',p:{verde:3,vermelho:1}},
 };
+const USO={vermelho:'roupa do Papai Noel, laços, frutinhas, corações',amarelo:'estrelas, sol, luzes, cabelo',azul:'céu, roupas, presentes, água',
+  verde:'árvore, folhas, cachecol, grama',branco:'neve, barba, nuvens, brilhos',preto:'olhinhos, botas, cintos, contornos',
+  laranja:'cenoura, bico de pinguim, abóbora',roxo:'laços, roupas, flores',marrom:'tronco, rena, chocolate, cabelo',limao:'folhas claras e brilhos',
+  rosa:'bochechas, nariz, laços',azulclaro:'céu, floco de neve, gelo',cinza:'pedras, sombra da neve, metal',pele:'rosto e mãos',
+  verdeescuro:'sombras da árvore e folhas do fundo',ouro:'estrelas, sinos, fivelas',bege:'galhada, focinho, biscoito',tijolo:'tijolos, chaminé, telhado',
+  lilas:'flores e detalhes delicados',marinho:'roupas, céu de noite, detalhes escuros',verdeagua:'mar, roupas, detalhes',menta:'doces e detalhes suaves',
+  amareloclaro:'luz, brilho, cabelo loiro',cinzaescuro:'pedras e sombras',vinho:'roupas, laços, frutinhas',pessego:'bochechas suaves, flores, roupas',musgo:'folhas de outono, mato, camuflagem'};
+const GRUPOS=[
+  ['Do potinho','vêm prontas no kit',ORDEM_KIT],
+  ['Cores quentes','misturas',['laranja','ouro','amareloclaro','pessego','rosa','pele','tijolo','vinho','marrom']],
+  ['Cores frias','misturas',['azulclaro','marinho','verdeagua','menta','limao','verdeescuro','musgo','roxo','lilas']],
+  ['Neutras','misturas',['bege','cinza','cinzaescuro']],
+];
 const lin=c=>{c/=255;return c<=.04045?c/12.92:Math.pow((c+.055)/1.055,2.4)};
 const gam=c=>Math.max(0,Math.min(255,Math.round(255*(c<=.0031308?12.92*c:1.055*Math.pow(c,1/2.4)-.055))));
 /* tinta se comporta como filtro: média geométrica da luz refletida (com um pouco de média simples) */
@@ -279,19 +348,22 @@ function manchaPath(s,r=8,var_=2.2,n=9){const pts=[];for(let i=0;i<n;i++){const 
 function mancha(cor,rot=0){const borda=cor.toLowerCase()==='#ffffff'?'#C9BFAE':'rgba(0,0,0,.18)';
   return `<svg viewBox="0 0 20 20" style="transform:rotate(${rot}deg)" aria-hidden="true"><path d="${manchaPath()}" fill="${cor}" stroke="${borda}" stroke-width=".7"/><ellipse cx="7" cy="6.5" rx="2.6" ry="1.5" fill="#fff" opacity=".55" transform="rotate(-30 7 6.5)"/></svg>`}
 
-document.getElementById('kit-inicio').innerHTML=ORDEM_KIT.map((k,i)=>`<div class="kit-item">${mancha(KIT[k].hex,i*47)}${KIT[k].n}</div>`).join('');
+document.getElementById('biblioteca').innerHTML=GRUPOS.map(([t,sub,ks])=>`<div class="grupo"><h3>${t} <small>${sub}</small></h3><div class="cores">${
+  ks.map((k,i)=>{const c=COR(k),m=MIX[k];return `<a class="cor-card" href="#${k}" aria-label="${c.n}">${mancha(c.hex,i*43)}<span class="nome">${c.n}</span>${
+    m?`<span class="mini">${Object.entries(m.p).map(([q,n])=>Array.from({length:n},()=>`<i style="background:${KIT[q].hex}"></i>`).join('')).join('')}</span>`:'<span class="pote-txt">do potinho</span>'}</a>`}).join('')}</div></div>`).join('');
 document.getElementById('grade').innerHTML=P.map(p=>`<a class="card" href="#${p.id}" style="text-decoration:none;color:inherit">
   <img src="img/${p.id}.png" alt="${p.n}" loading="lazy" width="600" height="600"><span class="nome">${p.n}</span>
   <span class="pontinhos">${p.c.map(([k])=>`<i style="background:${COR(k).hex}"></i>`).join('')}</span></a>`).join('');
 
 /* ================= roteamento ================= */
-const views={inicio:'v-inicio',laboratorio:'v-laboratorio',desafio:'v-desafio'};
+const views={inicio:'v-inicio',laboratorio:'v-laboratorio',desafio:'v-desafio',personagens:'v-personagens'};
 function rota(){const h=location.hash.replace('#','')||'inicio';
-  const vid=views[h]||(PM[h]?'v-personagem':'v-inicio');
+  const vid=views[h]||(PM[h]?'v-personagem':COR(h)?'v-cor':'v-inicio');
   for(const el of document.querySelectorAll('.view'))el.hidden=el.id!==vid;
-  const aba=views[h]?h:'inicio';
+  const aba=views[h]?h:PM[h]?'personagens':'inicio';
   for(const a of document.querySelectorAll('.aba')){if(a.dataset.aba===aba)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')}
   if(PM[h])abrirPersonagem(PM[h]);
+  if(!PM[h]&&!views[h]&&COR(h))abrirCor(h);
   if(h==='desafio'&&!desafio.alvo)novoDesafio();
   window.scrollTo(0,0)}
 addEventListener('hashchange',rota);
@@ -339,6 +411,37 @@ function abrirPersonagem(p){
          :`<div class="direto">Direto do potinho de ${c.n}.</div>`}</div>`}).join('');
   for(const b of document.querySelectorAll('[data-mix]'))b.onclick=()=>{const palco=b.closest('.passo').querySelector('.palco-mistura');palco.hidden=false;animarMistura(palco,b.dataset.mix);b.textContent='Ver de novo'};
 }
+
+/* ================= receita de uma cor ================= */
+const clareza=k=>{const [L]=lab(KIT[k].rgb);return L};
+let corAtual=null;
+function abrirCor(k){const c=COR(k),m=MIX[k];corAtual=k;
+  document.getElementById('c-mancha').innerHTML=mancha(c.hex,20);
+  document.getElementById('c-nome').textContent=c.n;
+  const palco=document.getElementById('c-palco'),gotas=document.getElementById('c-gotas'),passos=document.getElementById('c-passos');
+  document.getElementById('c-uso').innerHTML=`<b>BOA PARA</b> ${USO[k]||'o que a sua imaginação mandar'}.`;
+  if(m){const n=Object.values(m.p).reduce((a,b)=>a+b,0);
+    document.getElementById('c-qtd').textContent=`${n} gotas · ${Object.keys(m.p).length} cores do kit`;
+    gotas.innerHTML=gotinhas(m.p);
+    const ordem=Object.entries(m.p).sort((a,b)=>clareza(b[0])-clareza(a[0]));
+    passos.innerHTML=[`Coloque ${ordem[0][1]} ${ordem[0][1]>1?'gotas':'gota'} de ${KIT[ordem[0][0]].n} na paleta.`,
+      ...ordem.slice(1).map(([q,n])=>`Pingue ${n} ${n>1?'gotas':'gota'} de ${KIT[q].n}${n===1&&ordem[0][1]>=3?' (um pinguinho só!)':''}.`),
+      'Misture bem até não ver mais listrinhas.'].map(t=>`<li>${t}</li>`).join('');
+    document.getElementById('c-dica').textContent=ordem.some(([q])=>q==='preto')?'O preto é muito forte: pingue sempre de pouquinho em pouquinho.'
+      :ordem[0][0]==='branco'?'Começar pelo branco e ir escurecendo aos poucos é o segredo. Se ficar escuro demais, é só colocar mais branco.'
+      :'Quer mais clara? Coloque um pouco de branco. Mais escura? Um pinguinho de preto.';
+    document.getElementById('c-denovo').hidden=false;document.getElementById('c-lab').hidden=false;
+    animarMistura(palco,k);
+  }else{document.getElementById('c-qtd').textContent='vem pronta no seu kit';
+    gotas.innerHTML='';passos.innerHTML=`<li>Use direto do potinho de ${c.n}.</li><li>Para clarear, misture um pouco de branco.</li>${k!=='preto'&&k!=='branco'?'<li>Para escurecer, um pinguinho de preto.</li>':''}`;
+    document.getElementById('c-dica').textContent='Lave o pincel na água antes de trocar de cor, para a tinta não sujar o potinho.';
+    document.getElementById('c-denovo').hidden=true;document.getElementById('c-lab').hidden=true;
+    palco.innerHTML=`<svg viewBox="0 0 360 200" role="img" aria-label="Potinho de ${c.n}"><ellipse cx="180" cy="186" rx="90" ry="9" fill="rgba(42,26,94,.12)"/>
+      <rect x="120" y="70" width="120" height="112" rx="16" fill="#fff" stroke="#2A1A5E" stroke-width="3"/><rect x="126" y="100" width="108" height="76" rx="11" fill="${c.hex}" stroke="${k==='branco'?'#C9BFAE':'none'}"/>
+      <rect x="112" y="52" width="136" height="24" rx="8" fill="#6B3FD6"/><text x="180" y="32" text-anchor="middle" font-family="Bowlby One, Arial Black, sans-serif" font-size="20" fill="#6B3FD6">Direto do potinho!</text></svg>`}
+  window.scrollTo(0,0)}
+document.getElementById('c-denovo').onclick=()=>corAtual&&MIX[corAtual]&&animarMistura(document.getElementById('c-palco'),corAtual);
+document.getElementById('c-lab').onclick=()=>{if(!MIX[corAtual])return;labT.carregar(MIX[corAtual].p);location.hash='laboratorio'};
 
 /* ================= animação da mistura ================= */
 const reduz=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -411,7 +514,8 @@ function criarTigela(svgId,potesId,aoMudar){const svg=document.getElementById(sv
         const t1=performance.now();(function w(t){const v=Math.min(1,(t-t1)/500);s.setAttribute('cx',x+(180-x)*v);s.setAttribute('r',14*(1-v));if(v<1)requestAnimationFrame(w);else s.remove()})(t1);atualizar()}})(t0)}
   document.getElementById(potesId).innerHTML=ORDEM_KIT.map((k,i)=>`<button class="pote" data-k="${k}" aria-label="Pingar uma gota de ${KIT[k].n}">${mancha(KIT[k].hex,i*53)}<span>${KIT[k].n}</span><span class="cont"></span></button>`).join('');
   for(const b of document.querySelectorAll(`#${potesId} .pote`))b.onclick=()=>pingar(b.dataset.k);
-  return{pingar,tirar(){st.gotas.pop();atualizar()},limpar(){st.gotas.length=0;atualizar()},conta,get n(){return st.gotas.length},atualizar}}
+  return{pingar,tirar(){st.gotas.pop();atualizar()},limpar(){st.gotas.length=0;atualizar()},
+    carregar(p){st.gotas.length=0;for(const [k,q] of Object.entries(p))for(let i=0;i<q;i++)st.gotas.push(k);atualizar()},conta,get n(){return st.gotas.length},atualizar}}
 
 const labRes=document.getElementById('lab-res');
 const labT=criarTigela('lab-svg','lab-potes',(p,c)=>{
