@@ -1,0 +1,462 @@
+<title>Ateliê de Cores</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Patrick+Hand&family=Permanent+Marker&display=swap">
+<style>
+/* Layout: caderno de ateliê no celular — uma coluna, palco do personagem no topo, abas fixas embaixo.
+   Visual único (papel claro da marca), escolhido de propósito: não muda com o tema escuro. */
+:root{
+  --papel:#FFF8EC; --cartao:#FFFFFF; --linha:#EADFCB; --caneta:#2A1A5E; --caneta-suave:#5B4E86;
+  --rosa:#FF4F9A; --roxo:#6B3FD6; --amarelo:#FFD23F; --azul:#2F7BFF; --rosa-claro:#FFD3E6;
+  --f-titulo:'Bowlby One','Arial Black',Impact,sans-serif;
+  --f-marca:'Permanent Marker','Comic Sans MS',cursive;
+  --f-texto:'Patrick Hand','Comic Sans MS','Segoe Print',cursive;
+  color-scheme:light;
+}
+html,body{height:100%}
+body{background:var(--papel);color:var(--caneta);font-family:var(--f-texto);font-size:19px;line-height:1.3;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0 calc(84px + env(safe-area-inset-bottom,0px));
+  background-image:radial-gradient(circle at 1px 1px,rgba(42,26,94,.07) 1px,transparent 1.4px);background-size:22px 22px}
+.wrap{max-width:760px;margin:0 auto}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0}
+button:focus-visible,a:focus-visible{outline:3px solid var(--roxo);outline-offset:3px;border-radius:10px}
+h1,h2,h3{text-wrap:balance;margin:0}
+.view[hidden]{display:none!important}
+
+/* ---------- topo ---------- */
+.marca{display:flex;align-items:center;justify-content:space-between;padding-block:14px 4px;font-family:var(--f-titulo);font-size:15px;letter-spacing:.04em}
+.marca .by{font-family:var(--f-marca);color:var(--rosa);letter-spacing:0;font-size:16px}
+.marca .slogan{font-family:var(--f-marca);font-size:13px;color:var(--caneta-suave);letter-spacing:0}
+
+.hero{position:relative;text-align:center;padding-block:26px 8px;overflow:hidden}
+.feixe{position:absolute;left:50%;top:-30px;width:520px;height:330px;margin-left:-260px;pointer-events:none;
+  background:conic-gradient(from 160deg at 50% 0%,transparent 0deg,rgba(255,210,63,.55) 14deg,rgba(255,210,63,.18) 26deg,transparent 40deg);
+  transform-origin:50% 0;animation:varre 6s ease-in-out infinite alternate;filter:blur(2px)}
+@keyframes varre{from{transform:rotate(-24deg)}to{transform:rotate(24deg)}}
+.holofote{width:54px;height:30px;margin:0 auto 6px;position:relative}
+.hero h1{position:relative;font-family:var(--f-titulo);font-size:clamp(40px,11vw,68px);line-height:.95;color:var(--roxo);transform:rotate(-2.5deg)}
+.hero h1 .mt{background:linear-gradient(transparent 55%,var(--amarelo) 55%,var(--amarelo) 88%,transparent 88%);padding:0 .12em}
+.hero h1 .ex{color:var(--rosa);display:inline-block;animation:pula 1.6s ease-in-out infinite}
+@keyframes pula{50%{transform:translateY(-8px) rotate(8deg)}}
+.oi{position:relative;font-family:var(--f-marca);color:var(--rosa);font-size:clamp(20px,5vw,26px);margin-top:14px}
+.pergunta{position:relative;font-size:22px;margin:4px auto 0;max-width:30ch}
+
+.kit{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 8px;margin:22px 0 6px}
+.kit-item{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:15px;min-width:52px}
+.kit-item svg{width:42px;height:42px;transition:transform .25s}
+.kit-item:hover svg{transform:translateY(-4px) rotate(-8deg)}
+.rotulo-kit{text-align:center;font-size:16px;color:var(--caneta-suave)}
+
+/* ---------- grade de personagens ---------- */
+.secao-titulo{font-family:var(--f-titulo);font-size:22px;margin:28px 0 12px;display:flex;align-items:center;gap:10px}
+.secao-titulo .mt{background:linear-gradient(transparent 55%,var(--rosa-claro) 55%,var(--rosa-claro) 92%,transparent 92%);padding:0 4px}
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.card{background:var(--cartao);border:2px solid var(--linha);border-radius:18px;padding:10px 10px 12px;text-align:center;
+  transition:transform .2s,box-shadow .2s,border-color .2s;display:flex;flex-direction:column;align-items:center;gap:4px}
+.card:hover{transform:translateY(-4px) rotate(-1deg);box-shadow:0 10px 0 -2px var(--amarelo);border-color:var(--caneta)}
+.card img{width:100%;height:auto;aspect-ratio:1;object-fit:contain;max-width:100%;filter:drop-shadow(0 6px 6px rgba(42,26,94,.15))}
+.card .nome{font-family:var(--f-titulo);font-size:15px;line-height:1.1}
+.pontinhos{display:flex;gap:3px;justify-content:center;flex-wrap:wrap}
+.pontinhos i{width:12px;height:12px;border-radius:50%;border:1px solid rgba(42,26,94,.25);display:block}
+
+/* ---------- personagem ---------- */
+.voltar{text-decoration:none;display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-size:18px;color:var(--roxo);padding:4px 2px}
+.p-topo{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin:8px 0 4px}
+.p-topo h2{font-family:var(--f-titulo);font-size:clamp(30px,8vw,44px);line-height:1;color:var(--roxo)}
+.p-topo .qtd{font-family:var(--f-marca);color:var(--rosa);font-size:18px;padding-bottom:4px}
+.p-grid{display:grid;grid-template-columns:1fr;gap:18px}
+@media(min-width:720px){.p-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}}
+.ensaio{background:var(--cartao);border:2px solid var(--linha);border-radius:22px;padding:12px;position:sticky;top:calc(8px + env(safe-area-inset-top,0px))}
+@media(max-width:719px){.ensaio{position:static}}
+.ensaio h3{font-family:var(--f-titulo);font-size:17px}
+.ensaio .dica{font-size:16px;color:var(--caneta-suave);margin:2px 0 6px}
+.tela{position:relative;width:100%;aspect-ratio:1;max-width:100%;touch-action:none;border-radius:16px;
+  background:radial-gradient(circle at 50% 45%,#fff 0,#F7EEDD 70%)}
+.tela canvas{width:100%;height:100%;display:block;cursor:crosshair}
+.ferramentas{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.tinta{width:38px;height:38px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--linha);transition:transform .15s}
+.tinta[aria-pressed="true"]{box-shadow:0 0 0 3px var(--caneta);transform:scale(1.12)}
+.sep{flex:1 1 auto}
+.pincel{width:38px;height:38px;border-radius:12px;border:2px solid var(--linha);display:grid;place-items:center;background:var(--papel)}
+.pincel i{display:block;border-radius:50%;background:var(--caneta)}
+.pincel[aria-pressed="true"]{border-color:var(--caneta);background:var(--amarelo)}
+.botao{border:2px solid var(--caneta);border-radius:999px;padding:4px 14px;background:var(--cartao);font-size:17px;transition:transform .15s}
+.botao:hover{transform:translateY(-2px)}
+.botao.cheio{background:var(--roxo);border-color:var(--roxo);color:#fff}
+
+.ordem{display:flex;flex-direction:column;gap:10px}
+.ordem h3{font-family:var(--f-titulo);font-size:20px}
+.ordem .sub{font-size:17px;color:var(--caneta-suave);margin-top:-4px}
+.passo{background:var(--cartao);border:2px solid var(--linha);border-radius:18px;padding:10px 12px;display:grid;
+  grid-template-columns:auto minmax(0,1fr);gap:4px 12px;align-items:center}
+.passo .num{font-family:var(--f-titulo);font-size:13px;color:var(--rosa)}
+.passo .gota svg{width:52px;height:52px}
+.passo .cor{font-family:var(--f-titulo);font-size:18px;line-height:1.1}
+.passo .onde{font-size:17px;color:var(--caneta-suave)}
+.passo .receita{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:16px;padding-top:4px;border-top:1.5px dashed var(--linha)}
+.receita .gotinhas{display:inline-flex;gap:2px;align-items:center}
+.receita .gotinhas i{width:14px;height:14px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:block;border:1px solid rgba(42,26,94,.2)}
+.receita .mais{font-family:var(--f-titulo);color:var(--rosa)}
+.direto{font-size:16px;color:var(--caneta-suave);grid-column:1/-1;padding-top:4px;border-top:1.5px dashed var(--linha)}
+.palco-mistura{grid-column:1/-1;width:100%;max-width:100%}
+.palco-mistura svg{width:100%;height:auto;display:block}
+
+/* ---------- laboratório e desafio ---------- */
+.lab{display:grid;gap:14px;margin-top:10px}
+@media(min-width:720px){.lab{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start}}
+.bancada{background:var(--cartao);border:2px solid var(--linha);border-radius:22px;padding:12px}
+.bancada svg{width:100%;height:auto;display:block}
+.potes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pote{background:var(--cartao);border:2px solid var(--linha);border-radius:18px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:0;font-size:17px;transition:transform .12s}
+.pote:active{transform:scale(.94)}
+.pote svg{width:44px;height:44px}
+.pote .cont{font-family:var(--f-titulo);font-size:13px;color:var(--rosa);min-height:16px}
+.resultado{font-size:20px;text-align:center;margin-top:6px}
+.resultado b{font-family:var(--f-titulo);font-weight:400;color:var(--roxo)}
+.linha-botoes{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+.alvo{display:flex;align-items:center;gap:14px;background:var(--cartao);border:2px solid var(--linha);border-radius:22px;padding:12px 14px}
+.alvo .amostra{width:84px;height:84px;border-radius:46% 54% 50% 50%/55% 45% 55% 45%;flex:none;box-shadow:inset 0 -8px 0 rgba(0,0,0,.08),0 0 0 3px #fff,0 0 0 5px var(--linha)}
+.alvo h3{font-family:var(--f-titulo);font-size:19px}
+.medidor{height:18px;border-radius:999px;background:var(--papel);border:2px solid var(--linha);overflow:hidden;margin-top:6px}
+.medidor i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--rosa),var(--amarelo));transition:width .5s cubic-bezier(.3,1.4,.5,1)}
+.medidor-txt{font-size:17px;margin-top:2px}
+.dica-box{background:var(--rosa-claro);border-radius:16px;padding:8px 12px;font-size:17px}
+
+/* ---------- abas ---------- */
+.abas{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--caneta);
+  padding:8px max(12px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
+.abas .in{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.aba{text-decoration:none;color:#fff;border-radius:14px;padding:6px 4px;display:flex;flex-direction:column;align-items:center;font-size:15px;line-height:1.1;opacity:.75}
+.aba svg{width:26px;height:26px}
+.aba[aria-current="page"]{background:var(--rosa);opacity:1}
+.rodape{text-align:center;padding-block:30px 10px;font-family:var(--f-marca);color:var(--caneta-suave);font-size:16px}
+#confete{position:fixed;inset:0;pointer-events:none;z-index:30}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="marca"><span>PALCO &amp; PINCEL <span class="by">by LAW</span></span><span class="slogan">Eu danço. Você pinta.</span></header>
+
+  <!-- ===== INÍCIO ===== -->
+  <section class="view" id="v-inicio">
+    <div class="hero">
+      <div class="feixe" aria-hidden="true"></div>
+      <svg class="holofote" viewBox="0 0 54 30" aria-hidden="true"><rect x="13" y="2" width="28" height="16" rx="5" fill="#6B3FD6"/><rect x="19" y="16" width="16" height="6" rx="2" fill="#2A1A5E"/><circle cx="20" cy="9" r="3" fill="#fff" opacity=".5"/></svg>
+      <h1><span class="mt">HORA DO SHOW</span><span class="ex">!</span></h1>
+      <div class="oi">Oi, estrelinha!</div>
+      <p class="pergunta">Qual personagem está na sua mão? Toque nele e eu te mostro as cores e as misturas.</p>
+    </div>
+    <div class="kit" id="kit-inicio" aria-label="As 6 cores do kit"></div>
+    <div class="rotulo-kit">As 6 cores que vêm no seu kit</div>
+    <h2 class="secao-titulo"><span class="mt">Escolha o personagem</span></h2>
+    <div class="grade" id="grade"></div>
+  </section>
+
+  <!-- ===== PERSONAGEM ===== -->
+  <section class="view" id="v-personagem" hidden>
+    <a class="voltar" href="#inicio">← Todos os personagens</a>
+    <div class="p-topo"><h2 id="p-nome">Papai Noel</h2><span class="qtd" id="p-qtd"></span></div>
+    <div class="p-grid">
+      <div class="ensaio">
+        <h3>Ensaio na tela</h3>
+        <p class="dica">Escolha uma cor e passe o dedo na peça para ver como fica antes de pintar de verdade.</p>
+        <div class="tela"><canvas id="tela" width="600" height="600" aria-label="Peça para pintar com o dedo"></canvas></div>
+        <div class="ferramentas" id="tintas"></div>
+        <div class="ferramentas">
+          <button class="pincel" data-tam="9" aria-pressed="false" aria-label="Pincel fino"><i style="width:6px;height:6px"></i></button>
+          <button class="pincel" data-tam="20" aria-pressed="true" aria-label="Pincel médio"><i style="width:12px;height:12px"></i></button>
+          <button class="pincel" data-tam="38" aria-pressed="false" aria-label="Pincel grosso"><i style="width:20px;height:20px"></i></button>
+          <span class="sep"></span>
+          <button class="botao" id="desfazer">Desfazer</button>
+          <button class="botao" id="limpar">Limpar</button>
+        </div>
+      </div>
+      <div class="ordem">
+        <h3>Ordem do show</h3>
+        <p class="sub">Comece pelas cores claras. Toque em "Ver a mistura" para aprender a fazer cada cor.</p>
+        <div id="passos" class="ordem"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== LABORATÓRIO ===== -->
+  <section class="view" id="v-laboratorio" hidden>
+    <h2 class="secao-titulo" style="margin-top:22px"><span class="mt">Laboratório de cores</span></h2>
+    <p style="margin:0">Toque nos potinhos para pingar gotas na tigela e descubra que cor aparece.</p>
+    <div class="lab">
+      <div class="bancada"><svg id="lab-svg" viewBox="0 0 360 230" aria-label="Tigela de mistura"></svg>
+        <div class="resultado" id="lab-res">A tigela está vazia. Pingue uma gota!</div>
+        <div class="linha-botoes"><button class="botao" id="lab-tirar">Tirar a última gota</button><button class="botao" id="lab-limpar">Esvaziar</button></div>
+      </div>
+      <div class="potes" id="lab-potes"></div>
+    </div>
+  </section>
+
+  <!-- ===== DESAFIO ===== -->
+  <section class="view" id="v-desafio" hidden>
+    <h2 class="secao-titulo" style="margin-top:22px"><span class="mt">Desafio da cor</span></h2>
+    <div class="alvo"><div class="amostra" id="des-amostra"></div>
+      <div style="min-width:0;flex:1"><h3 id="des-titulo">Faça esta cor!</h3>
+        <div class="medidor"><i id="des-medidor"></i></div><div class="medidor-txt" id="des-txt">Pingue gotas para chegar perto.</div></div></div>
+    <div class="lab">
+      <div class="bancada"><svg id="des-svg" viewBox="0 0 360 230" aria-label="Sua tigela"></svg>
+        <div class="linha-botoes"><button class="botao" id="des-tirar">Tirar a última gota</button><button class="botao" id="des-limpar">Esvaziar</button><button class="botao" id="des-dica">Dica</button><button class="botao cheio" id="des-prox">Outra cor</button></div>
+        <div class="dica-box" id="des-dica-txt" hidden style="margin-top:10px"></div>
+      </div>
+      <div class="potes" id="des-potes"></div>
+    </div>
+  </section>
+
+  <footer class="rodape">Palco &amp; Pincel by LAW · Eu danço. Você pinta. A gente brilha.</footer>
+</div>
+
+<nav class="abas" aria-label="Seções"><div class="in">
+  <a class="aba" href="#inicio" data-aba="inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.5 6 .8-4.4 4.1 1.1 6-5.3-2.9-5.3 2.9 1.1-6L3.4 9.3l6-.8z"/></svg>Personagens</a>
+  <a class="aba" href="#laboratorio" data-aba="laboratorio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18a9 9 0 0 1-18 0z"/><path d="M8 8c0-2 2-2 2-4M13 8c0-2 2-2 2-4"/></svg>Laboratório</a>
+  <a class="aba" href="#desafio" data-aba="desafio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>Desafio</a>
+</div></nav>
+<canvas id="confete" aria-hidden="true"></canvas>
+
+<script>
+(()=>{
+/* ================= cores e mistura ================= */
+const KIT={vermelho:{n:'vermelho',rgb:[226,35,43]},amarelo:{n:'amarelo',rgb:[255,206,20]},azul:{n:'azul',rgb:[24,86,200]},
+  verde:{n:'verde',rgb:[34,150,72]},branco:{n:'branco',rgb:[255,255,255]},preto:{n:'preto',rgb:[28,28,32]}};
+const ORDEM_KIT=['vermelho','amarelo','azul','verde','branco','preto'];
+const MIX={
+  laranja:{n:'laranja',p:{vermelho:1,amarelo:2}},
+  roxo:{n:'roxo',p:{vermelho:1,azul:1}},
+  marrom:{n:'marrom',p:{vermelho:1,verde:1}},
+  limao:{n:'verde-limão',p:{verde:1,amarelo:1}},
+  rosa:{n:'rosa',p:{branco:3,vermelho:1}},
+  azulclaro:{n:'azul-claro',p:{branco:3,azul:1}},
+  cinza:{n:'cinza',p:{branco:4,preto:1}},
+  pele:{n:'cor de pele',p:{branco:6,vermelho:1,amarelo:1}},
+  verdeescuro:{n:'verde-escuro',p:{verde:3,preto:1}},
+  ouro:{n:'amarelo-ouro',p:{amarelo:6,vermelho:1}},
+  bege:{n:'bege',p:{branco:4,amarelo:2,vermelho:1,verde:1}},
+  tijolo:{n:'cor de tijolo',p:{vermelho:3,verde:1}},
+  lilas:{n:'lilás',p:{branco:3,vermelho:1,azul:1}},
+  marinho:{n:'azul-marinho',p:{azul:3,preto:1}},
+};
+const lin=c=>{c/=255;return c<=.04045?c/12.92:Math.pow((c+.055)/1.055,2.4)};
+const gam=c=>Math.max(0,Math.min(255,Math.round(255*(c<=.0031308?12.92*c:1.055*Math.pow(c,1/2.4)-.055))));
+/* tinta se comporta como filtro: média geométrica da luz refletida (com um pouco de média simples) */
+function misturar(p){let t=0;for(const k in p)t+=p[k];if(!t)return null;const g=[0,0,0],a=[0,0,0];
+  for(const k in p){if(!p[k])continue;const w=p[k]/t;for(let i=0;i<3;i++){const v=Math.max(lin(KIT[k].rgb[i]),.002);g[i]+=w*Math.log(v);a[i]+=w*v}}
+  return [0,1,2].map(i=>gam(.82*Math.exp(g[i])+.18*a[i]))}
+const hex=c=>'#'+c.map(x=>x.toString(16).padStart(2,'0')).join('');
+for(const k in KIT)KIT[k].hex=hex(KIT[k].rgb);
+for(const k in MIX){MIX[k].rgb=misturar(MIX[k].p);MIX[k].hex=hex(MIX[k].rgb)}
+const COR=k=>KIT[k]||MIX[k];
+function lab(c){const [r,g,b]=c.map(lin);let x=(r*.4124+g*.3576+b*.1805)/.95047,y=r*.2126+g*.7152+b*.0722,z=(r*.0193+g*.1192+b*.9505)/1.08883;
+  const f=t=>t>.008856?Math.cbrt(t):7.787*t+16/116;x=f(x);y=f(y);z=f(z);return[116*y-16,500*(x-y),200*(y-z)]}
+const dE=(a,b)=>{const p=lab(a),q=lab(b);return Math.hypot(p[0]-q[0],p[1]-q[1],p[2]-q[2])};
+const parecida=c=>{let m=null;for(const k of [...ORDEM_KIT,...Object.keys(MIX)]){const d=dE(c,COR(k).rgb);if(!m||d<m.d)m={k,d}}return m};
+
+/* ================= personagens ================= */
+const P=[
+ {id:'noel',n:'Papai Noel',c:[['branco','barba, bigode, pompom e a barra do gorro'],['pele','rosto'],['rosa','bochechas e nariz'],['vermelho','gorro e roupa'],['ouro','fivela do cinto'],['preto','cinto, botas, luvas e olhinhos']]},
+ {id:'boneco',n:'Boneco de Neve',c:[['branco','corpo inteiro'],['rosa','bochechas'],['laranja','nariz de cenoura'],['vermelho','gorro'],['verde','cachecol'],['preto','olhos e botões']]},
+ {id:'rena',n:'Rena',c:[['bege','galhada, focinho e barriga'],['rosa','dentro das orelhas'],['marrom','cabeça, corpo e patinhas'],['vermelho','nariz'],['verde','cachecol'],['preto','olhinhos']]},
+ {id:'arvore',n:'Árvore',c:[['ouro','estrela do topo'],['branco','festão que dá a volta'],['verde','árvore'],['verdeescuro','cantinhos entre os galhos'],['vermelho','bolinhas'],['azul','mais bolinhas'],['marrom','tronco']]},
+ {id:'presente',n:'Presente',c:[['ouro','fita e laço'],['vermelho','caixa'],['verde','ou faça a caixa verde!']]},
+ {id:'floco',n:'Floco de Neve',c:[['branco','pontinhas e brilhos'],['azulclaro','floco inteiro'],['azul','centro e detalhes']]},
+ {id:'meia',n:'Meia',c:[['branco','barra de cima'],['ouro','presentinho'],['vermelho','meia'],['verde','laço do presente']]},
+ {id:'chamine',n:'Noel na Chaminé',c:[['branco','neve e barra das botas'],['cinza','pedrinhas da base'],['tijolo','tijolos'],['vermelho','calça do Noel'],['preto','botas e cinto']]},
+ {id:'bengala',n:'Bengala',c:[['branco','bengala inteira'],['vermelho','listras'],['verde','laço']]},
+ {id:'guirlanda',n:'Guirlanda',c:[['ouro','fundo do meio'],['limao','folhas da frente'],['verde','folhas'],['verdeescuro','folhas do fundo'],['vermelho','frutinhas e laço']]},
+ {id:'sino',n:'Sino',c:[['branco','estrelinhas da faixa'],['ouro','sino'],['vermelho','faixa de baixo'],['verde','topo (se quiser)']]},
+ {id:'pinguim',n:'Pinguim',c:[['branco','barriga, rosto e pompom'],['rosa','bochechas'],['laranja','bico e pés'],['vermelho','gorro'],['azul','presentinho'],['verde','cachecol'],['preto','cabeça e costas']]},
+];
+const PM=Object.fromEntries(P.map(p=>[p.id,p]));
+
+/* ================= desenhos ================= */
+let sem=7;const rnd=()=>{sem=(sem*9301+49297)%233280;return sem/233280};
+function manchaPath(s,r=8,var_=2.2,n=9){const pts=[];for(let i=0;i<n;i++){const a=i/n*2*Math.PI,rr=r+rnd()*var_;pts.push([10+rr*Math.cos(a),10+rr*Math.sin(a)])}
+  let d=`M${((pts[0][0]+pts[n-1][0])/2).toFixed(2)} ${((pts[0][1]+pts[n-1][1])/2).toFixed(2)}`;
+  for(let i=0;i<n;i++){const p=pts[i],q=pts[(i+1)%n];d+=` Q${p[0].toFixed(2)} ${p[1].toFixed(2)} ${((p[0]+q[0])/2).toFixed(2)} ${((p[1]+q[1])/2).toFixed(2)}`}return d+'Z'}
+function mancha(cor,rot=0){const borda=cor.toLowerCase()==='#ffffff'?'#C9BFAE':'rgba(0,0,0,.18)';
+  return `<svg viewBox="0 0 20 20" style="transform:rotate(${rot}deg)" aria-hidden="true"><path d="${manchaPath()}" fill="${cor}" stroke="${borda}" stroke-width=".7"/><ellipse cx="7" cy="6.5" rx="2.6" ry="1.5" fill="#fff" opacity=".55" transform="rotate(-30 7 6.5)"/></svg>`}
+
+document.getElementById('kit-inicio').innerHTML=ORDEM_KIT.map((k,i)=>`<div class="kit-item">${mancha(KIT[k].hex,i*47)}${KIT[k].n}</div>`).join('');
+document.getElementById('grade').innerHTML=P.map(p=>`<a class="card" href="#${p.id}" style="text-decoration:none;color:inherit">
+  <img src="img/${p.id}.png" alt="${p.n}" loading="lazy" width="600" height="600"><span class="nome">${p.n}</span>
+  <span class="pontinhos">${p.c.map(([k])=>`<i style="background:${COR(k).hex}"></i>`).join('')}</span></a>`).join('');
+
+/* ================= roteamento ================= */
+const views={inicio:'v-inicio',laboratorio:'v-laboratorio',desafio:'v-desafio'};
+function rota(){const h=location.hash.replace('#','')||'inicio';
+  const vid=views[h]||(PM[h]?'v-personagem':'v-inicio');
+  for(const el of document.querySelectorAll('.view'))el.hidden=el.id!==vid;
+  const aba=views[h]?h:'inicio';
+  for(const a of document.querySelectorAll('.aba')){if(a.dataset.aba===aba)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')}
+  if(PM[h])abrirPersonagem(PM[h]);
+  if(h==='desafio'&&!desafio.alvo)novoDesafio();
+  window.scrollTo(0,0)}
+addEventListener('hashchange',rota);
+
+/* ================= ensaio na tela (pintura com o dedo) ================= */
+const tela=document.getElementById('tela'),ctx=tela.getContext('2d');
+const tinta=document.createElement('canvas');tinta.width=tinta.height=600;const tctx=tinta.getContext('2d');
+const tmp=document.createElement('canvas');tmp.width=tmp.height=600;const mctx=tmp.getContext('2d');
+let base=null,atual=null,corPincel='#E2232B',tamPincel=20,tracos=[],tracoAtual=null;
+const guardados={};
+function compor(){ctx.clearRect(0,0,600,600);if(!base)return;ctx.drawImage(base,0,0,600,600);
+  mctx.globalCompositeOperation='source-over';mctx.clearRect(0,0,600,600);mctx.drawImage(tinta,0,0);
+  mctx.globalCompositeOperation='destination-in';mctx.drawImage(base,0,0,600,600);mctx.globalCompositeOperation='source-over';
+  ctx.globalCompositeOperation='multiply';ctx.drawImage(tmp,0,0);ctx.globalCompositeOperation='source-over'}
+function desenharTraco(t){tctx.strokeStyle=t.cor;tctx.fillStyle=t.cor;tctx.lineWidth=t.tam;tctx.lineCap='round';tctx.lineJoin='round';
+  if(t.pts.length===1){tctx.beginPath();tctx.arc(t.pts[0][0],t.pts[0][1],t.tam/2,0,7);tctx.fill();return}
+  tctx.beginPath();tctx.moveTo(...t.pts[0]);for(const p of t.pts.slice(1))tctx.lineTo(...p);tctx.stroke()}
+function refazer(){tctx.clearRect(0,0,600,600);for(const t of tracos)desenharTraco(t);compor()}
+function ponto(e){const r=tela.getBoundingClientRect();return[(e.clientX-r.left)/r.width*600,(e.clientY-r.top)/r.height*600]}
+tela.addEventListener('pointerdown',e=>{tela.setPointerCapture(e.pointerId);tracoAtual={cor:corPincel,tam:tamPincel,pts:[ponto(e)]};tracos.push(tracoAtual);desenharTraco(tracoAtual);compor()});
+tela.addEventListener('pointermove',e=>{if(!tracoAtual)return;const p=ponto(e),u=tracoAtual.pts[tracoAtual.pts.length-1];
+  tctx.strokeStyle=tracoAtual.cor;tctx.lineWidth=tracoAtual.tam;tctx.lineCap='round';tctx.beginPath();tctx.moveTo(...u);tctx.lineTo(...p);tctx.stroke();tracoAtual.pts.push(p);compor()});
+const fim=()=>{tracoAtual=null};tela.addEventListener('pointerup',fim);tela.addEventListener('pointercancel',fim);
+document.getElementById('desfazer').onclick=()=>{tracos.pop();refazer()};
+document.getElementById('limpar').onclick=()=>{tracos.length=0;refazer()};
+for(const b of document.querySelectorAll('.pincel'))b.onclick=()=>{tamPincel=+b.dataset.tam;for(const o of document.querySelectorAll('.pincel'))o.setAttribute('aria-pressed',o===b)};
+
+/* ================= página do personagem ================= */
+function gotinhas(p){return Object.entries(p).map(([k,q])=>`<span class="gotinhas" title="${q} ${q>1?'gotas':'gota'} de ${KIT[k].n}">${Array.from({length:q},()=>`<i style="background:${KIT[k].hex}"></i>`).join('')}</span> <span>${q} de ${KIT[k].n}</span>`).join(' <span class="mais">+</span> ')}
+function abrirPersonagem(p){
+  if(atual)guardados[atual.id]=tracos;
+  atual=p;tracos=guardados[p.id]||[];
+  document.getElementById('p-nome').textContent=p.n;
+  const nMix=p.c.filter(([k])=>MIX[k]).length;
+  document.getElementById('p-qtd').textContent=`${p.c.length} cores · ${nMix?nMix+(nMix>1?' misturas':' mistura'):'tudo direto do potinho'}`;
+  const im=new Image();im.onload=()=>{base=im;refazer()};im.src=`img/${p.id}.png`;
+  const t=document.getElementById('tintas');
+  t.innerHTML=p.c.map(([k],i)=>`<button class="tinta" style="background:${COR(k).hex}" data-cor="${COR(k).hex}" aria-pressed="${i===0}" aria-label="Pintar de ${COR(k).n}"></button>`).join('');
+  corPincel=COR(p.c[0][0]).hex;
+  for(const b of t.querySelectorAll('.tinta'))b.onclick=()=>{corPincel=b.dataset.cor;for(const o of t.querySelectorAll('.tinta'))o.setAttribute('aria-pressed',o===b)};
+  document.getElementById('passos').innerHTML=p.c.map(([k,onde],i)=>{const c=COR(k),m=MIX[k];
+    return `<div class="passo"><div class="gota">${mancha(c.hex,i*41)}</div>
+      <div style="min-width:0"><div class="num">COR ${i+1}</div><div class="cor">${c.n}</div><div class="onde">${onde}</div></div>
+      ${m?`<div class="receita">${gotinhas(m.p)} <button class="botao cheio" data-mix="${k}" style="margin-left:auto">Ver a mistura</button></div><div class="palco-mistura" hidden></div>`
+         :`<div class="direto">Direto do potinho de ${c.n}.</div>`}</div>`}).join('');
+  for(const b of document.querySelectorAll('[data-mix]'))b.onclick=()=>{const palco=b.closest('.passo').querySelector('.palco-mistura');palco.hidden=false;animarMistura(palco,b.dataset.mix);b.textContent='Ver de novo'};
+}
+
+/* ================= animação da mistura ================= */
+const reduz=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let gooN=0;
+function palcoSVG(alvo,altura=200){const id='goo'+(gooN++);
+  alvo.innerHTML=`<svg viewBox="0 0 360 ${altura}" role="img"><defs><filter id="${id}"><feGaussianBlur in="SourceGraphic" stdDeviation="6" result="b"/><feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9"/></filter>
+   <clipPath id="${id}c"><path d="M70 ${altura-92} Q180 ${altura-90} 290 ${altura-92} Q285 ${altura-8} 180 ${altura-6} Q75 ${altura-8} 70 ${altura-92}Z"/></clipPath></defs>
+   <ellipse cx="180" cy="${altura-6}" rx="100" ry="8" fill="rgba(42,26,94,.12)"/>
+   <path d="M64 ${altura-94} Q180 ${altura-100} 296 ${altura-94} Q292 ${altura-6} 180 ${altura-2} Q68 ${altura-6} 64 ${altura-94}Z" fill="#fff" stroke="#2A1A5E" stroke-width="3"/>
+   <g clip-path="url(#${id}c)"><g filter="url(#${id})" class="liq"></g></g>
+   <g class="cai"></g>
+   <path d="M64 ${altura-94} Q180 ${altura-100} 296 ${altura-94}" fill="none" stroke="#2A1A5E" stroke-width="3"/>
+   <text class="txt" x="180" y="28" text-anchor="middle" font-family="Bowlby One, Arial Black, sans-serif" font-size="20" fill="#6B3FD6"></text></svg>`;
+  const s=alvo.querySelector('svg');return{s,liq:s.querySelector('.liq'),cai:s.querySelector('.cai'),txt:s.querySelector('.txt'),fundo:altura-30}}
+const NS='http://www.w3.org/2000/svg';
+function el(tag,at,pai){const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);pai&&pai.appendChild(e);return e}
+function gotaPath(x,y,r){return `M${x} ${y-r*1.6} C${x+r*.9} ${y-r*.5} ${x+r} ${y+r*.2} ${x} ${y+r} C${x-r} ${y+r*.2} ${x-r*.9} ${y-r*.5} ${x} ${y-r*1.6}Z`}
+function animarMistura(alvo,k){const m=MIX[k];const {liq,cai,txt,fundo}=palcoSVG(alvo);
+  const gotas=[];for(const [c,q] of Object.entries(m.p))for(let i=0;i<q;i++)gotas.push(c);
+  gotas.sort(()=>rnd()-.5);
+  const bolhas=gotas.map((c,i)=>{const ang=i/gotas.length*Math.PI*2;return{c,x:180+Math.cos(ang)*60*rnd(),y:fundo-10-rnd()*14,el:null}});
+  txt.textContent=gotas.length+' gotas no potinho...';
+  if(reduz){el('ellipse',{cx:180,cy:fundo,rx:110,ry:34,fill:m.hex},liq);txt.textContent='= '+m.n+'!';return}
+  const t0=performance.now(),dur=520,cair=gotas.length*dur*.55+500;
+  const queda=gotas.map((c,i)=>({c,ini:i*dur*.55,x:120+rnd()*120,el:el('path',{fill:KIT[c].hex,stroke:'rgba(0,0,0,.15)'},cai),chegou:false}));
+  let poca=null;
+  function quadro(t){const dt=t-t0;
+    for(const [i,g] of queda.entries()){if(g.chegou)continue;const u=(dt-g.ini)/dur;
+      if(u<0){g.el.setAttribute('d','');continue}
+      if(u>=1){g.chegou=true;g.el.remove();const b=bolhas[i];b.el=el('circle',{cx:g.x,cy:fundo-6,r:16,fill:KIT[g.c].hex},liq);b.x=g.x;continue}
+      const y=40+u*u*(fundo-46);g.el.setAttribute('d',gotaPath(g.x,y,9))}
+    const ativas=bolhas.filter(b=>b.el);
+    if(dt>cair){ // gira e mistura
+      const u=Math.min(1,(dt-cair)/1600),cor=m.hex;
+      ativas.forEach((b,i)=>{const a=dt/260+i*2.1,r=(1-u)*54+4;b.el.setAttribute('cx',180+Math.cos(a)*r);b.el.setAttribute('cy',fundo-6+Math.sin(a)*r*.25);b.el.setAttribute('fill',misturaParcial(KIT[b.c].rgb,m.rgb,u));b.el.setAttribute('r',16+u*10)});
+      if(!poca)poca=el('ellipse',{cx:180,cy:fundo+4,rx:0,ry:0,fill:m.hex},liq);
+      poca.setAttribute('rx',u*112);poca.setAttribute('ry',u*30);poca.setAttribute('fill',cor);
+      if(u>=1){txt.textContent='= '+m.n+'!';return}
+      txt.textContent='Misture, misture...'}
+    requestAnimationFrame(quadro)}
+  requestAnimationFrame(quadro)}
+function misturaParcial(a,b,u){return hex(a.map((v,i)=>Math.round(v+(b[i]-v)*u)))} // cada gota vai virando a cor final enquanto gira
+
+/* ================= laboratório e desafio (tigela com gotas) ================= */
+function criarTigela(svgId,potesId,aoMudar){const svg=document.getElementById(svgId);
+  const st={gotas:[],pal:null};
+  function desenhar(){svg.innerHTML='';const id='g'+(gooN++);const alt=230,f=alt-30;
+    svg.innerHTML=`<defs><filter id="${id}"><feGaussianBlur in="SourceGraphic" stdDeviation="7" result="b"/><feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9"/></filter>
+      <clipPath id="${id}c"><path d="M60 ${alt-112} Q180 ${alt-110} 300 ${alt-112} Q295 ${alt-8} 180 ${alt-6} Q65 ${alt-8} 60 ${alt-112}Z"/></clipPath></defs>
+      <ellipse cx="180" cy="${alt-6}" rx="110" ry="9" fill="rgba(42,26,94,.12)"/>
+      <path d="M54 ${alt-114} Q180 ${alt-120} 306 ${alt-114} Q302 ${alt-6} 180 ${alt-2} Q58 ${alt-6} 54 ${alt-114}Z" fill="#fff" stroke="#2A1A5E" stroke-width="3"/>
+      <g clip-path="url(#${id}c)"><g filter="url(#${id})" class="liq"></g></g><g class="cai"></g>
+      <path d="M54 ${alt-114} Q180 ${alt-120} 306 ${alt-114}" fill="none" stroke="#2A1A5E" stroke-width="3"/>`;
+    st.liq=svg.querySelector('.liq');st.cai=svg.querySelector('.cai');st.f=f;
+    st.poca=el('ellipse',{cx:180,cy:f+10,rx:0,ry:0,fill:'#fff'},st.liq);st.bolha=el('circle',{cx:180,cy:f,r:0,fill:'#fff'},st.liq)}
+  desenhar();
+  function conta(){const p={};for(const g of st.gotas)p[g]=(p[g]||0)+1;return p}
+  function atualizar(anim=true){const p=conta(),n=st.gotas.length,c=misturar(p);
+    const nivel=Math.min(1,n/10);
+    if(c){const h=hex(c);st.poca.setAttribute('fill',h);st.bolha.setAttribute('fill',h)}
+    st.poca.setAttribute('rx',n?80+nivel*50:0);st.poca.setAttribute('ry',n?20+nivel*34:0);st.poca.setAttribute('cy',st.f+18-nivel*10);
+    st.bolha.setAttribute('r',n?14+nivel*14:0);
+    for(const b of document.querySelectorAll(`#${potesId} .pote`)){const q=p[b.dataset.k]||0;b.querySelector('.cont').textContent=q?q+(q>1?' gotas':' gota'):''}
+    aoMudar(p,c)}
+  function pingar(k){if(st.gotas.length>=40)return;st.gotas.push(k);
+    if(reduz){atualizar();return}
+    const x=150+rnd()*60,g=el('path',{fill:KIT[k].hex,stroke:'rgba(0,0,0,.15)'},st.cai),t0=performance.now();
+    (function q(t){const u=Math.min(1,(t-t0)/450),y=10+u*u*(st.f-14);g.setAttribute('d',gotaPath(x,y,10));
+      if(u<1)requestAnimationFrame(q);else{g.remove();const s=el('circle',{cx:x,cy:st.f,r:14,fill:KIT[k].hex},st.liq);
+        const t1=performance.now();(function w(t){const v=Math.min(1,(t-t1)/500);s.setAttribute('cx',x+(180-x)*v);s.setAttribute('r',14*(1-v));if(v<1)requestAnimationFrame(w);else s.remove()})(t1);atualizar()}})(t0)}
+  document.getElementById(potesId).innerHTML=ORDEM_KIT.map((k,i)=>`<button class="pote" data-k="${k}" aria-label="Pingar uma gota de ${KIT[k].n}">${mancha(KIT[k].hex,i*53)}<span>${KIT[k].n}</span><span class="cont"></span></button>`).join('');
+  for(const b of document.querySelectorAll(`#${potesId} .pote`))b.onclick=()=>pingar(b.dataset.k);
+  return{pingar,tirar(){st.gotas.pop();atualizar()},limpar(){st.gotas.length=0;atualizar()},conta,get n(){return st.gotas.length},atualizar}}
+
+const labRes=document.getElementById('lab-res');
+const labT=criarTigela('lab-svg','lab-potes',(p,c)=>{
+  if(!c){labRes.innerHTML='A tigela está vazia. Pingue uma gota!';return}
+  const s=parecida(c);const quase=s.d<6?'Você fez':'Parece com';
+  labRes.innerHTML=`<i style="display:inline-block;width:22px;height:22px;border-radius:50%;vertical-align:-4px;background:${hex(c)};box-shadow:0 0 0 2px #fff,0 0 0 3.5px var(--linha)"></i> ${quase} <b>${COR(s.k).n}</b>${s.d<6?'!':''}`});
+document.getElementById('lab-tirar').onclick=()=>labT.tirar();
+document.getElementById('lab-limpar').onclick=()=>labT.limpar();
+/* exemplo pronto ao abrir: um rosa */
+['branco','branco','branco','vermelho'].forEach(k=>{labT.pingar(k)});
+
+const desafio={alvo:null,dica:0,ganhou:false};
+const desT=criarTigela('des-svg','des-potes',(p,c)=>{
+  if(!desafio.alvo)return;const med=document.getElementById('des-medidor'),txt=document.getElementById('des-txt');
+  if(!c){med.style.width='0%';txt.textContent='Pingue gotas para chegar perto.';return}
+  const d=dE(c,desafio.alvo.rgb),nota=Math.max(0,Math.min(100,Math.round(100-d*1.7)));
+  med.style.width=nota+'%';
+  if(nota>=93){txt.textContent=`${nota}%! Você acertou: ${desafio.alvo.n}!`;if(!desafio.ganhou){desafio.ganhou=true;confete();document.getElementById('des-titulo').textContent='Arrasou! Era '+desafio.alvo.n}}
+  else txt.textContent=nota>=80?`${nota}%: quase lá!`:nota>=55?`${nota}%: está chegando...`:`${nota}%: tente outras cores.`});
+function novoDesafio(){const ks=Object.keys(MIX);let k;do{k=ks[Math.floor(Math.random()*ks.length)]}while(desafio.alvo&&MIX[k]===desafio.alvo);
+  desafio.alvo=MIX[k];desafio.dica=0;desafio.ganhou=false;desT.limpar();
+  document.getElementById('des-amostra').style.background=MIX[k].hex;
+  document.getElementById('des-titulo').textContent='Faça esta cor!';
+  const d=document.getElementById('des-dica-txt');d.hidden=true;document.getElementById('des-dica').textContent='Dica'}
+document.getElementById('des-prox').onclick=novoDesafio;
+document.getElementById('des-tirar').onclick=()=>desT.tirar();
+document.getElementById('des-limpar').onclick=()=>desT.limpar();
+document.getElementById('des-dica').onclick=()=>{const a=desafio.alvo,d=document.getElementById('des-dica-txt');desafio.dica++;d.hidden=false;
+  const ks=Object.keys(a.p).map(k=>KIT[k].n);
+  if(desafio.dica===1){d.textContent='Use estas cores: '+ks.join(', ')+'.';document.getElementById('des-dica').textContent='Mais uma dica'}
+  else d.textContent='Receita: '+Object.entries(a.p).map(([k,q])=>`${q} ${q>1?'gotas':'gota'} de ${KIT[k].n}`).join(' + ')+'.'};
+
+/* ================= confete ================= */
+const cf=document.getElementById('confete'),cc=cf.getContext('2d');
+function confete(){if(reduz)return;const W=cf.width=innerWidth*devicePixelRatio,H=cf.height=innerHeight*devicePixelRatio;
+  const cores=['#FF4F9A','#6B3FD6','#FFD23F','#2F7BFF','#2FA84F'];
+  const ps=Array.from({length:140},()=>({x:W/2+(Math.random()-.5)*W*.3,y:H*.35,vx:(Math.random()-.5)*18*devicePixelRatio,vy:(-Math.random()*16-6)*devicePixelRatio,
+    s:(5+Math.random()*7)*devicePixelRatio,c:cores[Math.floor(Math.random()*5)],r:Math.random()*6,vr:(Math.random()-.5)*.3,estrela:Math.random()<.35}));
+  const t0=performance.now();
+  (function q(t){cc.clearRect(0,0,W,H);for(const p of ps){p.vy+=.45*devicePixelRatio;p.x+=p.vx;p.y+=p.vy;p.vx*=.99;p.r+=p.vr;
+      cc.save();cc.translate(p.x,p.y);cc.rotate(p.r);cc.fillStyle=p.c;
+      if(p.estrela){cc.beginPath();for(let i=0;i<8;i++){const a=i*Math.PI/4,rr=i%2?p.s*.35:p.s;cc.lineTo(Math.cos(a)*rr,Math.sin(a)*rr)}cc.fill()}
+      else cc.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);cc.restore()}
+    if(t-t0<3200)requestAnimationFrame(q);else cc.clearRect(0,0,W,H)})(t0)}
+
+rota();
+})();
+</script>
