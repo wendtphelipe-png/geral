@@ -280,10 +280,10 @@ const MIX={
   rosa:{n:'rosa',p:{branco:3,vermelho:1}},
   azulclaro:{n:'azul-claro',p:{branco:3,azul:1}},
   cinza:{n:'cinza',p:{branco:4,preto:1}},
-  pele:{n:'cor de pele',p:{branco:6,vermelho:1,amarelo:1}},
+  bege:{n:'bege',p:{branco:6,vermelho:1,amarelo:1}},
   verdeescuro:{n:'verde-escuro',p:{verde:3,preto:1}},
   ouro:{n:'amarelo-ouro',p:{amarelo:6,vermelho:1}},
-  bege:{n:'bege',p:{branco:4,amarelo:2,vermelho:1,verde:1}},
+  caramelo:{n:'caramelo',p:{branco:4,amarelo:2,vermelho:1,verde:1}},
   tijolo:{n:'cor de tijolo',p:{vermelho:3,verde:1}},
   lilas:{n:'lilás',p:{branco:3,vermelho:1,azul:1}},
   marinho:{n:'azul-marinho',p:{azul:3,preto:1}},
@@ -298,15 +298,15 @@ const MIX={
 const USO={vermelho:'roupa do Papai Noel, laços, frutinhas, corações',amarelo:'estrelas, sol, luzes, cabelo',azul:'céu, roupas, presentes, água',
   verde:'árvore, folhas, cachecol, grama',branco:'neve, barba, nuvens, brilhos',preto:'olhinhos, botas, cintos, contornos',
   laranja:'cenoura, bico de pinguim, abóbora',roxo:'laços, roupas, flores',marrom:'tronco, rena, chocolate, cabelo',limao:'folhas claras e brilhos',
-  rosa:'bochechas, nariz, laços',azulclaro:'céu, floco de neve, gelo',cinza:'pedras, sombra da neve, metal',pele:'rosto e mãos',
-  verdeescuro:'sombras da árvore e folhas do fundo',ouro:'estrelas, sinos, fivelas',bege:'galhada, focinho, biscoito',tijolo:'tijolos, chaminé, telhado',
+  rosa:'bochechas, nariz, laços',azulclaro:'céu, floco de neve, gelo',cinza:'pedras, sombra da neve, metal',bege:'rosto, mãos e detalhes claros',
+  verdeescuro:'sombras da árvore e folhas do fundo',ouro:'estrelas, sinos, fivelas',caramelo:'galhada, focinho, biscoito',tijolo:'tijolos, chaminé, telhado',
   lilas:'flores e detalhes delicados',marinho:'roupas, céu de noite, detalhes escuros',verdeagua:'mar, roupas, detalhes',menta:'doces e detalhes suaves',
   amareloclaro:'luz, brilho, cabelo loiro',cinzaescuro:'pedras e sombras',vinho:'roupas, laços, frutinhas',pessego:'bochechas suaves, flores, roupas',musgo:'folhas de outono, mato, camuflagem'};
 const GRUPOS=[
   ['Do potinho','vêm prontas no kit',ORDEM_KIT],
-  ['Cores quentes','misturas',['laranja','ouro','amareloclaro','pessego','rosa','pele','tijolo','vinho','marrom']],
+  ['Cores quentes','misturas',['laranja','ouro','amareloclaro','pessego','rosa','bege','tijolo','vinho','marrom']],
   ['Cores frias','misturas',['azulclaro','marinho','verdeagua','menta','limao','verdeescuro','musgo','roxo','lilas']],
-  ['Neutras','misturas',['bege','cinza','cinzaescuro']],
+  ['Neutras','misturas',['caramelo','cinza','cinzaescuro']],
 ];
 const lin=c=>{c/=255;return c<=.04045?c/12.92:Math.pow((c+.055)/1.055,2.4)};
 const gam=c=>Math.max(0,Math.min(255,Math.round(255*(c<=.0031308?12.92*c:1.055*Math.pow(c,1/2.4)-.055))));
@@ -325,9 +325,9 @@ const parecida=c=>{let m=null;for(const k of [...ORDEM_KIT,...Object.keys(MIX)])
 
 /* ================= personagens ================= */
 const P=[
- {id:'noel',n:'Papai Noel',c:[['branco','barba, bigode, pompom e a barra do gorro'],['pele','rosto'],['rosa','bochechas e nariz'],['vermelho','gorro e roupa'],['ouro','fivela do cinto'],['preto','cinto, botas, luvas e olhinhos']]},
+ {id:'noel',n:'Papai Noel',c:[['branco','barba, bigode, pompom e a barra do gorro'],['bege','rosto'],['rosa','bochechas e nariz'],['vermelho','gorro e roupa'],['ouro','fivela do cinto'],['preto','cinto, botas, luvas e olhinhos']]},
  {id:'boneco',n:'Boneco de Neve',c:[['branco','corpo inteiro'],['rosa','bochechas'],['laranja','nariz de cenoura'],['vermelho','gorro'],['verde','cachecol'],['preto','olhos e botões']]},
- {id:'rena',n:'Rena',c:[['bege','galhada, focinho e barriga'],['rosa','dentro das orelhas'],['marrom','cabeça, corpo e patinhas'],['vermelho','nariz'],['verde','cachecol'],['preto','olhinhos']]},
+ {id:'rena',n:'Rena',c:[['caramelo','galhada, focinho e barriga'],['rosa','dentro das orelhas'],['marrom','cabeça, corpo e patinhas'],['vermelho','nariz'],['verde','cachecol'],['preto','olhinhos']]},
  {id:'arvore',n:'Árvore',c:[['ouro','estrela do topo'],['branco','festão que dá a volta'],['verde','árvore'],['verdeescuro','cantinhos entre os galhos'],['vermelho','bolinhas'],['azul','mais bolinhas'],['marrom','tronco']]},
  {id:'presente',n:'Presente',c:[['ouro','fita e laço'],['vermelho','caixa'],['verde','ou faça a caixa verde!']]},
  {id:'floco',n:'Floco de Neve',c:[['branco','pontinhas e brilhos'],['azulclaro','floco inteiro'],['azul','centro e detalhes']]},
