@@ -143,6 +143,41 @@ def tampa(sai):
     print(f"tampa_kit_M: {e[0]:.0f} x {e[1]:.0f} x {e[2]:.0f} mm, {n} respiros, fechada={m.is_watertight}")
 
 
+# Sulcos por baixo (túneis com teto em 45°, sem suporte). DESLIGADO de propósito: medido no PrusaSlicer 2.7
+# em 24/11/2026, os sulcos AUMENTAM o filamento (cada parede e teto ganha perímetros e camadas sólidas):
+#   maciço 273 g | sulcos a cada 16 mm 364 g | a cada 34 mm 315 g (relâmpago 10%). A economia vem do fatiador.
+OCO = False
+OCO_CASCA = 2.0      # plástico mínimo entre o silicone e o sulco
+OCO_PASSO = 16.0     # distância entre os sulcos
+OCO_PAREDE = 1.6     # parede entre dois sulcos (no pé)
+OCO_BORDA = 2.0      # faixa maciça por dentro da borda da lâmina
+
+
+def esvaziar(corpo, env, Xg, Yg, zs, H):
+    """Abre sulcos por baixo (lado da mesa): túneis ao longo de y, paredes retas e teto em 45° (sem suporte)."""
+    perto = ndimage.distance_transform_edt(~env) * DX <= OCO_CASCA
+    livre = corpo & ~perto & dentro(Xg, Yg, -OCO_BORDA)[:, :, None] & (zs >= 0)[None, None, :]
+    kb = int(np.searchsorted(zs, H, side="right")) - 1          # camada que encosta na mesa
+    run = np.cumprod(livre[:, :, kb::-1], axis=2).sum(axis=2)   # quantas camadas livres a partir da mesa
+    x = Xg[0]
+    meio = (np.arange(-AX - DEGRAU, AX + DEGRAU + OCO_PASSO, OCO_PASSO))
+    i = np.argmin(np.abs(x[:, None] - meio[None, :]), axis=1)
+    dxv = np.abs(x - meio[i]) / DX
+    dentro_t = dxv <= (OCO_PASSO - OCO_PAREDE) / 2 / DX
+    A = np.full(run.shape, -1.0)
+    for t in np.unique(i[dentro_t]):
+        cols = np.where((i == t) & dentro_t)[0]
+        ap = np.min(run[:, cols] - 1 + dxv[cols][None, :], axis=1)      # teto do sulco t ao longo de y
+        for y in range(1, len(ap)):                                     # cumeeira desce no máximo 45° em y
+            ap[y] = min(ap[y], ap[y - 1] + 1)
+        for y in range(len(ap) - 2, -1, -1):
+            ap[y] = min(ap[y], ap[y + 1] + 1)
+        A[:, cols] = ap[:, None] - dxv[cols][None, :]
+    j = kb - np.arange(len(zs))
+    cav = (j[None, None, :] >= 0) & (j[None, None, :] <= A[:, :, None])
+    return corpo & ~cav
+
+
 def contramolde(pasta, sai, colecao, parte, args):
     from relevo3d import _camadas, _ocupacao
     os.makedirs(sai, exist_ok=True)
@@ -183,6 +218,8 @@ def contramolde(pasta, sai, colecao, parte, args):
     corpo = fora[:, :, None] & (Zg >= 0) & (Zg <= H) & ~env
     parede = fora & ~dentro(Xg, Yg, DEGRAU + FOLGA)
     corpo |= parede[:, :, None] & (Zg < 0) & (Zg >= -GUIA)
+    if OCO:
+        corpo = esvaziar(corpo, env, Xg, Yg, zs, H)
     del env
     # textos gravados no fundo (0,6 mm), legíveis olhando o fundo
     from matplotlib.path import Path as MPath

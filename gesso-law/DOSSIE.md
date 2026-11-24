@@ -114,6 +114,18 @@ Detalhes: `modelos/molde-kit-M/README.md`. Gerar: `modelos/molde_kit.py contramo
   **Natal Parte 2:** 264 x 216 x 44 mm, ~275 g; silicone ~268 ml (preparar ~294). Tampa universal ~180 g, uma vez só.
   (Antes: miolo ~360 g + muito suporte por kit, e moldura ~394 g + base ~204 g uma vez só.)
 - Arquivos: `natal-2026/parte-N/molde-kit/` (contramolde + `LEIA.txt`) e `molde-kit-M/tampa_kit_M.stl`.
+- **Filamento medido no PrusaSlicer 2.7 (24/11), ABS, camada 0,28 mm:**
+  | Contramolde Parte 1 | gramas |
+  |---|---|
+  | giroide 10%, 3 perímetros, topo 5, base 4 | 389 g |
+  | relâmpago 10%, 3 perímetros, topo 5, base 4 | 273 g |
+  | **relâmpago 10%, 2 perímetros, topo 4, base 3 (RECOMENDADO)** | **210 g** |
+  | relâmpago 8%, 2 perímetros, topo 3, base 3 | 190 g |
+  | com sulcos por baixo (testado a pedido): a cada 16 mm / 34 mm, relâmpago | 364 g / 315 g (pior) |
+  Tampa universal com as configurações recomendadas: 138 g. **Kit completo (contramolde + tampa) ≈ 350 g:
+  um rolo de 1 kg faz 2 kits com folga**, ou ~4 contramoldes depois que a tampa já existe.
+  Por que sulco não ajuda: o fatiador já deixa o miolo quase vazio; cada sulco cria paredes e tetos que ganham
+  perímetros e camadas sólidas. O que pesa é topo, base e tipo de preenchimento.
 - Conferido em 21/11: peça única e fechada, nada no ar, lâmina medida 3,5 mm, folga peça-contramolde mínima
   3,3 mm nas 6 peças. Ainda não testado na prática.
 - (Testados e recusados em 21/11: copinhos separados por peça e bandeja sem lâmina. O silicone tem que sair
