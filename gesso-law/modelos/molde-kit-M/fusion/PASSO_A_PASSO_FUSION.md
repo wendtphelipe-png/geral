@@ -1,5 +1,7 @@
 # Criar um kit novo no Fusion 360 (molde kit M, 6 peças)
 
+Versão para ler na tela (página): https://claude.ai/artifact/DJTtVmiBLe6L5YGBZPmZZn (cópia em `guia.html`).
+
 Arquivos desta pasta:
 | Arquivo | Para que serve |
 |---|---|

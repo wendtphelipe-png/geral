@@ -1,0 +1,229 @@
+<title>Guia do Molde Kit M</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: manual de bancada — coluna de leitura única, abas no topo, passos numerados com caixas de marcar. */
+:root{
+  --papel:#FFF8EC; --cartao:#FFFFFF; --linha:#E9DFCC; --texto:#2A1A5E; --suave:#5E5486;
+  --roxo:#6B3FD6; --rosa:#E23D86; --amarelo:#FFD23F; --dica:#FFF1C2; --alerta:#FFE1EE;
+  --f-titulo:'Bowlby One','Arial Black',Impact,sans-serif;
+  --f-texto:'Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-num:'JetBrains Mono',ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --papel:#17122B; --cartao:#211A3B; --linha:#3A3160; --texto:#F3EEFF; --suave:#BDB3DF;
+  --roxo:#B39BFF; --rosa:#FF7DB5; --amarelo:#FFD23F; --dica:#3A3218; --alerta:#40203A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --papel:#17122B; --cartao:#211A3B; --linha:#3A3160; --texto:#F3EEFF; --suave:#BDB3DF;
+  --roxo:#B39BFF; --rosa:#FF7DB5; --amarelo:#FFD23F; --dica:#3A3218; --alerta:#40203A; color-scheme:dark}
+body{background:var(--papel);color:var(--texto);font-family:var(--f-texto);font-size:17px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+.wrap{max-width:760px;margin:0 auto}
+h1,h2,h3{text-wrap:balance;margin:0}
+a{color:var(--roxo)}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--roxo);outline-offset:2px;border-radius:6px}
+header{padding-block:22px 6px}
+.marca{font-family:var(--f-titulo);font-size:13px;letter-spacing:.06em;color:var(--suave)}
+h1{font-family:var(--f-titulo);font-size:clamp(28px,6vw,40px);line-height:1.05;margin-top:6px}
+h1 .mt{background:linear-gradient(transparent 58%,var(--amarelo) 58%,var(--amarelo) 90%,transparent 90%);color:var(--texto)}
+.lead{color:var(--suave);margin:8px 0 0;max-width:62ch}
+nav.abas{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--papel);display:flex;gap:8px;padding-block:12px;border-bottom:2px solid var(--linha);margin-bottom:8px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--papel)}
+.aba{font:700 16px var(--f-texto);color:var(--texto);text-decoration:none;padding:8px 14px;border-radius:999px;border:2px solid var(--linha);background:var(--cartao)}
+.aba[aria-current="page"]{background:var(--roxo);border-color:var(--roxo);color:var(--papel)}
+.view[hidden]{display:none!important}
+h2{font-family:var(--f-titulo);font-size:22px;margin:30px 0 10px}
+h3{font-size:19px;margin:22px 0 8px}
+p{margin:0 0 10px}
+.tabela{overflow-x:auto;border:2px solid var(--linha);border-radius:14px;background:var(--cartao)}
+table{border-collapse:collapse;width:100%;font-size:16px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--linha);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--suave)}
+.num{font-family:var(--f-num);font-size:15px;font-variant-numeric:tabular-nums;white-space:nowrap}
+figure{margin:12px 0;background:var(--cartao);border:2px solid var(--linha);border-radius:14px;padding:10px}
+figure img{display:block;width:100%;height:auto;border-radius:8px}
+figcaption{font-size:14px;color:var(--suave);margin-top:6px}
+ol.passos{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;counter-reset:p}
+ol.passos>li{counter-increment:p;background:var(--cartao);border:2px solid var(--linha);border-radius:14px;padding:12px 14px 12px 14px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px}
+ol.passos>li .marcar{display:flex;flex-direction:column;align-items:center;gap:4px}
+ol.passos>li .marcar::before{content:counter(p);font-family:var(--f-titulo);font-size:20px;color:var(--rosa);line-height:1}
+ol.passos>li input{width:22px;height:22px;accent-color:var(--roxo);cursor:pointer}
+ol.passos>li.feito{opacity:.6}
+ol.passos>li.feito .corpo b:first-child{text-decoration:line-through}
+.corpo{min-width:0}
+.corpo ul{margin:6px 0 0;padding-left:1.2em}
+.caminho{font-family:var(--f-num);font-size:14px;background:var(--papel);border:1px solid var(--linha);border-radius:6px;padding:1px 6px;overflow-wrap:anywhere;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.dica,.alerta{border-radius:12px;padding:10px 14px;margin:10px 0;font-size:16px}
+.dica{background:var(--dica)}
+.alerta{background:var(--alerta)}
+.sites{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.site{background:var(--cartao);border:2px solid var(--linha);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.site h3{margin:0;font-size:18px}
+.site a{font-family:var(--f-num);font-size:14px;word-break:break-all}
+.site p{margin:0;font-size:15.5px;color:var(--suave)}
+.selo{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:var(--dica);color:var(--texto);align-self:flex-start}
+.lic{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:start}
+.pill{font:700 13px var(--f-texto);padding:3px 10px;border-radius:999px;white-space:nowrap;text-align:center}
+.pode{background:#CFF2DA;color:#0F5A2A}
+.nao{background:#FFD3DF;color:#8A1236}
+.talvez{background:#FFF1C2;color:#6A4D00}
+.progresso{font-size:15px;color:var(--suave);margin:4px 0 10px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="marca">PALCO &amp; PINCEL · MOLDES</div>
+  <h1><span class="mt">Molde Kit M</span> no Fusion 360</h1>
+  <p class="lead">Como preparar 6 peças com o pino em D e esculpir o contramolde com os 4 mm exatos de silicone. Marque os passos conforme for fazendo: as marcações ficam salvas neste aparelho.</p>
+</header>
+<nav class="abas" aria-label="Seções"><a class="aba" href="#passo-a-passo" data-v="passo-a-passo">Passo a passo</a><a class="aba" href="#sites" data-v="sites">Sites de modelos</a></nav>
+
+<!-- ================= PASSO A PASSO ================= -->
+<section class="view" id="v-passo-a-passo">
+<h2>Os números que não mudam</h2>
+<div class="tabela"><table>
+<tr><th>O quê</th><th>Medida</th></tr>
+<tr><td>Tamanho máximo de cada peça</td><td><span class="num">64 × 82 × 35 mm</span> (largura X × altura Y × espessura Z, sem o pino)</td></tr>
+<tr><td>Silicone em volta das peças</td><td><span class="num">4 mm</span></td></tr>
+<tr><td>Plástico mínimo embaixo da cavidade mais funda</td><td><span class="num">2 mm</span></td></tr>
+<tr><td>Pino D</td><td><span class="num">10 mm</span> de diâmetro, lado reto a <span class="num">3 mm</span> do centro, sai <span class="num">3,4 mm</span> das costas. Fica no <b>centro do retângulo da peça</b>, com o lado reto virado para o <b>topo</b> da peça.</td></tr>
+<tr><td>Costas das peças (batente da tampa)</td><td><span class="num">Z = 41 mm</span> no modelo do contramolde</td></tr>
+<tr><td>Centros das vagas</td><td><span class="num">1 (−85; −51,5) · 2 (0; −51,5) · 3 (85; −51,5)</span><br><span class="num">4 (−85; 51,5) · 5 (0; 51,5) · 6 (85; 51,5)</span></td></tr>
+</table></div>
+
+<figure><img src="modelo_fusion.png" alt="Modelo do contramolde visto de cima com as 6 vagas numeradas e os pinos de referência" width="1098" height="1012">
+<figcaption>Como o arquivo <b>kit_M_modelo.step</b> abre no Fusion, visto de cima. Vagas 1-2-3 na frente, 4-5-6 atrás, canto chanfrado na frente à direita.</figcaption></figure>
+
+<h3>Arquivos do pacote</h3>
+<div class="tabela"><table>
+<tr><th>Arquivo</th><th>Para que serve</th></tr>
+<tr><td class="num">kit_M_modelo.step</td><td>Contramolde em branco (lâmina de 4 mm) + 6 caixas-limite das vagas + 6 pinos de referência</td></tr>
+<tr><td class="num">pino_D.step</td><td>O pino de encaixe, já no lugar certo para juntar nas costas de cada peça</td></tr>
+<tr><td class="num">contramolde_M_em_branco.step</td><td>Só o bloco em branco</td></tr>
+<tr><td class="num">tampa_kit_M.stl</td><td>A tampa universal (a mesma de sempre, impressa uma vez)</td></tr>
+</table></div>
+
+<h2>Antes de começar (uma vez só)</h2>
+<ol class="passos" data-grupo="antes">
+<li><span class="marcar"><input type="checkbox" id="pre1" aria-label="Feito"></span><div class="corpo"><b>Unidades em milímetros.</b> <span class="caminho">Preferências › Unidades padrão › Projeto › mm</span></div></li>
+<li><span class="marcar"><input type="checkbox" id="pre2" aria-label="Feito"></span><div class="corpo"><b>Eixo Z para cima.</b> <span class="caminho">Preferências › Geral › Orientação de modelagem padrão › Z para cima</span></div></li>
+</ol>
+
+<h2>Parte A: preparar cada peça</h2>
+<p>Faça um arquivo do Fusion por peça. Posição de trabalho: <b>peça deitada de costas, frente para cima (+Z), cabeça apontando para +Y, costas planas em Z = 0.</b></p>
+<div class="progresso" id="prog-A"></div>
+<ol class="passos" data-grupo="A">
+<li><span class="marcar"><input type="checkbox" id="A1" aria-label="Feito"></span><div class="corpo"><b>Trazer o modelo.</b>
+<ul><li>Desenho seu no Fusion: já é sólido, siga em frente.</li>
+<li>STL baixado: <span class="caminho">Inserir › Inserir malha</span>. Se passar de uns 50 mil triângulos, use <span class="caminho">Malha › Modificar › Reduzir</span> (uns 20 mil) e depois <span class="caminho">Malha › Modificar › Converter malha</span> (Facetado).</li></ul></div></li>
+<li><span class="marcar"><input type="checkbox" id="A2" aria-label="Feito"></span><div class="corpo"><b>Costas planas.</b> Se o modelo for um boneco inteiro, corte ao meio com <span class="caminho">Modificar › Dividir corpo</span> usando um plano paralelo ao XY e fique com a metade da frente. As costas precisam ficar totalmente planas em Z = 0.</div></li>
+<li><span class="marcar"><input type="checkbox" id="A3" aria-label="Feito"></span><div class="corpo"><b>Tamanho.</b> <span class="caminho">Modificar › Escala</span> (uniforme) até caber em 64 × 82 × 35 mm. Para ver a medida: botão direito no corpo › <span class="caminho">Propriedades › Caixa delimitadora</span>. Use a <b>mesma escala nas 6 peças</b> para a coleção ficar uniforme.</div></li>
+<li><span class="marcar"><input type="checkbox" id="A4" aria-label="Feito"></span><div class="corpo"><b>Centralizar.</b> Nas Propriedades, anote Mín e Máx de X e Y da caixa delimitadora. Depois <span class="caminho">Modificar › Mover/Copiar</span>:
+<ul><li>X = −(MínX + MáxX) ÷ 2</li><li>Y = −(MínY + MáxY) ÷ 2</li></ul>
+O centro do retângulo da peça vai para a origem (0; 0).</div></li>
+<li><span class="marcar"><input type="checkbox" id="A5" aria-label="Feito"></span><div class="corpo"><b>Lugar do pino.</b> O centro das costas precisa ser maciço num círculo de 14 mm. Se ali for vazado (como o meio da Guirlanda), faça um esboço no plano XY com um círculo de 14 mm na origem e <span class="caminho">Extrudar</span> 3 mm para dentro da peça (Unir).</div></li>
+<li><span class="marcar"><input type="checkbox" id="A6" aria-label="Feito"></span><div class="corpo"><b>Juntar o pino.</b> <span class="caminho">Inserir › Inserir em projeto atual › pino_D.step</span>. Ele já entra no lugar certo: centro na origem, saindo das costas para −Z, lado reto para +Y. Depois <span class="caminho">Modificar › Combinar › Unir</span> (peça + pino).
+<ul><li>Peça em malha: transforme o pino em malha (<span class="caminho">Malha › Criar › Mosaico</span>) e use <span class="caminho">Malha › Modificar › Combinar › Unir</span>.</li></ul></div></li>
+<li><span class="marcar"><input type="checkbox" id="A7" aria-label="Feito"></span><div class="corpo"><b>Exportar para a resina.</b> Botão direito no corpo › <span class="caminho">Salvar como malha › STL</span> (milímetros). Na Mars 5 cabem 2 peças por mesa (143 × 90 mm).</div></li>
+</ol>
+
+<h2>Parte B: esculpir o contramolde</h2>
+<div class="progresso" id="prog-B"></div>
+<ol class="passos" data-grupo="B">
+<li><span class="marcar"><input type="checkbox" id="B1" aria-label="Feito"></span><div class="corpo"><b>Abrir o modelo.</b> Arquivo novo › <span class="caminho">Inserir › Inserir em projeto atual › kit_M_modelo.step</span>. Aparecem o contramolde (azul), 6 caixas amarelas transparentes (limite de cada vaga) e 6 pinos rosa. Ele já está na posição de impressão.</div></li>
+<li><span class="marcar"><input type="checkbox" id="B2" aria-label="Feito"></span><div class="corpo"><b>Trazer as 6 peças prontas</b> (já com pino): <span class="caminho">Inserir › Inserir em projeto atual</span>, uma de cada vez.</div></li>
+<li><span class="marcar"><input type="checkbox" id="B3" aria-label="Feito"></span><div class="corpo"><b>Virar cada peça de frente para baixo:</b> <span class="caminho">Mover/Copiar</span> › girar <b>180° em torno do eixo X</b>. Agora a frente aponta para −Z, o pino para +Z e a cabeça para −Y.</div></li>
+<li><span class="marcar"><input type="checkbox" id="B4" aria-label="Feito"></span><div class="corpo"><b>Encaixar no pino da vaga:</b> <span class="caminho">Modificar › Alinhar</span>. Clique na ponta do pino da peça e depois na ponta do pino rosa da vaga.
+<ul><li>Confira: as costas da peça ficam em Z = 41, na altura do batente.</li><li>A peça fica dentro da caixa amarela.</li><li>Anote qual peça foi em qual vaga.</li></ul></div></li>
+<li><span class="marcar"><input type="checkbox" id="B5" aria-label="Feito"></span><div class="corpo"><b>Fazer o envelope de 4 mm</b> de cada peça (é o espaço do silicone):
+<ul><li><b>Peça sólida:</b> botão direito › Copiar e Colar (cópia no mesmo lugar). Selecione todas as faces da cópia › <span class="caminho">Modificar › Deslocar face</span> › 4 mm para fora.</li>
+<li><b>Peça malha:</b> <span class="caminho">Malha › Modificar › Casca</span> na cópia, espessura 4 mm, direção Para fora; depois <span class="caminho">Malha › Combinar › Unir</span> a casca com a cópia.</li></ul></div></li>
+<li><span class="marcar"><input type="checkbox" id="B6" aria-label="Feito"></span><div class="corpo"><b>Esculpir:</b> <span class="caminho">Modificar › Combinar › Cortar</span>. Corpo de destino: <b>contramolde_em_branco</b>. Ferramentas: os 6 envelopes. Deixe "Manter ferramentas" desmarcado.</div></li>
+<li><span class="marcar"><input type="checkbox" id="B7" aria-label="Feito"></span><div class="corpo"><b>Esconder</b> as caixas amarelas, os pinos rosa e as peças. Não apague as peças: elas vão para a resina.</div></li>
+<li><span class="marcar"><input type="checkbox" id="B8" aria-label="Feito"></span><div class="corpo"><b>Conferir com corte:</b> <span class="caminho">Inspecionar › Análise de seção</span>.
+<ul><li>Uns 4 mm de folga entre cada peça e a cavidade.</li><li>Pelo menos 2 mm de plástico embaixo da cavidade mais funda.</li></ul></div></li>
+<li><span class="marcar"><input type="checkbox" id="B9" aria-label="Feito"></span><div class="corpo"><b>Economizar filamento (opcional):</b> se a peça mais grossa do kit tiver menos de 35 mm, suba a face de baixo do bloco com <span class="caminho">Pressionar/Puxar</span> em (35 − espessura da mais grossa) mm. Confira de novo os 2 mm embaixo da cavidade mais funda.</div></li>
+<li><span class="marcar"><input type="checkbox" id="B10" aria-label="Feito"></span><div class="corpo"><b>Quanto silicone preparar:</b> una os 6 envelopes com uma caixa da lâmina (contorno da lâmina de Z = 37 até Z = 41) e depois corte as 6 peças desse corpo. Em <span class="caminho">Propriedades › Volume</span>, cm³ = ml. Prepare 10% a mais.</div></li>
+<li><span class="marcar"><input type="checkbox" id="B11" aria-label="Feito"></span><div class="corpo"><b>Exportar e imprimir:</b> botão direito no contramolde › <span class="caminho">Salvar como malha › STL</span>. Ele já sai na posição de imprimir.</div></li>
+</ol>
+
+<div class="alerta"><b>Se o Fusion travar no passo do envelope</b> (comum com STL baixado, que tem muitos triângulos): me mande as 6 peças em STL que eu gero o contramolde na medida exata.</div>
+
+<h2>Configuração do PrusaSlicer (contramolde e tampa)</h2>
+<div class="tabela"><table>
+<tr><th>Onde</th><th>Opção</th><th>Valor</th></tr>
+<tr><td>Camadas e perímetros</td><td>Altura da camada / primeira camada</td><td class="num">0,28 / 0,3 mm</td></tr>
+<tr><td>Camadas e perímetros</td><td>Perímetros</td><td class="num">2</td></tr>
+<tr><td>Camadas e perímetros</td><td>Camadas sólidas topo / base</td><td class="num">4 / 3</td></tr>
+<tr><td>Preenchimento</td><td>Padrão / densidade</td><td>Relâmpago / <span class="num">10%</span></td></tr>
+<tr><td>Saia e aba</td><td>Aba</td><td>Somente aba externa, <span class="num">10 mm</span></td></tr>
+<tr><td>Material de suporte</td><td>Gerar suporte</td><td>Desligado</td></tr>
+<tr><td>Velocidade</td><td>Primeira camada</td><td class="num">20 mm/s</td></tr>
+<tr><td>Filamento (ABS)</td><td>Bico / mesa</td><td class="num">250→245 °C / 105 °C</td></tr>
+<tr><td>Resfriamento</td><td>Ventoinha</td><td>Desligada</td></tr>
+</table></div>
+<div class="dica">Resultado medido no PrusaSlicer: contramolde de Natal ≈ <b>211 g</b>, tampa ≈ <b>140 g</b>. Salve como perfis (ícone de disquete) para não perder.</div>
+
+<h2>Montar o molde de silicone</h2>
+<ol class="passos" data-grupo="C">
+<li><span class="marcar"><input type="checkbox" id="C1" aria-label="Feito"></span><div class="corpo"><b>Desmoldante</b> no contramolde, na tampa e nas peças de resina.</div></li>
+<li><span class="marcar"><input type="checkbox" id="C2" aria-label="Feito"></span><div class="corpo"><b>Peças na tampa</b> pelo pino D, seguindo os números gravados (peças penduradas, de frente para baixo).</div></li>
+<li><span class="marcar"><input type="checkbox" id="C3" aria-label="Feito"></span><div class="corpo"><b>Silicone</b> no contramolde, no volume calculado.</div></li>
+<li><span class="marcar"><input type="checkbox" id="C4" aria-label="Feito"></span><div class="corpo"><b>Descer a tampa</b> começando por um lado e baixando devagar até o outro, até assentar no batente. O excesso sai pelos 10 respiros. Canto chanfrado com canto chanfrado.</div></li>
+<li><span class="marcar"><input type="checkbox" id="C5" aria-label="Feito"></span><div class="corpo"><b>Peso em cima</b> até curar. Tire a tampa com as peças: o silicone (peça única) fica no contramolde, pronto para o gesso.</div></li>
+</ol>
+</section>
+
+<!-- ================= SITES ================= -->
+<section class="view" id="v-sites" hidden>
+<h2>Onde encontrar modelos prontos</h2>
+<div class="sites">
+  <article class="site"><span class="selo">Gratuito · filtro de licença</span><h3>Printables</h3><a href="https://www.printables.com" target="_blank" rel="noopener">printables.com</a><p>Da Prusa. Muitos modelos de boa qualidade. De onde saíram os modelos de Natal.</p></article>
+  <article class="site"><span class="selo">Gratuito · uso comercial indicado</span><h3>MakerWorld</h3><a href="https://makerworld.com" target="_blank" rel="noopener">makerworld.com</a><p>Da Bambu Lab. Acervo enorme e atual; a página do modelo diz se pode usar para vender.</p></article>
+  <article class="site"><span class="selo">Gratuito</span><h3>Thingiverse</h3><a href="https://www.thingiverse.com" target="_blank" rel="noopener">thingiverse.com</a><p>O maior e mais antigo acervo. A qualidade varia; confira bem a licença.</p></article>
+  <article class="site"><span class="selo">Grátis e pago</span><h3>Cults3D</h3><a href="https://cults3d.com" target="_blank" rel="noopener">cults3d.com</a><p>Muitos criadores vendem licença comercial à parte.</p></article>
+  <article class="site"><span class="selo">Curado</span><h3>MyMiniFactory</h3><a href="https://www.myminifactory.com" target="_blank" rel="noopener">myminifactory.com</a><p>Modelos testados e lojas de artistas. Bons personagens e bichinhos.</p></article>
+  <article class="site"><span class="selo">Buscador</span><h3>Thangs</h3><a href="https://thangs.com" target="_blank" rel="noopener">thangs.com</a><p>Procura em vários sites ao mesmo tempo.</p></article>
+  <article class="site"><span class="selo">Pago · licença comercial</span><h3>CGTrader / TurboSquid</h3><a href="https://www.cgtrader.com" target="_blank" rel="noopener">cgtrader.com</a><a href="https://www.turbosquid.com" target="_blank" rel="noopener">turbosquid.com</a><p>Modelos profissionais, com licença de uso na compra.</p></article>
+  <article class="site"><span class="selo">Creative Commons</span><h3>Sketchfab</h3><a href="https://sketchfab.com" target="_blank" rel="noopener">sketchfab.com</a><p>Muitos modelos baixáveis; bom para esculturas arredondadas.</p></article>
+</div>
+
+<h2>Licença: o que pode para vender</h2>
+<div class="lic">
+  <span class="pill pode">Pode</span><div><b>CC BY</b> (atribuição): pode vender e modificar, dando o crédito ao autor.</div>
+  <span class="pill pode">Pode</span><div><b>CC BY-SA</b>: pode vender e modificar, com crédito e mantendo a mesma licença no arquivo modificado.</div>
+  <span class="pill talvez">Ler</span><div><b>Licença comercial paga</b> (Cults3D, MyMiniFactory, CGTrader): vale o que está escrito na compra.</div>
+  <span class="pill nao">Não</span><div><b>NC</b> no nome da licença (não comercial): não pode vender.</div>
+  <span class="pill nao">Não</span><div><b>ND</b> (sem derivados): não pode modificar (cortar ao meio, colocar pino), então não serve para o molde.</div>
+  <span class="pill nao">Não</span><div><b>Personagem de marca</b> (Disney, Marvel etc.): mesmo que o arquivo seja grátis, vender exige licença da marca.</div>
+</div>
+
+<h2>Como escolher um modelo que vira bom molde</h2>
+<ol class="passos" data-grupo="S">
+<li><span class="marcar"><input type="checkbox" id="S1" aria-label="Confere"></span><div class="corpo"><b>Forma fofinha</b>, volumes arredondados, sem partes finas soltas (antenas, dedos separados, varinhas).</div></li>
+<li><span class="marcar"><input type="checkbox" id="S2" aria-label="Confere"></span><div class="corpo"><b>Frente bonita:</b> só a metade da frente vai para o molde; as costas ficam planas.</div></li>
+<li><span class="marcar"><input type="checkbox" id="S3" aria-label="Confere"></span><div class="corpo"><b>Relevo médio:</b> detalhe muito fino some no gesso e na pintura.</div></li>
+<li><span class="marcar"><input type="checkbox" id="S4" aria-label="Confere"></span><div class="corpo"><b>Mesmo estilo no kit todo</b> (de preferência do mesmo autor): as 6 peças ficam com cara de coleção.</div></li>
+</ol>
+</section>
+</div>
+
+<script>
+(()=>{
+const views={'passo-a-passo':'v-passo-a-passo',sites:'v-sites'};
+function rota(){const h=location.hash.slice(1);const v=views[h]?h:'passo-a-passo';
+  for(const [k,id] of Object.entries(views))document.getElementById(id).hidden=k!==v;
+  for(const a of document.querySelectorAll('.aba')){if(a.dataset.v===v)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')}}
+addEventListener('hashchange',rota);rota();
+let salvo={};try{salvo=JSON.parse(localStorage.getItem('guia-kitM')||'{}')}catch(e){}
+function progresso(){for(const g of ['A','B']){const l=[...document.querySelectorAll(`[data-grupo="${g}"] input`)],f=l.filter(i=>i.checked).length;
+  document.getElementById('prog-'+g).textContent=`${f} de ${l.length} passos feitos`}}
+for(const i of document.querySelectorAll('ol.passos input')){
+  i.checked=!!salvo[i.id];i.closest('li').classList.toggle('feito',i.checked);
+  i.addEventListener('change',()=>{salvo[i.id]=i.checked;i.closest('li').classList.toggle('feito',i.checked);progresso();
+    try{localStorage.setItem('guia-kitM',JSON.stringify(salvo))}catch(e){}})}
+progresso();
+})();
+</script>
