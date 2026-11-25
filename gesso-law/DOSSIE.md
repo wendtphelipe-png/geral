@@ -131,6 +131,13 @@ Detalhes: `modelos/molde-kit-M/README.md`. Gerar: `modelos/molde_kit.py contramo
 - (Testados e recusados em 21/11: copinhos separados por peça e bandeja sem lâmina. O silicone tem que sair
   numa peça só, com a lâmina ligando as 6 cavidades.)
 
+### Kit novo feito no Fusion 360 (desde 25/11)
+- Modelos em `modelos/molde-kit-M/fusion/`: `kit_M_modelo.step` (contramolde em branco com lâmina de **4 mm** de silicone,
+  limites das 6 vagas e 6 pinos de referência, na posição de impressão), `pino_D.step` e `PASSO_A_PASSO_FUSION.md`.
+  Gerador: `modelos/gerar_modelo_fusion.py`. Conferido: pino avulso igual ao das peças; peça real encaixada na vaga
+  coincide com o pino de referência; medidas externas iguais às do contramolde atual (a tampa universal serve).
+- Sites de modelos prontos e regras de licença: `modelos/SITES_MODELOS_PRONTOS.md`.
+
 ### Como fazer o molde (molde padrão M) — alternativa
 Detalhes: `modelos/molde-padrao-M/README.md`. Gerar o miolo de uma coleção: `modelos/molde_padrao.py colecao ...`.
 1. Moldura com a tampa na mesa; miolo da coleção dentro (nervuras para baixo, cavidades para cima).
