@@ -1359,13 +1359,19 @@ window.addEventListener("pagehide", () => {
   if (!salvarPendente || !proj) return;
   fetch(`/api/projetos/${proj.id}/timeline`, Object.assign(json("PUT", {timeline: tl, alvo: proj.alvo, mixer, camadas}), {keepalive: true}));
 });
+// O som da música inteira chega como WAV de dezenas de MB (Superstition acelerada: 43 MB). Lido
+// com r.blob(), o navegador falhava com "Failed to fetch" acima do limite dele para blobs; lido
+// como dados brutos e só depois embrulhado, funciona sempre.
+async function somDaResposta(r) {
+  return new Blob([await r.arrayBuffer()], {type: r.headers.get("Content-Type") || "audio/wav"});
+}
 function atualizarAudio(agora) { clearTimeout(timerAudio); timerAudio = setTimeout(montarAudio, agora ? 0 : 300); }
 async function montarAudio() {
   if (!proj) return;
   const minha = ++versaoAudio;
   try {
     const r = await api(`projetos/${proj.id}/audio`, json("POST", {timeline: timelineEfetiva(), camadas: camadasEfetivas(), clique: contagem}));
-    const blob = await r.blob();
+    const blob = await somDaResposta(r);
     if (minha !== versaoAudio) return;
     inicios = JSON.parse(r.headers.get("X-Inicios") || "[]");
     const tocando = !audio.paused, pos = audio.currentTime;
@@ -1909,7 +1915,9 @@ async function ouvirOpcao(i) {
   }))}));
   try {
     const r = await api(`projetos/${proj.id}/audio`, json("POST", {timeline: efetivos, camadas: clipes.length ? [{id: "previa", nome: "previa", ganho: 1, clipes}] : []}));
-    audio.pause(); previa.src = URL.createObjectURL(await r.blob()); previa.dataset.op = String(i); delete previa.dataset.u;
+    const som = await somDaResposta(r);
+    if (previa.src.startsWith("blob:")) URL.revokeObjectURL(previa.src);  // devolve a memória da prévia anterior
+    audio.pause(); previa.src = URL.createObjectURL(som); previa.dataset.op = String(i); delete previa.dataset.u;
     marcar(true); previa.onended = previa.onpause = () => marcar(false); previa.play();
   } catch (e) { alert("Não consegui tocar a opção: " + e.message); }
 }
